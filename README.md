@@ -20,6 +20,23 @@ We are using the bigbang quickstart script mostly but since we want to use our o
 - jq
 - yq
 
+## Conf
+
+Increase the max open file limit
+```
+sudo sysctl fs.inotify.max_queued_events=524288
+sudo sysctl fs.inotify.max_user_instances=512
+sudo sysctl fs.inotify.max_user_watches=524288
+```
+
+Override for WSL2 confs
+```
+# C:\Users\<your-username>\.wslconfig
+[wsl2]
+kernelCommandLine = cgroup_no_v1=all
+memory=24GB
+```
+
 ## Account
 - [github account](https://github.com/)
 - [p1 registry account](https://registry1.dso.mil/)

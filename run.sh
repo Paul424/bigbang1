@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 {up_kind|up_bigbang} [naam]"
@@ -12,9 +13,13 @@ shift
 
 function up_kind {
     NAME=${1}
-    # kind create cluster --config=kind.yaml --name $NAME
+    kind create cluster --config=kind.yaml --name $NAME
     kubectl config view --minify=false --raw=true > ~/.kube/${NAME}-dev-quickstart-config
-    # kind delete cluster
+}
+
+function down_kind {
+    NAME=${1}
+    kind delete cluster --name $NAME
 }
 
 function up_bigbang {
@@ -29,6 +34,12 @@ case "$COMMAND" in
         NAME=${1:-bb1};
         shift
         up_kind $NAME
+        ;;
+    
+    down_kind)
+        NAME=${1:-bb1};
+        shift
+        down_kind $NAME
         ;;
     
     up_bigbang)

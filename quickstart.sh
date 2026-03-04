@@ -3,6 +3,7 @@
 #
 
 #!/bin/bash
+set -x
 
 REGISTRY1_ENDPOINT=registry1.dso.mil
 BIG_BANG_REPO=""

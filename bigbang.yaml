@@ -1,0 +1,17 @@
+# Overrides / Confs for this specific deployment
+kyvernoPolicies:
+  values:
+    policies:
+      restrict-image-registries:
+        parameters:
+          allow:
+          # - registry1.dso.mil
+          # - registry.dso.mil
+          - nicolaka
+
+addons:
+  metricsServer:
+    values:
+      upstream:
+        args:
+        - --kubelet-insecure-tls

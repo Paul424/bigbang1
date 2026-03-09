@@ -1,6 +1,14 @@
 # Overrides / Confs for this specific deployment
 kyvernoPolicies:
   values:
+    exclude:
+      any:
+      # Kind cluster have a helper-pod-create-pvc-*** in namespace local-path-storage to setup storage backed by the host
+      - resources:
+          namespaces:
+          - local-path-storage
+          names:
+          - helper-pod-create-pvc-*
     policies:
       restrict-image-registries:
         parameters:
@@ -8,6 +16,12 @@ kyvernoPolicies:
           # - registry1.dso.mil
           # - registry.dso.mil
           - nicolaka
+      restrict-host-path-mount-pv:
+        parameters:
+          # Kind cluster is using local-path-provisioner configured to map volumes to /var/local-path-provisioner
+          allow:
+          - /var/local-path-provisioner
+          - /var/local-path-provisioner/*
 
 addons:
   metricsServer:
@@ -15,3 +29,13 @@ addons:
       upstream:
         args:
         - --kubelet-insecure-tls
+
+# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
+neuvector:
+  values:
+    containerd:
+      enabled: true
+    controller:
+      podAnnotations:
+        traffic.sidecar.istio.io/excludeInboundPorts: "18500,18301"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "18301"

@@ -2,7 +2,7 @@
 set -x
 
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 {up_kind|up_bigbang} [naam]"
+    echo "Usage: $0 {up_kind|up_kind_lb|down_kind|up_bigbang|template_bigbang|template_component} [naam]"
     exit 1
 fi
 
@@ -21,6 +21,15 @@ function down_kind {
     kind delete cluster --name $NAME
 }
 
+function up_kind_lb {
+    # Install cloud-provider-kind from https://github.com/kubernetes-sigs/cloud-provider-kind/releases
+    if ! [ -x "$(command -v cloud-provider-kind)" ]; then
+        echo 'Error: cloud-provider-kind is not installed.' >&2
+        exit 1
+    fi
+    cloud-provider-kind > ./log/cloud-provider-kind.log 2>&1
+}
+
 function up_bigbang {
     NAME=${1}
     export REPO1_LOCATION=$BASE/upstream
@@ -28,16 +37,85 @@ function up_bigbang {
 }
 
 function template_bigbang {
-    NAME=${1}
-    rm -rf ./out
+    OUTPUT=${1}
+    echo "Templating bigbang to $OUTPUT"
+    rm -rf ./$OUTPUT
     helm template ./upstream/big-bang/bigbang/chart \
         -n bigbang --create-namespace \
+        -f $BASE/bigbang.yaml \
         -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
         -f ./upstream/big-bang/bigbang/docs/reference/configs/example/dev-sso-values.yaml \
-        -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml \
-        -f $BASE/bigbang.yaml \
-        --output-dir ./out
+        --output-dir ./$OUTPUT
+        # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml
 }
+
+function template_component_extract_values {
+    OUTPUT=${1}
+    COMPONENT=${2}
+    echo "Extracting values for $COMPONENT from $OUTPUT"
+    mkdir -p ./$OUTPUT/$COMPONENT
+    cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.common' > ./$OUTPUT/$COMPONENT/values-common.yaml
+    cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.defaults' > ./$OUTPUT/$COMPONENT/values-defaults.yaml
+    cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.overlays' > ./$OUTPUT/$COMPONENT/values-overlays.yaml
+}
+
+function checkout_component_repo {
+    COMPONENT=${1}
+    GIT_REMOTE=${2}
+    ARG_VERSION=${3}
+    REPO_PATH=./upstream/${COMPONENT}
+    if [[ ! -d ${REPO_PATH} ]]; then
+        mkdir -p ${REPO_PATH}
+        git clone $GIT_REMOTE ${REPO_PATH}
+        pushd ${REPO_PATH}
+    else
+        pushd ${REPO_PATH}
+    fi
+    git fetch -a
+    if [[ "${ARG_VERSION}" == "latest" ]]; then
+        ARG_VERSION=$(git tag | sort -V | grep -v -- '-rc.' | tail -n 1)
+    fi
+    git checkout ${ARG_VERSION}
+    popd
+}
+
+function template_component {
+    OUTPUT=${1}
+    COMPONENT=${2}
+
+    # Umbrella chart to generate the values (and gitops confs)
+    # template_bigbang $OUTPUT
+
+    # Extract the values from gitops resources
+    # template_component_extract_values $OUTPUT $COMPONENT
+
+    # Setup clone for the upstream (from GitRepository resource)
+    case "$COMPONENT" in
+        kiali)
+            # Extract remote from the GitRepository resource
+            # GIT_REMOTE=https://repo1.dso.mil/big-bang/product/packages/kiali.git
+            GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            # ARG_VERSION="2.22.0-bb.0"
+            ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            checkout_component_repo $COMPONENT $GIT_REMOTE $ARG_VERSION
+            ;;
+
+        *)
+            echo "Invalid component"
+            exit 1
+            ;;
+    esac
+    
+    # Template out for the function
+    echo "Templating $COMPONENT to $OUTPUT/$COMPONENT"
+    # rm -rf ./$OUTPUT/$COMPONENT
+    helm template ./upstream/$COMPONENT/chart \
+        -f ./$OUTPUT/$COMPONENT/values-common.yaml \
+        -f ./$OUTPUT/$COMPONENT/values-defaults.yaml \
+        -f ./$OUTPUT/$COMPONENT/values-overlays.yaml \
+        --output-dir ./$OUTPUT
+}
+
 
 function up_debug {
     # Just manipulate the yaml as you see fit...
@@ -56,6 +134,10 @@ case "$COMMAND" in
         shift
         down_kind $NAME
         ;;
+
+    up_kind_lb)
+        up_kind_lb
+        ;;
     
     up_bigbang)
         NAME=${1:-bb1};
@@ -64,9 +146,16 @@ case "$COMMAND" in
         ;;
 
     template_bigbang)
-        NAME=${1:-bb1};
+        OUTPUT=${1:-out};
         shift
-        template_bigbang $NAME
+        template_bigbang $OUTPUT
+        ;;
+
+    template_component)
+        COMPONENT=${1:-kiali};
+        OUTPUT=${2:-out};
+        shift
+        template_component $OUTPUT $COMPONENT
         ;;
 
     debug)

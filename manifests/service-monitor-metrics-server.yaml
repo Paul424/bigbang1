@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations:
+    meta.helm.sh/release-name: metrics-server
+    meta.helm.sh/release-namespace: metrics-server
+  creationTimestamp: "2026-03-04T12:11:50Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: metrics-server
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: metrics-server
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: upstream-3.13.0
+    helm.toolkit.fluxcd.io/name: metrics-server
+    helm.toolkit.fluxcd.io/namespace: bigbang
+  name: metrics-server
+  namespace: metrics-server
+  resourceVersion: "397153"
+  uid: e8616458-fb1a-4f7b-906c-fd2f15f235dd
+spec:
+  endpoints:
+  - interval: 1m
+    path: /metrics
+    port: https
+    scheme: https
+    scrapeTimeout: 10s
+    tlsConfig:
+      insecureSkipVerify: true
+  jobLabel: app.kubernetes.io/instance
+  namespaceSelector:
+    matchNames:
+    - metrics-server
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: metrics-server
+      app.kubernetes.io/name: metrics-server

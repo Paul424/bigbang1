@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+  labels:
+    app.kubernetes.io/instance: public-ingressgateway
+    app.kubernetes.io/name: public-ingressgateway
+    app.kubernetes.io/version: 1.29.0
+    istio: ingressgateway
+  name: netshoot
+  namespace: istio-gateway
+spec:
+  containers:
+  - args: ["bash", "-c", "tail -f /dev/null"]
+    image: nicolaka/netshoot:v0.15
+    imagePullPolicy: IfNotPresent
+    name: netshoot
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+  imagePullSecrets:
+  - name: private-registry
+  # automountServiceAccountToken: true
+  serviceAccount: public-ingressgateway-ingressgateway-service-account
+  serviceAccountName: public-ingressgateway-ingressgateway-service-account
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   annotations:
+#   labels:
+#   name: allow-egress-from-netshoot-to-any-ns-any-pod-any-port
+#   namespace: monitoring
+# spec:
+#   egress:
+#   - {}
+#   # egress:
+#   # - to:
+#   #   - namespaceSelector: {}
+#   #     podSelector: {}
+#   podSelector:
+#     matchLabels:
+#       app.kubernetes.io/name: netshoot
+#   policyTypes:
+#   - Egress

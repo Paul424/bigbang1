@@ -9,12 +9,14 @@ We are using the bigbang quickstart script mostly but since we want to use our o
 ## Tools and environment
 - go 
 - kind 
+- cloud-provider-kind
 - docker
 - kubectl
 - k9s
 - kustomize
 - helm
 - flux cli
+- istioctl
 - pgp
 - sops
 - jq
@@ -58,6 +60,28 @@ Setup the infrastructure (foundation using kind):
 bash ./run.sh up_kind
 ```
 
+## Kind load balancer support
+
+Run the cloud-provider-kind package to listen to services of type: LoadBalancer and expose the svc over a proxy / load-balancer running on the docker network.
+```
+bash ./run.sh up_kind_lb
+```
+
+Then find the IP's on which the LB is exposing:
+```
+kubectl get svc -n istio-gateway
+NAME                         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                      AGE
+passthrough-ingressgateway   LoadBalancer   10.96.10.33     172.18.0.5    15021:32735/TCP,80:32292/TCP,443:31843/TCP   143m
+public-ingressgateway        LoadBalancer   10.96.140.121   172.18.0.6    15021:30373/TCP,80:31342/TCP,443:31088/TCP   160m
+```
+
+## Hostnames
+
+Add the aliases to your /etc/hosts (C:\Windows\System32\drivers\etc\hosts on Windows) as fake DNS service
+```
+172.18.0.6      kiali.dev.bigbang.mil
+```
+
 ## Bootstrap bigbang
 
 Bootstrap bigbang (flux.io and configured HelmReleases)
@@ -67,10 +91,26 @@ export REGISTRY1_TOKEN=<p1-registry-cli-secret>
 bash ./run.sh up_bigbang
 ```
 
+# Access
+
+## Credentials (defaults)
+
+https://docs-bigbang.dso.mil/latest/docs/configuration/default-credentials/#packages-with-no-built-in-authentication
+
+## DNS
+
+https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser
+
 # Debug
 
 ## Template out from main chart
 
 ```
-helm template ./upstream/big-bang/bigbang/chart -n bigbang --create-namespace -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml -f ./upstream/big-bang/bigbang/docs/reference/configs/example/dev-sso-values.yaml -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml --output-dir ./out
+bash ./run.sh template_bigbang <OUTPUT>
+```
+
+## Template out a component
+
+```
+bash ./run.sh template_component <COMPONENT> <OUTPUT>
 ```

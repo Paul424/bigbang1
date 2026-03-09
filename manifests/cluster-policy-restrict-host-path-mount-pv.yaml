@@ -1,0 +1,77 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kyverno-kyverno-policies
+    meta.helm.sh/release-namespace: kyverno
+    pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+    policies.kyverno.io/category: Best Practices (Security)
+    policies.kyverno.io/description: PersistentVolume using hostPath consume the underlying
+      node's file system. If not universally disabled,  they should be restricted
+      to specific host paths to prevent access to sensitive information.  This policy
+      ensures that PV hostPath is in the allowed list.
+    policies.kyverno.io/minversion: 1.5.0
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PersistentVolume
+    policies.kyverno.io/title: Restrict hostPath Volume Mountable Paths
+  creationTimestamp: "2026-03-02T09:05:07Z"
+  generation: 1
+  labels:
+    app: kyverno
+    app.kubernetes.io/component: policy
+    app.kubernetes.io/instance: kyverno-kyverno-policies
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-policies
+    app.kubernetes.io/part-of: kyverno
+    app.kubernetes.io/version: 3.3.4-bb.19
+    helm.sh/chart: kyverno-policies-3.3.4-bb.19
+    helm.toolkit.fluxcd.io/name: kyverno-policies
+    helm.toolkit.fluxcd.io/namespace: bigbang
+  name: restrict-host-path-mount-pv
+  resourceVersion: "490259"
+  uid: 764b0e5f-be23-4f53-ab31-bae3eedb6054
+spec:
+  admission: true
+  background: true
+  emitWarning: false
+  failurePolicy: Fail
+  rules:
+  - exclude:
+      any:
+      - resources:
+          names:
+          - svclb-*
+          namespaces:
+          - istio-system
+    match:
+      all:
+      - resources:
+          kinds:
+          - PersistentVolume
+    name: restrict-hostpath
+    skipBackgroundRequests: true
+    validate:
+      allowExistingViolations: true
+      message: PV hostPath is restricted to the allowed list.
+      pattern:
+        spec:
+          =(hostPath):
+            path: /var/lib/rancher/k3s/storage/pvc-*
+  validationFailureAction: Enforce
+  webhookTimeoutSeconds: 30
+status:
+  autogen: {}
+  conditions:
+  - lastTransitionTime: "2026-03-05T08:17:47Z"
+    message: Ready
+    reason: Succeeded
+    status: "True"
+    type: Ready
+  rulecount:
+    generate: 0
+    mutate: 0
+    validate: 1
+    verifyimages: 0
+  validatingadmissionpolicy:
+    generated: false
+    message: skip generating ValidatingAdmissionPolicy for non CEL rules.

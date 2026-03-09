@@ -1,0 +1,41 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: monitoring-monitoring
+    meta.helm.sh/release-namespace: monitoring
+  creationTimestamp: "2026-03-02T09:07:12Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    helm.toolkit.fluxcd.io/name: monitoring
+    helm.toolkit.fluxcd.io/namespace: bigbang
+  name: monitoring-alertmanager-authz-policy
+  namespace: monitoring
+  resourceVersion: "9624"
+  uid: 1bfcead4-f977-4a9e-8e53-99c83ae23700
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces:
+        - monitoring
+    to:
+    - operation:
+        methods:
+        - GET
+        - POST
+        paths:
+        - /*
+        ports:
+        - "9093"
+        - "8080"
+    - operation:
+        methods:
+        - POST
+        ports:
+        - "9094"
+  selector:
+    matchLabels:
+      alertmanager: monitoring-monitoring-kube-alertmanager

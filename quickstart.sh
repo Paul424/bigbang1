@@ -125,8 +125,9 @@ function deploy_bigbang {
             --set registryCredentials.username=${REGISTRY1_USERNAME} \
             --set registryCredentials.password=${REGISTRY1_TOKEN} \
             $@ \
-            -f ${BIG_BANG_REPO}/chart/ingress-certs.yaml \
-            -f ${BIG_BANG_REPO}/docs/reference/configs/example/dev-sso-values.yaml
+            -f ${BIG_BANG_REPO}/chart/ingress-certs.yaml
+            # Remove SSO overrides to connect with keycloak
+            # -f ${BIG_BANG_REPO}/docs/reference/configs/example/dev-sso-values.yaml
             # Remove k3d overrides to enable our own bigbang overrides (kyverno-policies didn't come through)
             # -f ${BIG_BANG_REPO}/docs/reference/configs/example/policy-overrides-k3d.yaml
 }

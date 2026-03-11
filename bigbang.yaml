@@ -23,12 +23,32 @@ kyvernoPolicies:
           - /var/local-path-provisioner
           - /var/local-path-provisioner/*
 
-addons:
-  metricsServer:
-    values:
-      upstream:
-        args:
-        - --kubelet-insecure-tls
+kiali:
+  sso:
+    enabled: true
+    client_id: kind-kiali
+    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
+
+monitoring:
+  sso:
+    enabled: true
+    prometheus:
+      client_id: kind-prometheus
+      client_secret: UDNNtdoy2tNkjxU0rd1b1wfOi2NbPvMZ
+
+grafana:
+  sso:
+    enabled: true
+    grafana:
+      client_id: kind-grafana
+      client_secret: W3PEfhtMZHV3qEjNx81pGzSKdb993bXC
+      scopes: "openid grafana"
+
+sso:
+  name: keycloak
+  url: https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
+  # Override to use the on-cluster dns name (since we have keycloak running locally)
+  # token_url: https://keycloak-keycloak-http.keycloak.svc.cluster.local:8443/auth/realms/me-yoda/protocol/openid-connect/token
 
 # Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
 neuvector:
@@ -39,3 +59,28 @@ neuvector:
       podAnnotations:
         traffic.sidecar.istio.io/excludeInboundPorts: "18500,18301"
         traffic.sidecar.istio.io/excludeOutboundPorts: "18301"
+
+addons:
+  metricsServer:
+    values:
+      upstream:
+        args:
+        - --kubelet-insecure-tls
+
+  authservice:
+    enabled: true
+
+  keycloak:
+    enabled: true
+    # values:
+      # upstream:
+        # args:
+        #   - "start"
+        #   - "--debug"
+        #   - "--verbose"
+        #   - "--import <path>"
+
+
+# kiali is missing authorization policies => [403]
+# authservice is missing authorization policies => [403]
+# need to enable keycloak and create client-ids

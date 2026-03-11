@@ -44,8 +44,8 @@ function template_bigbang {
         -n bigbang --create-namespace \
         -f $BASE/bigbang.yaml \
         -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
-        -f ./upstream/big-bang/bigbang/docs/reference/configs/example/dev-sso-values.yaml \
         --output-dir ./$OUTPUT
+        # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/dev-sso-values.yaml
         # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml
 }
 
@@ -84,10 +84,10 @@ function template_component {
     COMPONENT=${2}
 
     # Umbrella chart to generate the values (and gitops confs)
-    # template_bigbang $OUTPUT
+    template_bigbang $OUTPUT
 
     # Extract the values from gitops resources
-    # template_component_extract_values $OUTPUT $COMPONENT
+    template_component_extract_values $OUTPUT $COMPONENT
 
     # Setup clone for the upstream (from GitRepository resource)
     case "$COMPONENT" in
@@ -101,8 +101,10 @@ function template_component {
             ;;
 
         *)
-            echo "Invalid component"
-            exit 1
+            # Extract remote from the GitRepository resource
+            GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            checkout_component_repo $COMPONENT $GIT_REMOTE $ARG_VERSION
             ;;
     esac
     

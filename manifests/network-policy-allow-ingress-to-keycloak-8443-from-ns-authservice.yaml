@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+  name: allow-ingress-to-keycloak-8443-from-ns-authservice-pod-authservice
+  namespace: keycloak
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: authservice
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: authservice
+    ports:
+    - port: 8443
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  policyTypes:
+  - Ingress

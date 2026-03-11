@@ -1,0 +1,12 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: debug-keycloak-allow-all
+  namespace: keycloak
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: keycloak
+  action: ALLOW
+  rules:
+   - {}

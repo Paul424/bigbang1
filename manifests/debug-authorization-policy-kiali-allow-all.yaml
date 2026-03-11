@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: debug-kiali-allow-all
+  namespace: kiali
+spec:
+  selector:
+    matchLabels:
+      app: kiali
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["spiffe://cluster.local/ns/istio-gateway/sa/public-ingressgateway-ingressgateway-service-account"]
+    - source:
+        namespaces: ["istio-gateway"]

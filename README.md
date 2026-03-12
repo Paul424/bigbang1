@@ -72,6 +72,22 @@ export REGISTRY1_TOKEN=<p1-registry-cli-secret>
 bash ./run.sh up_bigbang
 ```
 
+## Hacks
+
+```
+# Allow keycloak to reach its own database
+./manifests/debug-authorization-policy-keycloak-allow-all.yaml
+
+# Allow authservice to access keycloak
+./manifests/debug-authorization-policy-authservice-allow-all.yaml
+
+# Allow metrics-server to serve the v1beta1.metrics.k8s.io API
+./manifests/debug-authorization-policy-metrics-server-allow-all.yaml
+
+# Allow access to Grafana
+./manifests/debug-authorization-policy-monitoring-allow-all.yaml
+```
+
 ## Kind load balancer support
 
 Run the cloud-provider-kind package to listen to services of type: LoadBalancer and expose the svc over a proxy / load-balancer running on the docker network.

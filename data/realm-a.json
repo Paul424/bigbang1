@@ -693,7 +693,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "W3PEfhtMZHV3qEjNx81pGzSKdb993bXC",
+      "secret": "**********",
       "redirectUris": [
         "https://grafana.dev.bigbang.mil/login/generic_oauth"
       ],
@@ -712,11 +712,15 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
+        "logout.confirmation.enabled": "false",
         "oidc.ciba.grant.enabled": "false",
         "client.secret.creation.time": "1773241502",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
+        "frontchannel.logout.session.required": "true",
         "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
       },
@@ -752,7 +756,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy",
+      "secret": "**********",
       "redirectUris": [
         "https://kiali.dev.bigbang.mil/kiali"
       ],
@@ -770,11 +774,15 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
+        "logout.confirmation.enabled": "false",
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
         "client.secret.creation.time": "1773241438",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -810,7 +818,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "UDNNtdoy2tNkjxU0rd1b1wfOi2NbPvMZ",
+      "secret": "**********",
       "redirectUris": [
         "/login/generic_oauth"
       ],
@@ -1715,12 +1723,12 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-role-list-mapper",
             "oidc-address-mapper",
-            "oidc-full-name-mapper",
             "oidc-usermodel-property-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "saml-user-property-mapper",
+            "oidc-full-name-mapper",
+            "saml-role-list-mapper",
             "saml-user-attribute-mapper",
             "oidc-usermodel-attribute-mapper"
           ]
@@ -1762,14 +1770,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper",
             "oidc-full-name-mapper",
+            "saml-user-property-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
             "oidc-address-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
-            "saml-user-property-mapper"
+            "oidc-usermodel-attribute-mapper",
+            "saml-role-list-mapper"
           ]
         }
       },
@@ -2728,29 +2736,5 @@
   },
   "clientPolicies": {
     "policies": []
-  },
-  "users" : [ {
-    "id" : "d262d111-a6fa-4d6a-ba4b-cbcb9c2dd757",
-    "username" : "barney",
-    "firstName" : "Barney",
-    "lastName" : "Flintstone",
-    "email" : "barney.flintstone@gmail.com",
-    "emailVerified" : false,
-    "enabled" : true,
-    "createdTimestamp" : 1773217268487,
-    "totp" : false,
-    "credentials" : [ {
-      "id" : "01638e4a-801a-41f0-aa86-770a5ef93ac2",
-      "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1773217298765,
-      "secretData" : "{\"value\":\"G/O8cnQcwcgjwtUQomdBXeai0P/XyilkLMJQ/8ufAqs=\",\"salt\":\"VkShEczJYTvtTgRbPG/0kQ==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
-    } ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-me-yoda" ],
-    "notBefore" : 0,
-    "groups" : [ ]
-  } ]
+  }
 }

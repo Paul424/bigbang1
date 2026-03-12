@@ -54,6 +54,8 @@ function template_component_extract_values {
     COMPONENT=${2}
     echo "Extracting values for $COMPONENT from $OUTPUT"
     mkdir -p ./$OUTPUT/$COMPONENT
+    # equivalent of:
+    # kubectl get secret -n bigbang bigbang-kiali-values -o json | jq -r '.data.defaults' | base64 -d
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.common' > ./$OUTPUT/$COMPONENT/values-common.yaml
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.defaults' > ./$OUTPUT/$COMPONENT/values-defaults.yaml
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.overlays' > ./$OUTPUT/$COMPONENT/values-overlays.yaml
@@ -97,6 +99,7 @@ function template_component {
             GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
             # ARG_VERSION="2.22.0-bb.0"
             ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            NAMESPACE=$(yq e '.spec.targetNamespace' $OUTPUT/bigbang/templates/$COMPONENT/helmrelease.yaml)
             checkout_component_repo $COMPONENT $GIT_REMOTE $ARG_VERSION
             ;;
 
@@ -104,6 +107,7 @@ function template_component {
             # Extract remote from the GitRepository resource
             GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
             ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            NAMESPACE=$(yq e '.spec.targetNamespace' $OUTPUT/bigbang/templates/$COMPONENT/helmrelease.yaml)
             checkout_component_repo $COMPONENT $GIT_REMOTE $ARG_VERSION
             ;;
     esac
@@ -115,9 +119,42 @@ function template_component {
         -f ./$OUTPUT/$COMPONENT/values-common.yaml \
         -f ./$OUTPUT/$COMPONENT/values-defaults.yaml \
         -f ./$OUTPUT/$COMPONENT/values-overlays.yaml \
+        -n $NAMESPACE \
         --output-dir ./$OUTPUT
 }
 
+function install_component {
+    OUTPUT=${1}
+    COMPONENT=${2}
+
+    # Umbrella chart to generate the values (and gitops confs)
+    template_bigbang $OUTPUT
+
+    # Extract the values from gitops resources
+    template_component_extract_values $OUTPUT $COMPONENT
+
+    # Setup clone for the upstream (from GitRepository resource)
+    case "$COMPONENT" in
+        *)
+            # Extract remote from the GitRepository resource
+            GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/$COMPONENT/gitrepository.yaml)
+            NAMESPACE=$(yq e '.spec.targetNamespace' $OUTPUT/bigbang/templates/$COMPONENT/helmrelease.yaml)
+            NAME=$(yq e '.metadata.name' $OUTPUT/bigbang/templates/$COMPONENT/helmrelease.yaml)
+            checkout_component_repo $COMPONENT $GIT_REMOTE $ARG_VERSION
+            ;;
+    esac
+    
+    # Template out for the function
+    echo "Apply $COMPONENT to $OUTPUT/$COMPONENT"
+    # rm -rf ./$OUTPUT/$COMPONENT
+    helm upgrade --install $NAME ./upstream/$COMPONENT/chart \
+        -f ./$OUTPUT/$COMPONENT/values-common.yaml \
+        -f ./$OUTPUT/$COMPONENT/values-defaults.yaml \
+        -f ./$OUTPUT/$COMPONENT/values-overlays.yaml \
+        -n $NAMESPACE \
+        --debug
+}
 
 function up_debug {
     # Just manipulate the yaml as you see fit...
@@ -158,6 +195,13 @@ case "$COMMAND" in
         OUTPUT=${2:-out};
         shift
         template_component $OUTPUT $COMPONENT
+        ;;
+
+    install_component)
+        COMPONENT=${1:-kiali};
+        OUTPUT=${2:-out};
+        shift
+        install_component $OUTPUT $COMPONENT
         ;;
 
     debug)

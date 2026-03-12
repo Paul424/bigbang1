@@ -28,6 +28,11 @@ kiali:
     enabled: true
     client_id: kind-kiali
     client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
+  # values:
+  #   upstream:
+  #     debug:
+  #       enabled: true
+  #       verbosity: "9"
 
 monitoring:
   sso:
@@ -52,19 +57,21 @@ sso:
 
 # Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
 neuvector:
-  values:
-    containerd:
-      enabled: true
-    controller:
-      podAnnotations:
-        traffic.sidecar.istio.io/excludeInboundPorts: "18500,18301"
-        traffic.sidecar.istio.io/excludeOutboundPorts: "18301"
+  enabled: false
+  # values:
+  #   containerd:
+  #     enabled: true
+  #   controller:
+  #     podAnnotations:
+  #       traffic.sidecar.istio.io/excludeInboundPorts: "18500,18301"
+  #       traffic.sidecar.istio.io/excludeOutboundPorts: "18301"
 
 addons:
   metricsServer:
     values:
       upstream:
         args:
+        # Fixes on kind: Failed to scrape node" err="Get \"https://172.18.0.3:10250/metrics/resource\": tls: failed to verify certificate: x509: cannot  │lida ││ validate certificate for 172.18.0.3 because it doesn't contain any IP SANs" node="bb1-control-plane" 
         - --kubelet-insecure-tls
 
   authservice:

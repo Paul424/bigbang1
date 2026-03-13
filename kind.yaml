@@ -10,3 +10,15 @@ nodes:
   image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
 - role: worker
   image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+
+# OIDC setup for api-server to enable token validation for headlamp requests
+# See: https://repo1.dso.mil/big-bang/product/packages/headlamp/-/blob/main/docs/keycloak.md?ref_type=heads
+kubeadmConfigPatches:
+- |-
+  kind: ClusterConfiguration
+  apiServer:
+    extraArgs:
+      oidc-client-id: kubernetes
+      oidc-issuer-url: https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
+      oidc-username-claim: preferred_username
+      oidc-groups-claim: groups

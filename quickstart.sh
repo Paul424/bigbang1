@@ -364,7 +364,7 @@ function main {
     echo "=================================================================================="
     echo "                          INSTALLATION   COMPLETE"
     echo ""
-    build_k3d_cluster --kubeconfig ${KUBECONFIG} --print-instructions
+    # build_k3d_cluster --kubeconfig ${KUBECONFIG} --print-instructions
     echo
     echo "=================================================================================="
     set +e

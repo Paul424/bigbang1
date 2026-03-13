@@ -4,6 +4,15 @@ Just a test / demo setup to run bigbang on KinD.
 
 We are using the bigbang quickstart script mostly but since we want to use our own kind setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
 
+# Todo
+
+- Enable OIDC on api-server to enable k8s RBAC for authorization using keycloak attributes.
+  See docs/keycloak.md and docs/RBAC.md in the Headlamp package for details.
+- Headlamp not working yet (OIDC /w keycloak issue)
+  https://github.com/kubernetes-sigs/headlamp/issues/3884
+- Istio crt rotation isn't working (certificate has expired:TLS_error_end)
+- 
+
 # Prerequisites
 
 ## Tools and environment
@@ -72,22 +81,6 @@ export REGISTRY1_TOKEN=<p1-registry-cli-secret>
 bash ./run.sh up_bigbang
 ```
 
-## Hacks
-
-```
-# Allow keycloak to reach its own database
-./manifests/debug-authorization-policy-keycloak-allow-all.yaml
-
-# Allow authservice to access keycloak
-./manifests/debug-authorization-policy-authservice-allow-all.yaml
-
-# Allow metrics-server to serve the v1beta1.metrics.k8s.io API
-./manifests/debug-authorization-policy-metrics-server-allow-all.yaml
-
-# Allow access to Grafana
-./manifests/debug-authorization-policy-monitoring-allow-all.yaml
-```
-
 ## Kind load balancer support
 
 Run the cloud-provider-kind package to listen to services of type: LoadBalancer and expose the svc over a proxy / load-balancer running on the docker network.
@@ -110,6 +103,8 @@ Add the aliases to your /etc/hosts as fake DNS service
 172.18.0.6      kiali.dev.bigbang.mil
 172.18.0.6      grafana.dev.bigbang.mil
 172.18.0.6      prometheus.dev.bigbang.mil
+172.18.0.6      alertmanager.dev.bigbang.mil
+172.18.0.6      headlamp.dev.bigbang.mil
 ```
 
 And test access from the terminal using:
@@ -148,10 +143,12 @@ The services are exposed using type: LoadBalancer to the docker network which in
 7. Open a new tab and access one of the apps, for instance: ```https://prometheus.dev.bigbang.mil/``` and make sure foxyproxy is active for this tab.
 8. In C:\Windows\System32\drivers\etc\hosts create (fake) DNS mapping for instance:
 ```
+172.18.0.5      keycloak.dev.bigbang.mil
 172.18.0.6      kiali.dev.bigbang.mil
 172.18.0.6      grafana.dev.bigbang.mil
 172.18.0.6      prometheus.dev.bigbang.mil
-172.18.0.7      keycloak.dev.bigbang.mil
+172.18.0.6      alertmanager.dev.bigbang.mil
+172.18.0.6      headlamp.dev.bigbang.mil
 ```
 
 ## Credentials (defaults)
@@ -180,3 +177,28 @@ bash ./run.sh template_bigbang <OUTPUT>
 ```
 bash ./run.sh template_component <COMPONENT> <OUTPUT>
 ```
+
+# Hacks
+
+## Missing AuthorizationPolicies
+
+When NOT enabled istio.hardened then the components are missing their AuthorizationPolicies because istio itself does have an AuthorizationPolicy (default-deny-all) in its root namespace; making it the default for any workload in the mesh.
+
+```
+# Allow keycloak to reach its own database
+./manifests/debug-authorization-policy-keycloak-allow-all.yaml
+
+# Allow authservice to access keycloak
+./manifests/debug-authorization-policy-authservice-allow-all.yaml
+
+# Allow metrics-server to serve the v1beta1.metrics.k8s.io API
+./manifests/debug-authorization-policy-metrics-server-allow-all.yaml
+
+# Allow access to Grafana
+./manifests/debug-authorization-policy-monitoring-allow-all.yaml
+```
+
+## Local helm install fails for Kiali (ingress_gateway_namespace field not declared in schema)
+
+See: https://repo1.dso.mil/big-bang/bigbang/-/issues/3186
+

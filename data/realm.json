@@ -1,6 +1,8 @@
 {
   "id": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
   "realm": "me-yoda",
+  "displayName": "",
+  "displayNameHtml": "",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -313,6 +315,7 @@
       "kind-kiali": [],
       "kind-grafana": [],
       "security-admin-console": [],
+      "kind-headlamp": [],
       "admin-cli": [],
       "account-console": [],
       "broker": [
@@ -413,10 +416,42 @@
           "containerId": "4129840f-dcb2-4a76-b6f1-830655e6348f",
           "attributes": {}
         }
-      ]
+      ],
+      "kind-alertmanager": []
     }
   },
-  "groups": [],
+  "groups": [
+    {
+      "id": "6d1ac8e4-6139-4fb1-b0f4-6ebaecd1b801",
+      "name": "headlamp-admins",
+      "description": "",
+      "path": "/headlamp-admins",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
+      "id": "bb1bee90-5981-4da2-98f0-2f6e9001a24d",
+      "name": "headlamp-developers",
+      "description": "",
+      "path": "/headlamp-developers",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
+      "id": "b980ac6a-4c34-4407-9fcb-3991533fd085",
+      "name": "headlamp-readers",
+      "description": "",
+      "path": "/headlamp-readers",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    }
+  ],
   "defaultRole": {
     "id": "046dc369-7914-4874-8a2d-98b0588fd47a",
     "name": "default-roles-me-yoda",
@@ -682,6 +717,64 @@
       ]
     },
     {
+      "id": "b2c33cac-e77b-447b-9586-3dc0d552521b",
+      "clientId": "kind-alertmanager",
+      "name": "AlertManager",
+      "description": "",
+      "rootUrl": "https://alertmanager.dev.bigbang.mil",
+      "adminUrl": "https://alertmanager.dev.bigbang.mil",
+      "baseUrl": "/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "o4TdJfYuom979hGDrcpXdy7lrVZg4GTm",
+      "redirectUris": [
+        "/login/generic_oauth"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1773323608",
+        "backchannel.logout.session.required": "true",
+        "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "grafana",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "9763c603-6ab9-43b8-b2b4-6de59bd344de",
       "clientId": "kind-grafana",
       "name": "Grafana",
@@ -716,6 +809,7 @@
         "client.secret.creation.time": "1773241502",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -735,6 +829,121 @@
       "optionalClientScopes": [
         "address",
         "phone",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "e8c7e36e-c597-4c73-a6f3-2f238844cb14",
+      "clientId": "kind-headlamp",
+      "name": "Headlamp",
+      "description": "",
+      "rootUrl": "https://headlamp.dev.bigbang.mil",
+      "adminUrl": "https://headlamp.dev.bigbang.mil",
+      "baseUrl": "/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "/oidc-callback"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "logout.confirmation.enabled": "false",
+        "client.secret.creation.time": "1773325531",
+        "standard.token.exchange.enabled": "false",
+        "oauth2.jwt.authorization.grant.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "display.on.consent.screen": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "42ba7a4e-2719-4d1b-b68d-6fbb142f032b",
+          "name": "headlampId",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "headlampId",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "id",
+            "jsonType.label": "long"
+          }
+        },
+        {
+          "id": "a82d4898-a9cf-463c-84d7-82e045217f49",
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "email",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "email",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "4e0b68a1-5f6c-4fbc-afdf-a74a83f66af3",
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "username",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "username",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "groups",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "grafana",
         "organization",
         "offline_access",
         "microprofile-jwt"
@@ -775,6 +984,7 @@
         "client.secret.creation.time": "1773241438",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -1183,6 +1393,38 @@
             "claim.name": "realm_access.roles",
             "jsonType.label": "String",
             "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "84e3254e-4a92-467c-8672-6116ae0acc05",
+      "name": "groups",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      },
+      "protocolMappers": [
+        {
+          "id": "ce819a51-344d-4e78-9f4e-2902f6b912f2",
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "multivalued": "true",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "groups"
           }
         }
       ]
@@ -1676,7 +1918,8 @@
     "roles",
     "web-origins",
     "acr",
-    "basic"
+    "basic",
+    "groups"
   ],
   "defaultOptionalClientScopes": [
     "offline_access",
@@ -1716,13 +1959,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "saml-role-list-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "saml-user-property-mapper",
             "oidc-address-mapper",
             "oidc-full-name-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-property-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper"
+            "oidc-usermodel-property-mapper"
           ]
         }
       },
@@ -1762,14 +2005,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-full-name-mapper",
             "oidc-address-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "oidc-usermodel-attribute-mapper",
             "saml-user-attribute-mapper",
-            "saml-user-property-mapper"
+            "oidc-full-name-mapper",
+            "saml-role-list-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-usermodel-property-mapper"
           ]
         }
       },
@@ -1825,6 +2068,18 @@
         "config": {
           "allow-default-scopes": [
             "true"
+          ]
+        }
+      }
+    ],
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "id": "ad8665ae-987b-4253-8b78-66659b3254d1",
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}],\"unmanagedAttributePolicy\":\"ADMIN_EDIT\"}"
           ]
         }
       }
@@ -2706,17 +2961,20 @@
   "firstBrokerLoginFlow": "first broker login",
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
-    "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DeviceCodeLifespan": "600",
     "clientOfflineSessionMaxLifespan": "0",
     "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
-    "parRequestUriLifespan": "60",
-    "clientSessionMaxLifespan": "0",
     "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
-    "realmReusableOtpCode": "false"
+    "realmReusableOtpCode": "false",
+    "cibaExpiresIn": "120",
+    "oauth2DeviceCodeLifespan": "600",
+    "saml.signature.algorithm": "",
+    "parRequestUriLifespan": "60",
+    "clientSessionMaxLifespan": "0",
+    "frontendUrl": "",
+    "acr.loa.map": "{}"
   },
   "keycloakVersion": "26.5.4",
   "userManagedAccessAllowed": false,
@@ -2736,6 +2994,9 @@
     "lastName" : "Flintstone",
     "email" : "barney.flintstone@gmail.com",
     "emailVerified" : false,
+    "attributes" : {
+      "headlampId" : [ "0" ]
+    },
     "enabled" : true,
     "createdTimestamp" : 1773217268487,
     "totp" : false,
@@ -2751,6 +3012,25 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-me-yoda" ],
     "notBefore" : 0,
-    "groups" : [ ]
-  } ]
+    "groups" : [ "/headlamp-readers" ]
+  }, {
+    "id" : "0aded8e6-1863-4451-b98c-9a54e9774673",
+    "username" : "fred",
+    "firstName" : "Fred",
+    "lastName" : "Flintstone",
+    "email" : "fred.flintstone@gmail.com",
+    "emailVerified" : true,
+    "attributes" : {
+      "headlampId" : [ "1" ]
+    },
+    "enabled" : true,
+    "createdTimestamp" : 1773405674319,
+    "totp" : false,
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/headlamp-admins" ]
+  } ]  
 }

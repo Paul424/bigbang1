@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: headlamp-headlamp
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/version: 0.40.0
+  name: headlamp-headlamp
+  namespace: headlamp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: headlamp-headlamp
+      app.kubernetes.io/name: headlamp
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: headlamp-headlamp
+        app.kubernetes.io/name: headlamp
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - -in-cluster
+        - -in-cluster-context-name=main
+        - -plugins-dir=/headlamp/plugins
+        - -oidc-client-id=$(OIDC_CLIENT_ID)
+        - -oidc-idp-issuer-url=$(OIDC_ISSUER_URL)
+        - -oidc-scopes=$(OIDC_SCOPES)
+        - -oidc-use-pkce=$(OIDC_USE_PKCE)
+        - -oidc-ca-file=/usr/local/share/ca-certificates/extra/ca-chain.pem
+        - -log-level=debug
+        env:
+        - name: OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: clientID
+              name: oidc
+        - name: OIDC_ISSUER_URL
+          valueFrom:
+            secretKeyRef:
+              key: issuerURL
+              name: oidc
+        - name: OIDC_SCOPES
+          valueFrom:
+            secretKeyRef:
+              key: scopes
+              name: oidc
+        - name: OIDC_USE_PKCE
+          valueFrom:
+            secretKeyRef:
+              key: usePKCE
+              name: oidc
+        - name: HEADLAMP_CONFIG_LOG_LEVEL
+          value: debug
+        image: registry1.dso.mil/ironbank/opensource/headlamp-k8s/headlamp:v0.40.0
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: upstream
+        ports:
+        - containerPort: 4466
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          runAsGroup: 101
+          runAsNonRoot: true
+          runAsUser: 100
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/local/share/ca-certificates/extra
+          name: sso-ca-chain
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      hostUsers: true
+      imagePullSecrets:
+      - name: private-registry
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: headlamp-headlamp
+      serviceAccountName: headlamp-headlamp
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: cachain
+          optional: true
+        name: kiali-cabundle
+      - name: sso-ca-chain
+        secret:
+          defaultMode: 420
+          items:
+          - key: ca.pem
+            path: ca-chain.pem
+          optional: false
+          secretName: tls-ca-sso

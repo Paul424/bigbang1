@@ -10,6 +10,7 @@ We are using the bigbang quickstart script mostly but since we want to use our o
   See docs/keycloak.md and docs/RBAC.md in the Headlamp package for details.
 - Headlamp not working yet (OIDC /w keycloak issue)
   https://github.com/kubernetes-sigs/headlamp/issues/3884
+- In headlamp, i can logout but it doesn't logout from idp (keycloak); so how to switch user?
 - Istio crt rotation isn't working (certificate has expired:TLS_error_end)
 - 
 

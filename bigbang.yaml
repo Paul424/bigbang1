@@ -3,6 +3,11 @@ istiod:
     hardened:
       # Enable istio hardened so we generate AuthorizationPolicies for the components
       enabled: true
+    upstream:
+      meshConfig:
+        defaultConfig:
+          proxyMetadata:
+            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
 
 sso:
   name: keycloak

@@ -261,9 +261,9 @@ addons:
   keycloak:
     enabled: true
     # values:
-      # upstream:
-        # args:
-        #   - "start"
-        #   - "--debug"
-        #   - "--verbose"
+    #   upstream:
+    #     args:
+    #       - "start"
+    #       - "--debug"
+    #       - "--verbose"
         #   - "--import <path>"

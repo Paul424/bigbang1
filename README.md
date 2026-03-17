@@ -10,7 +10,6 @@ We are using the bigbang quickstart script mostly but since we want to use our o
   See docs/keycloak.md and docs/RBAC.md in the Headlamp package for details.
 - Headlamp not working yet (OIDC /w keycloak issue)
   https://github.com/kubernetes-sigs/headlamp/issues/3884
-- In headlamp, i can logout but it doesn't logout from idp (keycloak); so how to switch user?
 - Istio crt rotation isn't working (certificate has expired:TLS_error_end)
 - 
 
@@ -152,18 +151,31 @@ The services are exposed using type: LoadBalancer to the docker network which in
 172.18.0.6      headlamp.dev.bigbang.mil
 ```
 
-## Credentials (defaults)
+[More info on DNS](https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser)
 
-https://docs-bigbang.dso.mil/latest/docs/configuration/default-credentials/#packages-with-no-built-in-authentication
+## Credentials
 
-## Links
+Apps are using following [default credentials](https://docs-bigbang.dso.mil/latest/docs/configuration/default-credentials/#packages-with-no-built-in-authentication)
+
+SSO is preconfigured using Keycloak with following users:
+
+| Username | Password | AuthZ |
+| --- | ----------- | --- |
+| barney | barney | read-only access to some resources |
+| fred | fred | admin access to all (most) resources |
+
+> [!NOTE]
+> When logging out in an app, the OIDC session still exists and attemts to login using SSO will reuse the existing session. To switch users, [login to keycloak](https://keycloak.dev.bigbang.mil/auth/admin/master/console/#/me-yoda/sessions) to remove the session manually.
+
+
+## App Links
 
 1. [Keycloak](https://keycloak.dev.bigbang.mil/auth/admin)
-2. 
-
-## DNS
-
-https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser
+2. [Prometheus](https://prometheus.dev.bigbang.mil/)
+3. [AlertManager](https://alertmanager.dev.bigbang.mil/)
+4. [Kiali](https://kiali.dev.bigbang.mil/kiali/)
+5. [Grafana](https://grafana.dev.bigbang.mil/)
+6. [Headlamp](https://headlamp.dev.bigbang.mil/)
 
 # Debug
 
@@ -183,7 +195,7 @@ bash ./run.sh template_component <COMPONENT> <OUTPUT>
 
 ## Missing AuthorizationPolicies
 
-When NOT enabled istio.hardened then the components are missing their AuthorizationPolicies because istio itself does have an AuthorizationPolicy (default-deny-all) in its root namespace; making it the default for any workload in the mesh.
+When istio.hardened is set to false then the components are missing their AuthorizationPolicies because istio itself does have an AuthorizationPolicy (default-deny-all) in its root namespace; making it the default for any workload in the mesh.
 
 ```
 # Allow keycloak to reach its own database

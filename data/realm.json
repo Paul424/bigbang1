@@ -3136,11 +3136,18 @@
     "enabled" : true,
     "createdTimestamp" : 1773405674319,
     "totp" : false,
-    "credentials" : [ ],
+    "credentials" : [ {
+      "id" : "a8f338e4-f11c-4422-a0bc-4a90bd52ca54",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773663786706,
+      "secretData" : "{\"value\":\"RgdOc9KGjYEiZxzN2+aG7C49dI0kI+gnYfYZMmQpjro=\",\"salt\":\"h3uFLuq1gwfLh/7cNm4tjw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-me-yoda" ],
     "notBefore" : 0,
     "groups" : [ "/headlamp-admins" ]
-  } ]  
+  } ]
 }

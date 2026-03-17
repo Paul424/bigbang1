@@ -185,9 +185,9 @@ addons:
       # Headlamp uses PKCE (public client) - no client_secret required
     values:
       upstream:
-        # env:
-        #   - name: HEADLAMP_CONFIG_LOG_LEVEL
-        #     value: "debug"
+        env:
+          - name: HEADLAMP_CONFIG_LOG_LEVEL
+            value: "debug"
         config:
           oidc:
             scopes: "openid,email,profile,groups"
@@ -209,6 +209,7 @@ addons:
                     - replicasets
                     - statefulsets
                   verbs: ["get", "list", "watch"]
+            # See issue https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81 but since fred is an admin (existing role it's not an issue for now)
             # - name: headlamp-developer
             #   create: true
             #   rules:

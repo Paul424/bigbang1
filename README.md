@@ -1,17 +1,8 @@
-# bigbang1
+# Bigbang1
 
 Just a test / demo setup to run bigbang on KinD.
 
 We are using the bigbang quickstart script mostly but since we want to use our own kind setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
-
-# Todo
-
-- Enable OIDC on api-server to enable k8s RBAC for authorization using keycloak attributes.
-  See docs/keycloak.md and docs/RBAC.md in the Headlamp package for details.
-- Headlamp not working yet (OIDC /w keycloak issue)
-  https://github.com/kubernetes-sigs/headlamp/issues/3884
-- Istio crt rotation isn't working (certificate has expired:TLS_error_end)
-- 
 
 # Prerequisites
 
@@ -55,7 +46,7 @@ kernelCommandLine = cgroup_no_v1=all
 memory=24GB
 ```
 
-## Account
+## Accounts
 
 Access to the git versioned scripts (of this repo)
 - [github account](https://github.com/)
@@ -69,7 +60,7 @@ Access to the upstream charts and images
 
 Setup the infrastructure (foundation using kind):
 ```
-bash ./run.sh up_kind
+bash ./run.sh up_kind <CLUSTER-NAME>
 ```
 
 ## Bootstrap bigbang
@@ -78,7 +69,7 @@ Bootstrap bigbang (flux.io and configured HelmReleases)
 ```
 export REGISTRY1_USERNAME=<account-name-to-access-p1-registry>
 export REGISTRY1_TOKEN=<p1-registry-cli-secret>
-bash ./run.sh up_bigbang
+bash ./run.sh up_bigbang <CLUSTER-NAME>
 ```
 
 ## Kind load balancer support
@@ -118,6 +109,26 @@ HTTP/2 200
 We run a keycloak instance within the same / single cluster which needs a realm setup with clients and users.
 
 Open the [kaycloak UI](https://keycloak.dev.bigbang.mil/auth/admin/master/console/#/master/realm-settings) and import the realm from ```./data/realm.json``` this includes the realm + clients + users.
+
+## Setup kubectl context using OIDC
+
+By default KinD creates a kube config with just signed certificates giving you admin access to the api-server. Since the api-server is configured with OIDC (backed by keycloak) we can also add a context per User defined in keycloak:
+
+```
+bash ./run.sh up_kc_config barney <CLUSTER-NAME>
+bash ./run.sh up_kc_config fred <CLUSTER-NAME>
+
+# Tests
+
+kubectl get nodes --context barney
+Error from server (Forbidden): nodes is forbidden: User "barney" cannot list resource "nodes" in API group "" at the cluster scope
+
+kubectl get nodes --context fred
+NAME                STATUS   ROLES           AGE   VERSION
+bb3-control-plane   Ready    control-plane   16m   v1.35.0
+bb3-worker          Ready    <none>          16m   v1.35.0
+bb3-worker2         Ready    <none>          16m   v1.35.0
+```
 
 # Access
 
@@ -191,7 +202,7 @@ bash ./run.sh template_bigbang <OUTPUT>
 bash ./run.sh template_component <COMPONENT> <OUTPUT>
 ```
 
-# Hacks
+# Hacks & Issues
 
 ## Missing AuthorizationPolicies
 
@@ -211,7 +222,15 @@ When istio.hardened is set to false then the components are missing their Author
 ./manifests/debug-authorization-policy-monitoring-allow-all.yaml
 ```
 
-## Local helm install fails for Kiali (ingress_gateway_namespace field not declared in schema)
+## Upstream issue's
 
-See: https://repo1.dso.mil/big-bang/bigbang/-/issues/3186
+- https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81
 
+## Access issue's (TLS connection aborted etc...)
+
+Possible causes:
+1. Tunnel down; check putty
+2. Load balancer IP's have changed; check the ingress services for their external addresses and match the /etc/hosts
+3. Istio workload certificates expired; check using ```istioctl proxy-config secret <workload>```; easiest for renewal is to just kill the pod.
+4. Authservice not responding as it should
+5. SSO (keycloak) down

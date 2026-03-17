@@ -11,14 +11,14 @@ COMMAND="$1"
 shift
 
 function up_kind {
-    NAME=${1}
-    kind create cluster --config=kind.yaml --name $NAME
-    kubectl config view --minify=false --raw=true > ~/.kube/${NAME}-dev-quickstart-config
+    CLUSTER_NAME=${1}
+    kind create cluster --config=kind.yaml --name $CLUSTER_NAME --verbosity 2
+    kubectl config view --minify=false --raw=true > ~/.kube/${CLUSTER_NAME}-dev-quickstart-config
 }
 
 function down_kind {
-    NAME=${1}
-    kind delete cluster --name $NAME
+    CLUSTER_NAME=${1}
+    kind delete cluster --name $CLUSTER_NAME
 }
 
 function up_kind_lb {
@@ -31,9 +31,9 @@ function up_kind_lb {
 }
 
 function up_bigbang {
-    NAME=${1}
+    CLUSTER_NAME=${1}  # To map the kind context
     export REPO1_LOCATION=$BASE/upstream
-    bash ./quickstart.sh --host $NAME --deploy -- -f $BASE/bigbang.yaml
+    bash ./quickstart.sh --host $CLUSTER_NAME --deploy -- -f $BASE/bigbang.yaml
 }
 
 function template_bigbang {
@@ -161,17 +161,59 @@ function up_debug {
     kubectl apply -f $BASE/manifests/netshoot.yaml
 }
 
+function up_kc_config {
+    # Create (update) a kube config context using OIDC
+    #
+    # Example: 
+    #   kubectl --context barney get pods -A
+    #   [OK]
+    #
+    #   kubectl --context barney delete pod -n kiali kiali-7ccd646bb-ltgxs
+    #   Error from server (Forbidden): pods "kiali" is forbidden: User "https://keycloak.dev.bigbang.mil/auth/realms/me-yoda#barney" cannot delete resource "pods" in API group "" in the namespace "kiali"
+    #
+    #   kubectl --context fred delete pod -n kiali kiali-7ccd646bb-ltgxs
+    #   pod "kiali-7ccd646bb-ltgxs" deleted from kiali namespace
+    local USERNAME=${1};
+    local CLUSTER_NAME=${2};
+    local CLIENT_ID=kubernetes
+    local ISSUER=https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
+    local ENDPOINT=$ISSUER/protocol/openid-connect/token
+    local ID_TOKEN=$(curl -k -X POST $ENDPOINT \
+        -d grant_type=password \
+        -d client_id=$CLIENT_ID \
+        -d username=$USERNAME \
+        -d password=$USERNAME \
+        -d scope=openid \
+        -d response_type=id_token | jq -r '.id_token')
+    local REFRESH_TOKEN=$(curl -k -X POST $ENDPOINT \
+        -d grant_type=password \
+        -d client_id=$CLIENT_ID \
+        -d username=$USERNAME \
+        -d password=$USERNAME \
+        -d scope=openid \
+        -d response_type=id_token | jq -r '.refresh_token')
+    local CA_DATA=$(kubectl get secret -n keycloak keycloak-keycloak-tlscert -o json | jq -r '.data."tls.crt"')
+    kubectl config set-credentials $USERNAME \
+        --auth-provider=oidc \
+        --auth-provider-arg=client-id=$CLIENT_ID \
+        --auth-provider-arg=idp-issuer-url=$ISSUER \
+        --auth-provider-arg=id-token=$ID_TOKEN \
+        --auth-provider-arg=refresh-token=$REFRESH_TOKEN \
+        --auth-provider-arg=idp-certificate-authority-data=$CA_DATA
+    kubectl config set-context $USERNAME --cluster=kind-$CLUSTER_NAME --user=$USERNAME
+}
+
 case "$COMMAND" in
     up_kind)
-        NAME=${1:-bb1};
+        CLUSTER_NAME=${1:-bb1};
         shift
-        up_kind $NAME
+        up_kind $CLUSTER_NAME
         ;;
     
     down_kind)
-        NAME=${1:-bb1};
+        CLUSTER_NAME=${1:-bb1};
         shift
-        down_kind $NAME
+        down_kind $CLUSTER_NAME
         ;;
 
     up_kind_lb)
@@ -179,9 +221,9 @@ case "$COMMAND" in
         ;;
     
     up_bigbang)
-        NAME=${1:-bb1};
+        CLUSTER_NAME=${1:-bb1};
         shift
-        up_bigbang $NAME
+        up_bigbang $CLUSTER_NAME
         ;;
 
     template_bigbang)
@@ -206,6 +248,13 @@ case "$COMMAND" in
 
     debug)
         up_debug
+        ;;
+
+    up_kc_config)
+        USERNAME=${1:-barney};
+        CLUSTER_NAME=${2:-bb1};
+        shift
+        up_kc_config $USERNAME $CLUSTER_NAME
         ;;
 
     *)

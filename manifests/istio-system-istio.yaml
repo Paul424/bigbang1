@@ -1,0 +1,50 @@
+apiVersion: v1
+data:
+  mesh: |-
+    accessLogFile: /dev/stdout
+    accessLogFormat: |
+      [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE% %RESPONSE_FLAGS% %RESPONSE_CODE_DETAILS% %CONNECTION_TERMINATION_DETAILS% "%UPSTREAM_TRANSPORT_FAILURE_REASON%" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%" "%REQ(X-REQUEST-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME% traceID=%REQ(x-b3-traceid)%
+    defaultConfig:
+      discoveryAddress: istiod.istio-system.svc:15012
+      tracing:
+        sampling: 10
+        zipkin:
+          address: tempo-tempo.tempo.svc:9411
+    defaultProviders:
+      metrics:
+      - prometheus
+    enablePrometheusMerge: true
+    enableTracing: true
+    extensionProviders:
+    - envoyExtAuthzGrpc:
+        port: "10003"
+        service: authservice.authservice.svc.cluster.local
+      name: authservice
+    meshMTLS:
+      minProtocolVersion: TLSV1_2
+    rootNamespace: istio-system
+    trustDomain: cluster.local
+  meshNetworks: 'networks: {}'
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: istiod
+    meta.helm.sh/release-namespace: istio-system
+  creationTimestamp: "2026-03-13T10:49:00Z"
+  labels:
+    app.kubernetes.io/instance: istiod
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: istiod
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: upstream-1.29.0
+    helm.toolkit.fluxcd.io/name: istiod
+    helm.toolkit.fluxcd.io/namespace: bigbang
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istiod
+  name: istio
+  namespace: istio-system
+  resourceVersion: "7672"
+  uid: 6fbab605-0488-4541-b469-28c765c6d05f

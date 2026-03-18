@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    traffic.sidecar.istio.io/excludeOutboundPorts: "10257"
+  labels:
+    app: prometheus
+    app.kubernetes.io/name: prometheus
+  name: netshoot
+  namespace: monitoring
+spec:
+  containers:
+  - args: ["bash", "-c", "tail -f /dev/null"]
+    image: nicolaka/netshoot:v0.15
+    imagePullPolicy: IfNotPresent
+    name: netshoot
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+  imagePullSecrets:
+  - name: private-registry
+  automountServiceAccountToken: true
+  serviceAccount: monitoring-monitoring-kube-prometheus
+  serviceAccountName: monitoring-monitoring-kube-prometheus
+  # nodeSelector:
+  #   kubernetes.io/hostname: bb3-control-plane
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   annotations:
+#   labels:
+#   name: allow-egress-from-netshoot-to-any-ns-any-pod-any-port
+#   namespace: monitoring
+# spec:
+#   egress:
+#   - to:
+#     - ipBlock:
+#         cidr: 172.18.0.5/32
+#   podSelector:
+#     matchLabels:
+#       app.kubernetes.io/name: prometheus
+#   policyTypes:
+#   - Egress

@@ -36,6 +36,11 @@ function up_bigbang {
     bash ./quickstart.sh --host $CLUSTER_NAME --deploy -- -f $BASE/bigbang.yaml
 }
 
+function up_hacks {
+    CLUSTER_NAME=${1}
+    kubectl apply -f $BASE/manifests/dev-clusterrolebinding.yaml
+}
+
 function template_bigbang {
     OUTPUT=${1}
     echo "Templating bigbang to $OUTPUT"
@@ -224,6 +229,12 @@ case "$COMMAND" in
         CLUSTER_NAME=${1:-bb1};
         shift
         up_bigbang $CLUSTER_NAME
+        ;;
+    
+    up_hacks)
+    CLUSTER_NAME=${1:-bb1};
+        shift
+        up_hacks $CLUSTER_NAME
         ;;
 
     template_bigbang)

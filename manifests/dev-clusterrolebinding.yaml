@@ -1,0 +1,140 @@
+# Due to an issue with defining multiple cr's (https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81) we apply following manifest instead.
+#
+# Generated using:
+# bash ./run.sh template_component headlamp out.headlamp.a
+# 
+---
+# Source: headlamp/templates/bigbang/dev-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: headlamp-viewer
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - services
+    - configmaps
+    - namespaces
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    - daemonsets
+    - replicasets
+    - statefulsets
+    verbs:
+    - get
+    - list
+    - watch
+---
+# Source: headlamp/templates/bigbang/dev-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: headlamp-developer
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - pods/log
+    - services
+    - configmaps
+    - events
+    - namespaces
+    - nodes
+    - persistentvolumeclaims
+    - persistentvolumes
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - delete
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    - daemonsets
+    - replicasets
+    - statefulsets
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - delete
+  - apiGroups:
+    - batch
+    resources:
+    - jobs
+    - cronjobs
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - delete
+  - apiGroups:
+    - networking.k8s.io
+    resources:
+    - ingresses
+    - networkpolicies
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - delete
+---
+# Source: headlamp/templates/bigbang/dev-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-viewers-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "headlamp-viewer"
+subjects:
+- kind: Group
+  name: headlamp-viewers
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: headlamp/templates/bigbang/dev-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-developers-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "headlamp-developer"
+subjects:
+- kind: Group
+  name: headlamp-developers
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: headlamp/templates/bigbang/dev-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-admin-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "cluster-admin"
+subjects:
+- kind: Group
+  name: headlamp-admins
+  apiGroup: rbac.authorization.k8s.io

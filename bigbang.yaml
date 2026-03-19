@@ -149,6 +149,18 @@ grafana:
       client_id: kind-grafana
       client_secret: W3PEfhtMZHV3qEjNx81pGzSKdb993bXC
       scopes: "openid grafana"
+  values:
+    upstream:
+      grafana.ini:
+        auth.generic_oauth:
+          # Map Keycloak roles (show up as multi-value groups claim) to Grafana roles (GrafanaAdmin, Admin, Editor, Viewer)
+          role_attribute_path: contains(groups[*], 'monitoring-admins') && 'GrafanaAdmin' || contains(groups[*], 'monitoring-developers') && 'Editor' || 'Viewer'
+          # Allow users to be assigned the Grafana admin role
+          allow_assign_grafana_admin: true
+          # User (group) to Organisation mapping
+          org_attribute_path: teams[?starts_with(@, '/teams')]
+          # Notice the named orgs need to be precreated in Grafana
+          org_mapping: "/teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow"
 
 # twistlock:
 #   sso:
@@ -181,7 +193,7 @@ addons:
     enabled: true
     sso:
       enabled: true
-      client_id: kubernetes
+      client_id: kind-headlamp
       # Headlamp uses PKCE (public client) - no client_secret required
     values:
       upstream:
@@ -195,69 +207,70 @@ addons:
       bigbang:
         rbac:
           enabled: true
-          clusterRoles:
-            - name: headlamp-readonly
-              create: true
-              rules:
-                - apiGroups: [""]
-                  resources: ["pods", "services", "configmaps", "namespaces"]
-                  verbs: ["get", "list", "watch"]
-                - apiGroups: ["apps"]
-                  resources:
-                    - deployments
-                    - daemonsets
-                    - replicasets
-                    - statefulsets
-                  verbs: ["get", "list", "watch"]
-            # See issue https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81 but since fred is an admin (existing role it's not an issue for now)
-            # - name: headlamp-developer
-            #   create: true
-            #   rules:
-            #     - apiGroups: [""]
-            #       resources: 
-            #         - pods
-            #         - pods/log
-            #         - services
-            #         - configmaps
-            #         - events
-            #         - namespaces
-            #         - nodes
-            #         - persistentvolumeclaims
-            #         - persistentvolumes                  
-            #       verbs: ["get", "list", "watch", "create", "update", "delete"]
-            #     - apiGroups: ["apps"]
-            #       resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-            #       verbs: ["get", "list", "watch", "create", "update", "delete"]
-            #     - apiGroups: ["batch"]
-            #       resources:
-            #         - jobs
-            #         - cronjobs
-            #       verbs: ["get", "list", "watch", "create", "update", "delete"]
-            #     - apiGroups: ["networking.k8s.io"]
-            #       resources:
-            #         - ingresses
-            #         - networkpolicies
-            #       verbs: ["get", "list", "watch", "create", "update", "delete"]
+          clusterRoles: []
+          # clusterRoles:
+          #   - name: headlamp-viewer
+          #     create: true
+          #     rules:
+          #       - apiGroups: [""]
+          #         resources: ["pods", "services", "configmaps", "namespaces"]
+          #         verbs: ["get", "list", "watch"]
+          #       - apiGroups: ["apps"]
+          #         resources:
+          #           - deployments
+          #           - daemonsets
+          #           - replicasets
+          #           - statefulsets
+          #         verbs: ["get", "list", "watch"]
+          #   # See issue https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81 but since fred is an admin (existing role it's not an issue for now)
+          #   - name: headlamp-developer
+          #     create: true
+          #     rules:
+          #       - apiGroups: [""]
+          #         resources: 
+          #           - pods
+          #           - pods/log
+          #           - services
+          #           - configmaps
+          #           - events
+          #           - namespaces
+          #           - nodes
+          #           - persistentvolumeclaims
+          #           - persistentvolumes                  
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["apps"]
+          #         resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["batch"]
+          #         resources:
+          #           - jobs
+          #           - cronjobs
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["networking.k8s.io"]
+          #         resources:
+          #           - ingresses
+          #           - networkpolicies
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
 
-          clusterRoleBindings:
-            - name: headlamp-readers-binding
-              roleRef: headlamp-readonly
-              subjects:
-                - kind: Group
-                  name: "headlamp-readers"
-                  apiGroup: rbac.authorization.k8s.io
-            - name: headlamp-developers-binding
-              roleRef: headlamp-developer
-              subjects:
-                - kind: Group
-                  name: "headlamp-developers"
-                  apiGroup: rbac.authorization.k8s.io
-            - name: headlamp-admin-binding
-              roleRef: cluster-admin
-              subjects:
-                - kind: Group
-                  name: "headlamp-admins"
-                  apiGroup: rbac.authorization.k8s.io
+          # clusterRoleBindings:
+          #   - name: headlamp-viewers-binding
+          #     roleRef: headlamp-viewer
+          #     subjects:
+          #       - kind: Group
+          #         name: "headlamp-viewers"
+          #         apiGroup: rbac.authorization.k8s.io
+          #   - name: headlamp-developers-binding
+          #     roleRef: headlamp-developer
+          #     subjects:
+          #       - kind: Group
+          #         name: "headlamp-developers"
+          #         apiGroup: rbac.authorization.k8s.io
+          #   - name: headlamp-admin-binding
+          #     roleRef: cluster-admin
+          #     subjects:
+          #       - kind: Group
+          #         name: "headlamp-admins"
+          #         apiGroup: rbac.authorization.k8s.io
 
   keycloak:
     enabled: true

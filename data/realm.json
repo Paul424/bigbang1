@@ -59,10 +59,89 @@
         "attributes": {}
       },
       {
-        "id": "dfb18f76-818c-45f0-a12d-e505e5e515a5",
-        "name": "admins",
+        "id": "a9297261-63b6-46f9-8601-caf6d07cbca0",
+        "name": "headlamp-viewers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "headlamp"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "0e8c70e5-bbdc-4bb4-9711-0e7a9df2f528",
+        "name": "monitoring-admins",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "monitoring"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "88667782-513d-4638-983a-b1df9270a738",
+        "name": "headlamp-developers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "headlamp"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "34c114da-0045-4e13-84e6-2ed70eb14a22",
+        "name": "monitoring-developers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "monitoring"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "a63bfddc-e0e0-4467-b3fb-d53c899e86b3",
+        "name": "headlamp",
         "description": "",
         "composite": false,
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "cc5791bf-7295-4c76-866a-72bcab814448",
+        "name": "monitoring",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "030a4a7f-7301-4429-b3e0-102a53c25986",
+        "name": "monitoring-viewers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "monitoring"
+          ]
+        },
         "clientRole": false,
         "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
         "attributes": {}
@@ -93,6 +172,20 @@
         "name": "offline_access",
         "description": "${role_offline-access}",
         "composite": false,
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "d4951b06-7488-40ef-8831-271ec6fa8b43",
+        "name": "headlamp-admins",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "headlamp"
+          ]
+        },
         "clientRole": false,
         "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
         "attributes": {}
@@ -423,6 +516,28 @@
   },
   "groups": [
     {
+      "id": "c7c76c29-e092-42e5-9751-fcef2d5027d3",
+      "name": "departments",
+      "description": "Company departments",
+      "path": "/departments",
+      "subGroups": [
+        {
+          "id": "bf042875-62e8-472d-babe-c92d4993ed8b",
+          "name": "System Integrators",
+          "description": "",
+          "path": "/departments/System Integrators",
+          "parentId": "c7c76c29-e092-42e5-9751-fcef2d5027d3",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
       "id": "6d1ac8e4-6139-4fb1-b0f4-6ebaecd1b801",
       "name": "headlamp-admins",
       "description": "",
@@ -448,6 +563,191 @@
       "description": "",
       "path": "/headlamp-readers",
       "subGroups": [],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
+      "id": "af16bc88-7d91-493e-b821-89fa3eeb10a3",
+      "name": "level",
+      "description": "seniority level",
+      "path": "/level",
+      "subGroups": [
+        {
+          "id": "f4680f7e-fe5a-4719-a71e-5bf9dec14e03",
+          "name": "junior",
+          "description": "",
+          "path": "/level/junior",
+          "parentId": "af16bc88-7d91-493e-b821-89fa3eeb10a3",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "8588c3c2-5b63-40f5-937b-2ee7edd92d55",
+          "name": "medior",
+          "description": "",
+          "path": "/level/medior",
+          "parentId": "af16bc88-7d91-493e-b821-89fa3eeb10a3",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "2da41cfe-52a2-4e19-b575-57e6ad34a587",
+          "name": "senior",
+          "description": "",
+          "path": "/level/senior",
+          "parentId": "af16bc88-7d91-493e-b821-89fa3eeb10a3",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
+      "id": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+      "name": "roles",
+      "description": "Groups users into their role (education or experience)",
+      "path": "/roles",
+      "subGroups": [
+        {
+          "id": "a40acd87-ef54-4bac-a4f9-6e8cf35357e1",
+          "name": "ao",
+          "description": "Application Operator; developer, data scientist, data-engineer. Manage workloads, apps, projects.",
+          "path": "/roles/ao",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [
+            "monitoring-developers",
+            "headlamp-developers"
+          ],
+          "clientRoles": {}
+        },
+        {
+          "id": "ac7c9b3c-f7fd-4f14-acdb-52ad455d2d35",
+          "name": "io",
+          "description": "Infrastructure Operator. Support and reliability ops; IT, security and network ops",
+          "path": "/roles/io",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [
+            "headlamp-viewers",
+            "monitoring-viewers"
+          ],
+          "clientRoles": {}
+        },
+        {
+          "id": "d6f47c3c-208f-4026-ae7a-00f06111dd3c",
+          "name": "kubernetes-engineer",
+          "description": "",
+          "path": "/roles/kubernetes-engineer",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "36ab6ff8-ea5f-4ca5-b10e-66cfdfac3db4",
+          "name": "network-engineer",
+          "description": "",
+          "path": "/roles/network-engineer",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "63e1bd90-6cdc-4245-a5f9-c0c18f92db05",
+          "name": "pa",
+          "description": "Platform Administrator; DB Admin, it admin, billing ops",
+          "path": "/roles/pa",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [
+            "monitoring-admins",
+            "headlamp-admins"
+          ],
+          "clientRoles": {}
+        },
+        {
+          "id": "4e771b66-0388-4ad5-adc1-081c489ac4b0",
+          "name": "sales-director",
+          "description": "",
+          "path": "/roles/sales-director",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "e2f7fb66-4075-4395-b927-bd29f78cc530",
+          "name": "security-engineer",
+          "description": "",
+          "path": "/roles/security-engineer",
+          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
+      "id": "99915423-89f4-4573-9d92-2bc0e8ff0a1d",
+      "name": "teams",
+      "description": "",
+      "path": "/teams",
+      "subGroups": [
+        {
+          "id": "f64ea764-a668-4803-83af-bfa0e2553717",
+          "name": "team-ops",
+          "description": "",
+          "path": "/teams/team-ops",
+          "parentId": "99915423-89f4-4573-9d92-2bc0e8ff0a1d",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "10aad79e-3a43-41d4-885e-dcbbcd181827",
+          "name": "team-sustaining",
+          "description": "",
+          "path": "/teams/team-sustaining",
+          "parentId": "99915423-89f4-4573-9d92-2bc0e8ff0a1d",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "51bc6c01-c491-40bf-b280-0a5cd6e13056",
+          "name": "team-yellow",
+          "description": "",
+          "path": "/teams/team-yellow",
+          "parentId": "99915423-89f4-4573-9d92-2bc0e8ff0a1d",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
       "attributes": {},
       "realmRoles": [],
       "clientRoles": {}
@@ -821,15 +1121,16 @@
       "defaultClientScopes": [
         "web-origins",
         "acr",
-        "grafana",
         "roles",
         "profile",
+        "groups",
         "basic",
         "email"
       ],
       "optionalClientScopes": [
         "address",
         "phone",
+        "grafana",
         "organization",
         "offline_access",
         "microprofile-jwt"
@@ -1099,6 +1400,7 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
@@ -1524,20 +1826,20 @@
       },
       "protocolMappers": [
         {
-          "id": "ce819a51-344d-4e78-9f4e-2902f6b912f2",
-          "name": "groups",
+          "id": "b481ec40-f592-47dc-9a7e-1d4edec854a5",
+          "name": "roles",
           "protocol": "openid-connect",
-          "protocolMapper": "oidc-group-membership-mapper",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
           "consentRequired": false,
           "config": {
-            "full.path": "false",
             "introspection.token.claim": "true",
-            "userinfo.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "lightweight.claim": "false",
             "access.token.claim": "true",
-            "claim.name": "groups"
+            "claim.name": "groups",
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1893,8 +2195,8 @@
           "protocolMapper": "oidc-allowed-origins-mapper",
           "consentRequired": false,
           "config": {
-            "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
           }
         }
       ]
@@ -1973,8 +2275,8 @@
           "consentRequired": false,
           "config": {
             "id.token.claim": "true",
-            "introspection.token.claim": "true",
             "access.token.claim": "true",
+            "introspection.token.claim": "true",
             "userinfo.token.claim": "true"
           }
         }
@@ -2001,7 +2303,26 @@
         "gui.order": "",
         "consent.screen.text": "",
         "include.in.openid.provider.metadata": "true"
-      }
+      },
+      "protocolMappers": [
+        {
+          "id": "9bc92a9d-3052-44e6-98e5-59936596a6cf",
+          "name": "teams (groups)",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "true",
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "multivalued": "true",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "teams"
+          }
+        }
+      ]
     },
     {
       "id": "3caccc9a-bcb6-4eba-91d8-466ce5804475",
@@ -2072,13 +2393,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "saml-role-list-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-property-mapper",
             "oidc-address-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-property-mapper",
             "oidc-full-name-mapper",
-            "oidc-usermodel-property-mapper"
+            "oidc-usermodel-attribute-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-user-attribute-mapper"
           ]
         }
       },
@@ -2118,14 +2439,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
             "saml-user-property-mapper",
             "oidc-usermodel-attribute-mapper",
             "saml-user-attribute-mapper",
-            "oidc-full-name-mapper",
             "saml-role-list-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper"
+            "oidc-full-name-mapper"
           ]
         }
       },
@@ -3104,9 +3425,9 @@
     "id" : "d262d111-a6fa-4d6a-ba4b-cbcb9c2dd757",
     "username" : "barney",
     "firstName" : "Barney",
-    "lastName" : "Flintstone",
-    "email" : "barney.flintstone@gmail.com",
-    "emailVerified" : false,
+    "lastName" : "Rubble",
+    "email" : "barney.rubble@gmail.com",
+    "emailVerified" : true,
     "attributes" : {
       "headlampId" : [ "0" ]
     },
@@ -3125,7 +3446,30 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-me-yoda" ],
     "notBefore" : 0,
-    "groups" : [ "/headlamp-readers" ]
+    "groups" : [ "/departments/System Integrators", "/roles/ao", "/headlamp-readers", "/level/junior", "/teams/team-ops" ]
+  }, {
+    "id" : "791be900-71b2-421d-b838-291c62771544",
+    "username" : "betty",
+    "firstName" : "Betty",
+    "lastName" : "Rubble",
+    "email" : "betty.rubble@gmail.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1773913518224,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "4f9d6a4e-f642-4b1f-aac1-cea5fd66dc58",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773913530085,
+      "secretData" : "{\"value\":\"sz2YaX0RRDJ7mkM5dLtoOsuHOgO4i4xbkLMMDTCcHg0=\",\"salt\":\"k0izVO1T/oorO0pzR2VudQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/roles/pa", "/level/senior", "/teams/team-yellow" ]
   }, {
     "id" : "0aded8e6-1863-4451-b98c-9a54e9774673",
     "username" : "fred",
@@ -3151,6 +3495,29 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-me-yoda" ],
     "notBefore" : 0,
-    "groups" : [ "/headlamp-admins" ]
+    "groups" : [ "/departments/System Integrators", "/headlamp-admins", "/roles/pa", "/level/senior", "/teams/team-yellow" ]
+  }, {
+    "id" : "4de31aae-205b-4b39-86ab-d9ee8bf35dde",
+    "username" : "wilma",
+    "firstName" : "Wilma",
+    "lastName" : "Flintstone",
+    "email" : "wilma.flintstone@gmail.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1773913468014,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "32919a63-722a-489e-89e2-b3b85ceb1edd",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773913482708,
+      "secretData" : "{\"value\":\"FbZp5tobHz3mKdNA57GDwOIJECqXzzW052raZdTySVg=\",\"salt\":\"V57H8IMWnkho8serstPGGA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/roles/io", "/level/medior", "/teams/team-ops" ]
   } ]
 }

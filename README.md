@@ -72,6 +72,13 @@ export REGISTRY1_TOKEN=<p1-registry-cli-secret>
 bash ./run.sh up_bigbang <CLUSTER-NAME>
 ```
 
+## Apply Hacks
+
+This is to overcome issue's with the upstream
+```
+bash ./run.sh up_hacks
+```
+
 ## Kind load balancer support
 
 Run the cloud-provider-kind package to listen to services of type: LoadBalancer and expose the svc over a proxy / load-balancer running on the docker network.

@@ -30,7 +30,7 @@ Increase the max open file limit
 DefaultLimitNOFILE=524288
 ```
 
-Increase max file watches
+Increase max file watches (See: https://open-docs.neuvector.com/basics/requirements#adding-scaling-constraints-for-large-workload-environments)
 ```
 # Append to /etc/sysctl.d/99-sysctl.conf and reload using sysctl -p
 fs.inotify.max_queued_events=616384
@@ -244,3 +244,19 @@ Possible causes:
 3. Istio workload certificates expired; check using ```istioctl proxy-config secret <workload>```; easiest for renewal is to just kill the pod.
 4. Authservice not responding as it should
 5. SSO (keycloak) down
+
+## Expired workload certificates
+
+Workload certificates are known to NOT renew when the whole cluster is at sleep (running on a laptop, going into sleep mode...). A quick fix is to just kill all the envoy proxies and have k8s deal with it, this should trigger renewal.
+
+```
+istioctl proxy-config secret -n kiali  kiali-66d5969cbb-9hlr9
+RESOURCE NAME     TYPE           STATUS     VALID CERT     SERIAL NUMBER                        NOT AFTER                NOT BEFORE
+default           Cert Chain     ACTIVE     false          05a5a5704d098b3b5ed004f3c55c79f0     2026-03-20T12:10:11Z     2026-03-18T12:08:11Z
+ROOTCA            CA             ACTIVE     true           ad3489a60eda98d657ac38809b6ada85     2036-03-15T12:06:13Z     2026-03-18T12:06:13Z
+```
+
+Fix:
+```
+sudo pkill envoy
+```

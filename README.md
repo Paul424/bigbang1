@@ -122,8 +122,7 @@ Open the [kaycloak UI](https://keycloak.dev.bigbang.mil/auth/admin/master/consol
 By default KinD creates a kube config with just signed certificates giving you admin access to the api-server. Since the api-server is configured with OIDC (backed by keycloak) we can also add a context per User defined in keycloak:
 
 ```
-bash ./run.sh up_kc_config barney <CLUSTER-NAME>
-bash ./run.sh up_kc_config fred <CLUSTER-NAME>
+bash ./run.sh up_kc_config <barney|betty|fred|wilma> <CLUSTER-NAME>
 
 # Tests
 
@@ -167,6 +166,8 @@ The services are exposed using type: LoadBalancer to the docker network which in
 172.18.0.6      prometheus.dev.bigbang.mil
 172.18.0.6      alertmanager.dev.bigbang.mil
 172.18.0.6      headlamp.dev.bigbang.mil
+172.18.0.2      neuvector.dev.bigbang.mil
+172.18.0.2      twistlock.dev.bigbang.mil
 ```
 
 [More info on DNS](https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser)
@@ -194,6 +195,8 @@ SSO is preconfigured using Keycloak with following users:
 4. [Kiali](https://kiali.dev.bigbang.mil/kiali/)
 5. [Grafana](https://grafana.dev.bigbang.mil/)
 6. [Headlamp](https://headlamp.dev.bigbang.mil/)
+7. [Twistlock](https://twistlock.dev.bigbang.mil/)
+8. [Neuvector](https://neuvector.dev.bigbang.mil/)
 
 # Debug
 

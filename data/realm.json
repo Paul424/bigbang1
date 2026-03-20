@@ -59,20 +59,6 @@
         "attributes": {}
       },
       {
-        "id": "a9297261-63b6-46f9-8601-caf6d07cbca0",
-        "name": "headlamp-viewers",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "headlamp"
-          ]
-        },
-        "clientRole": false,
-        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
-        "attributes": {}
-      },
-      {
         "id": "0e8c70e5-bbdc-4bb4-9711-0e7a9df2f528",
         "name": "monitoring-admins",
         "description": "",
@@ -101,13 +87,13 @@
         "attributes": {}
       },
       {
-        "id": "34c114da-0045-4e13-84e6-2ed70eb14a22",
-        "name": "monitoring-developers",
+        "id": "ef25410d-881f-4010-9a8f-bf23f2963db6",
+        "name": "neuvector-admins",
         "description": "",
         "composite": true,
         "composites": {
           "realm": [
-            "monitoring"
+            "neuvector"
           ]
         },
         "clientRole": false,
@@ -124,10 +110,15 @@
         "attributes": {}
       },
       {
-        "id": "cc5791bf-7295-4c76-866a-72bcab814448",
-        "name": "monitoring",
+        "id": "af752231-35b7-42fa-acae-3ee45ecac7ae",
+        "name": "neuvector-viewers",
         "description": "",
-        "composite": false,
+        "composite": true,
+        "composites": {
+          "realm": [
+            "neuvector"
+          ]
+        },
         "clientRole": false,
         "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
         "attributes": {}
@@ -140,6 +131,71 @@
         "composites": {
           "realm": [
             "monitoring"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "d4951b06-7488-40ef-8831-271ec6fa8b43",
+        "name": "headlamp-admins",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "headlamp"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "a9297261-63b6-46f9-8601-caf6d07cbca0",
+        "name": "headlamp-viewers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "headlamp"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "34c114da-0045-4e13-84e6-2ed70eb14a22",
+        "name": "monitoring-developers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "monitoring"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "cc5791bf-7295-4c76-866a-72bcab814448",
+        "name": "monitoring",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
+        "attributes": {}
+      },
+      {
+        "id": "308695c6-2a6f-475b-8ca2-d2cc6e01cdf6",
+        "name": "neuvector-developers",
+        "description": "",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "neuvector"
           ]
         },
         "clientRole": false,
@@ -168,24 +224,19 @@
         "attributes": {}
       },
       {
-        "id": "c396592a-4dff-4843-8ca0-c2108210a8ce",
-        "name": "offline_access",
-        "description": "${role_offline-access}",
+        "id": "f690d2bd-08b8-4a0a-b684-0570e2f6816c",
+        "name": "neuvector",
+        "description": "",
         "composite": false,
         "clientRole": false,
         "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
         "attributes": {}
       },
       {
-        "id": "d4951b06-7488-40ef-8831-271ec6fa8b43",
-        "name": "headlamp-admins",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "headlamp"
-          ]
-        },
+        "id": "c396592a-4dff-4843-8ca0-c2108210a8ce",
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
         "clientRole": false,
         "containerId": "f2f5b8a0-0bf8-4021-8640-493ca3935da0",
         "attributes": {}
@@ -406,11 +457,8 @@
           "attributes": {}
         }
       ],
-      "kind-kiali": [],
-      "kind-grafana": [],
       "security-admin-console": [],
-      "kind-headlamp": [],
-      "admin-cli": [],
+      "kind-twistlock": [],
       "account-console": [],
       "broker": [
         {
@@ -423,6 +471,10 @@
           "attributes": {}
         }
       ],
+      "kind-kiali": [],
+      "kind-grafana": [],
+      "kind-headlamp": [],
+      "admin-cli": [],
       "account": [
         {
           "id": "f0b7ecd4-dc05-4814-8dd3-957450a1ab49",
@@ -511,6 +563,7 @@
           "attributes": {}
         }
       ],
+      "kind-neuvector": [],
       "kind-alertmanager": []
     }
   },
@@ -627,7 +680,8 @@
           "attributes": {},
           "realmRoles": [
             "monitoring-developers",
-            "headlamp-developers"
+            "headlamp-developers",
+            "neuvector-developers"
           ],
           "clientRoles": {}
         },
@@ -641,6 +695,7 @@
           "attributes": {},
           "realmRoles": [
             "headlamp-viewers",
+            "neuvector-viewers",
             "monitoring-viewers"
           ],
           "clientRoles": {}
@@ -677,6 +732,7 @@
           "attributes": {},
           "realmRoles": [
             "monitoring-admins",
+            "neuvector-admins",
             "headlamp-admins"
           ],
           "clientRoles": {}
@@ -1311,6 +1367,67 @@
       ]
     },
     {
+      "id": "0a97084e-d372-4771-acd2-11ee0b5ab531",
+      "clientId": "kind-neuvector",
+      "name": "Neuvector",
+      "description": "",
+      "rootUrl": "https://neuvector.dev.bigbang.mil",
+      "adminUrl": "https://neuvector.dev.bigbang.mil",
+      "baseUrl": "/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY",
+      "redirectUris": [
+        "/openId_auth"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "logout.confirmation.enabled": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1773998273",
+        "backchannel.logout.session.required": "true",
+        "standard.token.exchange.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "groups",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "grafana",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "9070e118-d171-4812-8073-3d86cc7bf94d",
       "clientId": "kind-prometheus",
       "name": "Prometheus",
@@ -1362,6 +1479,65 @@
       "optionalClientScopes": [
         "address",
         "phone",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "6e1db8d5-1111-4255-b5c3-4e239a9f091b",
+      "clientId": "kind-twistlock",
+      "name": "Twistlock",
+      "description": "",
+      "rootUrl": "https://twistlock.dev.bigbang.mil",
+      "adminUrl": "https://twistlock.dev.bigbang.mil",
+      "baseUrl": "/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "/api/v1/authenticate/callback/oidc"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "logout.confirmation.enabled": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "standard.token.exchange.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "groups",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "grafana",
         "organization",
         "offline_access",
         "microprofile-jwt"

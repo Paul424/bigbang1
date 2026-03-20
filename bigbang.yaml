@@ -162,21 +162,41 @@ grafana:
           # Notice the named orgs need to be precreated in Grafana
           org_mapping: "/teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow"
 
-# twistlock:
-#   sso:
-#     enabled: true
-#     client_id: 
+twistlock:
+  enabled: true
+  sso:
+    enabled: true
+    client_id: kind-twistlock
+  # values:
+  #   console:
+  #     license: ""
+  #     additionalUsers:
+  #       - username: "fred"
+  #         role: "devOps"
+  #         authType: "saml"
 
 # Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
 neuvector:
-  enabled: false
-  # values:
-  #   containerd:
-  #     enabled: true
-  #   controller:
-  #     podAnnotations:
-  #       traffic.sidecar.istio.io/excludeInboundPorts: "18500,18301"
-  #       traffic.sidecar.istio.io/excludeOutboundPorts: "18301"
+  # enabled: false
+  sso:
+    enabled: true
+    client_id: kind-neuvector
+    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
+    default_role: null
+  values:
+    upstream:
+      controller:
+        secret:
+          data:
+            oidcinitcfg.yaml:
+              group_claim: groups
+              group_mapped_roles:
+                - group: neuvector-admins 
+                  global_role: admin 
+                - group: neuvector-developers
+                  global_role: ciops
+                - group: neuvector-viewers
+                  global_role: reader
 
 addons:
   metricsServer:

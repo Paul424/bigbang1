@@ -160,14 +160,15 @@ The services are exposed using type: LoadBalancer to the docker network which in
 7. Open a new tab and access one of the apps, for instance: ```https://prometheus.dev.bigbang.mil/``` and make sure foxyproxy is active for this tab.
 8. In C:\Windows\System32\drivers\etc\hosts create (fake) DNS mapping for instance:
 ```
-172.18.0.5      keycloak.dev.bigbang.mil
-172.18.0.6      kiali.dev.bigbang.mil
-172.18.0.6      grafana.dev.bigbang.mil
-172.18.0.6      prometheus.dev.bigbang.mil
-172.18.0.6      alertmanager.dev.bigbang.mil
-172.18.0.6      headlamp.dev.bigbang.mil
-172.18.0.2      neuvector.dev.bigbang.mil
-172.18.0.2      twistlock.dev.bigbang.mil
+172.18.0.6      keycloak.dev.bigbang.mil
+172.18.0.5      kiali.dev.bigbang.mil
+172.18.0.5      grafana.dev.bigbang.mil
+172.18.0.5      prometheus.dev.bigbang.mil
+172.18.0.5      alertmanager.dev.bigbang.mil
+172.18.0.5      headlamp.dev.bigbang.mil
+172.18.0.5      neuvector.dev.bigbang.mil
+172.18.0.5      twistlock.dev.bigbang.mil
+172.18.0.5      chat.dev.bigbang.mil
 ```
 
 [More info on DNS](https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser)

@@ -301,3 +301,21 @@ addons:
     #       - "--debug"
     #       - "--verbose"
         #   - "--import <path>"
+
+  minio:
+    enabled: true
+
+  mattermost:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: kind-mattermost
+      client_secret: "Mu5htteQAnFv1hEwoM9p1qgi38dkXsSz"
+    values:
+      resources:
+        limits:
+          cpu: 50m
+          memory: 4Gi
+        requests:
+          cpu: 50m
+          memory: 128Mi

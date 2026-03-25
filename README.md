@@ -212,6 +212,38 @@ bash ./run.sh template_bigbang <OUTPUT>
 bash ./run.sh template_component <COMPONENT> <OUTPUT>
 ```
 
+# Extras
+
+Cluster API demo using local provisioner
+
+```
+export CLUSTER_TOPOLOGY=true
+
+# Initialize infrastructure using (local) docker engine
+clusterctl init --infrastructure docker
+
+# Apply the (demo) cluster
+clusterctl generate cluster capi-quickstart \
+  --flavor development \
+  --kubernetes-version v1.35.0 \
+  --control-plane-machine-count=1 \
+  --worker-machine-count=1 \
+  > ./debug/capi-quickstart.yaml
+kubectl apply -f ./debug/capi-quickstart.yaml
+
+# Fetch and merge the kube config
+kind get kubeconfig --name capi-quickstart > ./debug/capi-quickstart.kubeconfig
+export KUBECONFIG=~/.kube/config:./debug/capi-quickstart.kubeconfig
+cp ~/.kube/config ~/.kube/config-$(date +"%Y%m%d%H%M%S")
+kubectl config view --flatten > ~/.kube/config-merged
+cp ~/.kube/config-merged ~/.kube/config
+rm -rf ~/.kube/config-merged
+
+# Install a CNI
+kubectl --kubeconfig=./debug/capi-quickstart.kubeconfig \
+  apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+```
+
 # Hacks & Issues
 
 ## Missing AuthorizationPolicies

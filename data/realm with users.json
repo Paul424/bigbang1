@@ -687,34 +687,6 @@
           "clientRoles": {}
         },
         {
-          "id": "17897d71-b2d2-4d14-b810-97cc0bc7ff62",
-          "name": "application-operators",
-          "path": "/roles/application-operators",
-          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
-          "subGroups": [],
-          "attributes": {},
-          "realmRoles": [
-            "headlamp-developers",
-            "monitoring-developers",
-            "neuvector-developers"
-          ],
-          "clientRoles": {}
-        },
-        {
-          "id": "7a1f165d-20c6-436b-9175-c70b4b6fe2e3",
-          "name": "infrastructure-operators",
-          "path": "/roles/infrastructure-operators",
-          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
-          "subGroups": [],
-          "attributes": {},
-          "realmRoles": [
-            "headlamp-viewers",
-            "neuvector-viewers",
-            "monitoring-viewers"
-          ],
-          "clientRoles": {}
-        },
-        {
           "id": "ac7c9b3c-f7fd-4f14-acdb-52ad455d2d35",
           "name": "io",
           "description": "Infrastructure Operator. Support and reliability ops; IT, security and network ops",
@@ -756,20 +728,6 @@
           "name": "pa",
           "description": "Platform Administrator; DB Admin, it admin, billing ops",
           "path": "/roles/pa",
-          "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
-          "subGroups": [],
-          "attributes": {},
-          "realmRoles": [
-            "monitoring-admins",
-            "neuvector-admins",
-            "headlamp-admins"
-          ],
-          "clientRoles": {}
-        },
-        {
-          "id": "c475ed97-3dc9-44d3-aac7-c14bc4bf26b7",
-          "name": "platform-administrators",
-          "path": "/roles/platform-administrators",
           "parentId": "763e7151-bc23-457f-a0cd-87873b93c0dd",
           "subGroups": [],
           "attributes": {},
@@ -1444,7 +1402,6 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
@@ -2675,45 +2632,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-property-mapper",
-            "oidc-full-name-mapper",
-            "oidc-address-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
             "saml-user-attribute-mapper",
-            "saml-role-list-mapper"
-          ]
-        }
-      },
-      {
-        "id": "c490d746-0161-4e17-9f39-f2838dc6154e",
-        "name": "Allowed Registration Web Origins",
-        "providerId": "registration-web-origins",
-        "subType": "authenticated",
-        "subComponents": {},
-        "config": {}
-      },
-      {
-        "id": "0e419266-0a63-4556-ad2b-f6b12d4a85ae",
-        "name": "Allowed Registration Web Origins",
-        "providerId": "registration-web-origins",
-        "subType": "anonymous",
-        "subComponents": {},
-        "config": {}
-      },
-      {
-        "id": "3b7de286-feab-40ea-afd8-5df66ed4f7cc",
-        "name": "Trusted Hosts",
-        "providerId": "trusted-hosts",
-        "subType": "anonymous",
-        "subComponents": {},
-        "config": {
-          "host-sending-registration-request-must-match": [
-            "true"
-          ],
-          "client-uris-must-match": [
-            "true"
+            "saml-role-list-mapper",
+            "oidc-address-mapper",
+            "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper"
           ]
         }
       },
@@ -2753,14 +2679,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
-            "saml-role-list-mapper",
-            "oidc-full-name-mapper",
             "oidc-address-mapper",
             "oidc-usermodel-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "saml-role-list-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-full-name-mapper",
+            "saml-user-property-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-property-mapper"
           ]
         }
       },
@@ -2773,6 +2699,37 @@
         "config": {
           "max-clients": [
             "200"
+          ]
+        }
+      },
+      {
+        "id": "c490d746-0161-4e17-9f39-f2838dc6154e",
+        "name": "Allowed Registration Web Origins",
+        "providerId": "registration-web-origins",
+        "subType": "authenticated",
+        "subComponents": {},
+        "config": {}
+      },
+      {
+        "id": "0e419266-0a63-4556-ad2b-f6b12d4a85ae",
+        "name": "Allowed Registration Web Origins",
+        "providerId": "registration-web-origins",
+        "subType": "anonymous",
+        "subComponents": {},
+        "config": {}
+      },
+      {
+        "id": "3b7de286-feab-40ea-afd8-5df66ed4f7cc",
+        "name": "Trusted Hosts",
+        "providerId": "trusted-hosts",
+        "subType": "anonymous",
+        "subComponents": {},
+        "config": {
+          "host-sending-registration-request-must-match": [
+            "true"
+          ],
+          "client-uris-must-match": [
+            "true"
           ]
         }
       },
@@ -2801,319 +2758,7 @@
         }
       }
     ],
-    "org.keycloak.storage.UserStorageProvider": [
-      {
-        "id": "3ySXNuTBTUOc_ewgVwRVTw",
-        "name": "openldap",
-        "providerId": "ldap",
-        "subComponents": {
-          "org.keycloak.storage.ldap.mappers.LDAPStorageMapper": [
-            {
-              "id": "369ac0dd-6191-4ef9-9211-f8906b9b71ba",
-              "name": "groups",
-              "providerId": "group-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "mode": [
-                  "LDAP_ONLY"
-                ],
-                "membership.attribute.type": [
-                  "DN"
-                ],
-                "user.roles.retrieve.strategy": [
-                  "LOAD_GROUPS_BY_MEMBER_ATTRIBUTE"
-                ],
-                "group.name.ldap.attribute": [
-                  "cn"
-                ],
-                "membership.user.ldap.attribute": [
-                  "uid"
-                ],
-                "membership.ldap.attribute": [
-                  "uniqueMember"
-                ],
-                "preserve.group.inheritance": [
-                  "false"
-                ],
-                "ignore.missing.groups": [
-                  "false"
-                ],
-                "groups.dn": [
-                  "ou=groups,dc=example,dc=org"
-                ],
-                "memberof.ldap.attribute": [
-                  "memberOf"
-                ],
-                "group.object.classes": [
-                  "groupOfUniqueNames"
-                ],
-                "drop.non.existing.groups.during.sync": [
-                  "false"
-                ],
-                "groups.path": [
-                  "/roles"
-                ]
-              }
-            },
-            {
-              "id": "106ca8dc-22d7-4e91-aeaf-664e84d0b483",
-              "name": "Kerberos principal attribute mapper",
-              "providerId": "kerberos-principal-attribute-mapper",
-              "subComponents": {},
-              "config": {}
-            },
-            {
-              "id": "2ab3afb2-e669-4709-a0a9-1a4faf765c7a",
-              "name": "last name",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "sn"
-                ],
-                "is.mandatory.in.ldap": [
-                  "true"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "always.read.value.from.ldap": [
-                  "true"
-                ],
-                "user.model.attribute": [
-                  "lastName"
-                ]
-              }
-            },
-            {
-              "id": "843e2a79-0051-4b24-9937-6713c2b6754e",
-              "name": "creation date",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "createTimestamp"
-                ],
-                "is.mandatory.in.ldap": [
-                  "false"
-                ],
-                "always.read.value.from.ldap": [
-                  "true"
-                ],
-                "read.only": [
-                  "true"
-                ],
-                "user.model.attribute": [
-                  "createTimestamp"
-                ]
-              }
-            },
-            {
-              "id": "7dcbc1a6-032a-4032-a5f7-14b1c39ef3e2",
-              "name": "modify date",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "modifyTimestamp"
-                ],
-                "is.mandatory.in.ldap": [
-                  "false"
-                ],
-                "always.read.value.from.ldap": [
-                  "true"
-                ],
-                "read.only": [
-                  "true"
-                ],
-                "user.model.attribute": [
-                  "modifyTimestamp"
-                ]
-              }
-            },
-            {
-              "id": "ea9ef7c2-cafc-427e-95e2-ba82b3ab1fa4",
-              "name": "email",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "mail"
-                ],
-                "is.mandatory.in.ldap": [
-                  "false"
-                ],
-                "always.read.value.from.ldap": [
-                  "false"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "user.model.attribute": [
-                  "email"
-                ]
-              }
-            },
-            {
-              "id": "049b8cd0-a594-4bda-aedf-55cb1cab3063",
-              "name": "first name",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "givenName"
-                ],
-                "attribute.force.default": [
-                  "true"
-                ],
-                "is.mandatory.in.ldap": [
-                  "true"
-                ],
-                "is.binary.attribute": [
-                  "false"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "always.read.value.from.ldap": [
-                  "true"
-                ],
-                "user.model.attribute": [
-                  "firstName"
-                ]
-              }
-            },
-            {
-              "id": "e8835d90-d2be-4524-aa27-dce6d93f1ff8",
-              "name": "username",
-              "providerId": "user-attribute-ldap-mapper",
-              "subComponents": {},
-              "config": {
-                "ldap.attribute": [
-                  "uid"
-                ],
-                "is.mandatory.in.ldap": [
-                  "true"
-                ],
-                "always.read.value.from.ldap": [
-                  "false"
-                ],
-                "read.only": [
-                  "false"
-                ],
-                "user.model.attribute": [
-                  "username"
-                ]
-              }
-            }
-          ]
-        },
-        "config": {
-          "pagination": [
-            "true"
-          ],
-          "fullSyncPeriod": [
-            "-1"
-          ],
-          "connectionTrace": [
-            "false"
-          ],
-          "startTls": [
-            "false"
-          ],
-          "usersDn": [
-            "ou=users,dc=example,dc=org"
-          ],
-          "connectionPooling": [
-            "true"
-          ],
-          "cachePolicy": [
-            "DEFAULT"
-          ],
-          "useKerberosForPasswordAuthentication": [
-            "false"
-          ],
-          "importEnabled": [
-            "true"
-          ],
-          "enabled": [
-            "true"
-          ],
-          "usernameLDAPAttribute": [
-            "uid"
-          ],
-          "bindCredential": [
-            "**********"
-          ],
-          "bindDn": [
-            "cn=admin,dc=example,dc=org"
-          ],
-          "changedSyncPeriod": [
-            "-1"
-          ],
-          "vendor": [
-            "other"
-          ],
-          "uuidLDAPAttribute": [
-            "uid"
-          ],
-          "allowKerberosAuthentication": [
-            "false"
-          ],
-          "connectionUrl": [
-            "ldap://dev-openldap.openldap.svc.cluster.local"
-          ],
-          "syncRegistrations": [
-            "true"
-          ],
-          "authType": [
-            "simple"
-          ],
-          "krbPrincipalAttribute": [
-            "krb5PrincipalName"
-          ],
-          "searchScope": [
-            "1"
-          ],
-          "useTruststoreSpi": [
-            "always"
-          ],
-          "usePasswordModifyExtendedOp": [
-            "false"
-          ],
-          "trustEmail": [
-            "false"
-          ],
-          "userObjectClasses": [
-            "inetOrgPerson, organizationalPerson"
-          ],
-          "removeInvalidUsersEnabled": [
-            "true"
-          ],
-          "rdnLDAPAttribute": [
-            "uid"
-          ],
-          "editMode": [
-            "WRITABLE"
-          ],
-          "validatePasswordPolicy": [
-            "false"
-          ]
-        }
-      }
-    ],
     "org.keycloak.keys.KeyProvider": [
-      {
-        "id": "db0a27a9-18ee-4b9e-b0d0-c2b36b51a165",
-        "name": "aes-generated",
-        "providerId": "aes-generated",
-        "subComponents": {},
-        "config": {
-          "priority": [
-            "100"
-          ]
-        }
-      },
       {
         "id": "60aec329-3d1a-40b0-b68e-62aca3dd3f97",
         "name": "rsa-enc-generated",
@@ -3125,6 +2770,17 @@
           ],
           "algorithm": [
             "RSA-OAEP"
+          ]
+        }
+      },
+      {
+        "id": "db0a27a9-18ee-4b9e-b0d0-c2b36b51a165",
+        "name": "aes-generated",
+        "providerId": "aes-generated",
+        "subComponents": {},
+        "config": {
+          "priority": [
+            "100"
           ]
         }
       },
@@ -4004,5 +3660,104 @@
   },
   "clientPolicies": {
     "policies": []
-  }
+  },
+  "users" : [ {
+    "id" : "d262d111-a6fa-4d6a-ba4b-cbcb9c2dd757",
+    "username" : "barney",
+    "firstName" : "Barney",
+    "lastName" : "Rubble",
+    "email" : "barney.rubble@gmail.com",
+    "emailVerified" : true,
+    "attributes" : {
+      "headlampId" : [ "0" ]
+    },
+    "enabled" : true,
+    "createdTimestamp" : 1773217268487,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "01638e4a-801a-41f0-aa86-770a5ef93ac2",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773217298765,
+      "secretData" : "{\"value\":\"G/O8cnQcwcgjwtUQomdBXeai0P/XyilkLMJQ/8ufAqs=\",\"salt\":\"VkShEczJYTvtTgRbPG/0kQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/roles/ao", "/headlamp-readers", "/level/junior", "/teams/team-ops" ]
+  }, {
+    "id" : "791be900-71b2-421d-b838-291c62771544",
+    "username" : "betty",
+    "firstName" : "Betty",
+    "lastName" : "Rubble",
+    "email" : "betty.rubble@gmail.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1773913518224,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "4f9d6a4e-f642-4b1f-aac1-cea5fd66dc58",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773913530085,
+      "secretData" : "{\"value\":\"sz2YaX0RRDJ7mkM5dLtoOsuHOgO4i4xbkLMMDTCcHg0=\",\"salt\":\"k0izVO1T/oorO0pzR2VudQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/roles/pa", "/level/senior", "/teams/team-yellow" ]
+  }, {
+    "id" : "0aded8e6-1863-4451-b98c-9a54e9774673",
+    "username" : "fred",
+    "firstName" : "Fred",
+    "lastName" : "Flintstone",
+    "email" : "fred.flintstone@gmail.com",
+    "emailVerified" : true,
+    "attributes" : {
+      "headlampId" : [ "1" ]
+    },
+    "enabled" : true,
+    "createdTimestamp" : 1773405674319,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "a8f338e4-f11c-4422-a0bc-4a90bd52ca54",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773663786706,
+      "secretData" : "{\"value\":\"RgdOc9KGjYEiZxzN2+aG7C49dI0kI+gnYfYZMmQpjro=\",\"salt\":\"h3uFLuq1gwfLh/7cNm4tjw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/headlamp-admins", "/roles/pa", "/level/senior", "/teams/team-yellow" ]
+  }, {
+    "id" : "4de31aae-205b-4b39-86ab-d9ee8bf35dde",
+    "username" : "wilma",
+    "firstName" : "Wilma",
+    "lastName" : "Flintstone",
+    "email" : "wilma.flintstone@gmail.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1773913468014,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "32919a63-722a-489e-89e2-b3b85ceb1edd",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1773913482708,
+      "secretData" : "{\"value\":\"FbZp5tobHz3mKdNA57GDwOIJECqXzzW052raZdTySVg=\",\"salt\":\"V57H8IMWnkho8serstPGGA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-me-yoda" ],
+    "notBefore" : 0,
+    "groups" : [ "/departments/System Integrators", "/roles/io", "/level/medior", "/teams/team-ops" ]
+  } ]
 }

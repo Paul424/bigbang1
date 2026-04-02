@@ -1,3 +1,17 @@
+helmRepositories:
+  - name: "kubelauncher"
+    repository: "oci://ghcr.io/kubelauncher/charts"
+    type: "oci"
+    provider: "generic"
+    # username: 
+    # password: 
+  - name: "openldap"
+    repository: "https://jp-gouin.github.io/helm-openldap"
+    type: "default"
+    provider: "generic"
+    # username: 
+    # password: 
+
 istiod:
   values:
     hardened:
@@ -95,19 +109,39 @@ kyvernoPolicies:
           - local-path-storage
           names:
           - helper-pod-create-pvc-*
+      # openldap
+      - resources:
+          namespaces:
+          - openldap
+          names:
+          - openldap-*
+          - dev-openldap-*
+
     policies:
       restrict-image-registries:
         parameters:
           allow:
           # - registry1.dso.mil
           # - registry.dso.mil
-          - nicolaka
+          - nicolaka  # netshoot debug image
+          # - ghcr.io/kubelauncher/openldap  # openldap
+          # - jpgouin/openldap  # openldap
+          # - bitnami/openldap  # openldap
+          # - debian  # openldap
       restrict-host-path-mount-pv:
         parameters:
           # Kind cluster is using local-path-provisioner configured to map volumes to /var/local-path-provisioner
           allow:
           - /var/local-path-provisioner
           - /var/local-path-provisioner/*
+      require-non-root-user:
+        exclude:
+          any:
+          - resources:
+              namespaces:
+              - openldap
+              names:
+              - openldap-*
 
 kiali:
   sso:
@@ -163,7 +197,7 @@ grafana:
           org_mapping: "/teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow"
 
 twistlock:
-  enabled: true
+  enabled: false
   sso:
     enabled: true
     client_id: kind-twistlock
@@ -177,7 +211,7 @@ twistlock:
 
 # Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
 neuvector:
-  # enabled: false
+  enabled: false
   sso:
     enabled: true
     client_id: kind-neuvector
@@ -227,21 +261,20 @@ addons:
       bigbang:
         rbac:
           enabled: true
-          clusterRoles: []
-          # clusterRoles:
-          #   - name: headlamp-viewer
-          #     create: true
-          #     rules:
-          #       - apiGroups: [""]
-          #         resources: ["pods", "services", "configmaps", "namespaces"]
-          #         verbs: ["get", "list", "watch"]
-          #       - apiGroups: ["apps"]
-          #         resources:
-          #           - deployments
-          #           - daemonsets
-          #           - replicasets
-          #           - statefulsets
-          #         verbs: ["get", "list", "watch"]
+          clusterRoles:
+            - name: headlamp-viewer
+              create: true
+              rules:
+                - apiGroups: [""]
+                  resources: ["pods", "services", "configmaps", "namespaces"]
+                  verbs: ["get", "list", "watch"]
+                - apiGroups: ["apps"]
+                  resources:
+                    - deployments
+                    - daemonsets
+                    - replicasets
+                    - statefulsets
+                  verbs: ["get", "list", "watch"]
           #   # See issue https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81 but since fred is an admin (existing role it's not an issue for now)
           #   - name: headlamp-developer
           #     create: true
@@ -272,29 +305,36 @@ addons:
           #           - networkpolicies
           #         verbs: ["get", "list", "watch", "create", "update", "delete"]
 
-          # clusterRoleBindings:
-          #   - name: headlamp-viewers-binding
-          #     roleRef: headlamp-viewer
-          #     subjects:
-          #       - kind: Group
-          #         name: "headlamp-viewers"
-          #         apiGroup: rbac.authorization.k8s.io
-          #   - name: headlamp-developers-binding
-          #     roleRef: headlamp-developer
-          #     subjects:
-          #       - kind: Group
-          #         name: "headlamp-developers"
-          #         apiGroup: rbac.authorization.k8s.io
-          #   - name: headlamp-admin-binding
-          #     roleRef: cluster-admin
-          #     subjects:
-          #       - kind: Group
-          #         name: "headlamp-admins"
-          #         apiGroup: rbac.authorization.k8s.io
+          clusterRoleBindings:
+            - name: headlamp-viewers-binding
+              roleRef: headlamp-viewer
+              subjects:
+                - kind: Group
+                  name: "headlamp-viewers"
+                  apiGroup: rbac.authorization.k8s.io
+            # - name: headlamp-developers-binding
+            #   roleRef: headlamp-developer
+            #   subjects:
+            #     - kind: Group
+            #       name: "headlamp-developers"
+            #       apiGroup: rbac.authorization.k8s.io
+            - name: headlamp-admin-binding
+              roleRef: cluster-admin
+              subjects:
+                - kind: Group
+                  name: "headlamp-admins"
+                  apiGroup: rbac.authorization.k8s.io
 
   keycloak:
     enabled: true
-    # values:
+    values:
+      networkPolicies:
+        egress:
+          from:
+            keycloak:
+              to:
+                k8s:
+                  openldap/*:1389: true
     #   upstream:
     #     args:
     #       - "start"
@@ -303,10 +343,10 @@ addons:
         #   - "--import <path>"
 
   minio:
-    enabled: true
+    enabled: false
 
   mattermost:
-    enabled: true
+    enabled: false
     sso:
       enabled: true
       client_id: kind-mattermost
@@ -319,3 +359,167 @@ addons:
         requests:
           cpu: 50m
           memory: 128Mi
+
+packages:
+  openldap:
+    enabled: true
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/openldap.git
+      path: "./manifests"
+      branch: main
+    kustomize: true
+    passBigBangValues: false
+    wrapper:
+      enabled: true
+      postRenderers: []
+    flux:
+      timeout: 5m
+    postRenderers: []
+    dependsOn: []
+    istio:
+      hosts:
+        - names:
+            - openldap
+          gateways:
+            - istio-gateway/passthrough-ingressgateway
+          destination:
+            protocol: tcp
+            service: openldap
+            port: 1389
+      hardened:
+        customAuthorizationPolicies:
+          - name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
+            enabled: true
+            spec:
+              action: ALLOW
+              rules:
+              - from:
+                - source:
+                    principals:
+                    - cluster.local/ns/keycloak/sa/keycloak-keycloak
+                to:
+                - operation:
+                    ports:
+                    - "1389"
+              selector:
+                matchLabels:
+                  app: openldap
+    monitor: {}
+    network:
+      additionalPolicies:
+        - name: allow-ingress-to-openldap-1389-from-ns-keycloak
+          spec:
+            ingress:
+            - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: keycloak
+                podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: keycloak
+              ports:
+              - port: 1389
+                protocol: TCP
+            podSelector:
+              matchLabels:
+                app: openldap
+            policyTypes:
+            - Ingress
+    secrets: {}
+    configMaps: {}
+    # values: {}
+
+  # https://artifacthub.io/packages/helm/helm-openldap/openldap-stack-ha
+  # https://github.com/jp-gouin/helm-openldap => https://github.com/bitnami/containers/tree/main/bitnami/openldap
+  # This instance didn't work since the initial setup fails and registry from the cm is never loaded
+  # openldap:
+  #   enabled: true
+  #   sourceType: "helmRepo"
+  #   wrapper:
+  #     enabled: true
+  #     postRenderers: []
+  #   helmRepo:
+  #     repoName: openldap
+  #     chartName: openldap-stack-ha
+  #     tag: 4.3.3
+  #   flux:
+  #     timeout: 5m
+  #   postRenderers: []
+  #   dependsOn: []
+  #   istio:
+  #     hosts:
+  #       - names:
+  #           - openldap
+  #         gateways:
+  #           - istio-gateway/passthrough-ingressgateway
+  #         destination:
+  #           protocol: tcp
+  #           service: openldap
+  #           port: 389
+  #   monitor: {}
+  #   network: {}
+  #   secrets: {}
+  #   configMaps: {}
+  #   values:
+  #     replicaCount: 1
+  #     global:
+  #       ldapDomain: "example.org"
+  #       # ldapDomain: "dev.bigbang.mil"
+  #       adminPassword: admin
+  #       configPassword: admin
+  #     image:
+  #       repository: paul424/openldap
+  #       # tag: 2.6.x-debian-12-r0
+  #       tag: 2.6.13-debian-12-r0-debug-1
+  #     logLevel: info
+  #     initialSchema: "cosine,inetorgperson,nis"
+  #     initSchema:
+  #       image: 
+  #         # repository: debian
+  #         tag: trixie-slim
+  #     initTLSSecret:
+  #       tls_enabled: false
+  #       image:
+  #         # registry: docker.io
+  #         # repository: alpine/openssl
+  #         tag: 3.5.5
+  #     # https://github.com/bitnami/containers/blob/main/bitnami/openldap/README.md#bootstrapping
+  #     # openldap data is in a PVC (data-openldap-0/1/2) and data from /ldifs is only loaded once, so for any change make sure to wipe first
+  #     env:
+  #       BITNAMI_DEBUG: "true"
+  #       LDAP_LOGLEVEL: "-1"  # 256
+  #       LDAP_REQUIRE_TLS: "false"
+  #       LDAPTLS_REQCERT: "never"
+  #       LDAP_ENABLE_TLS: "yes"
+  #       LDAP_SKIP_DEFAULT_TREE: "yes"
+  #       LDAP_ALLOW_ANON_BINDING: "yes"
+  #       # LDAP_ROOT: "dc=example,dc=org"   # "dc=dev,dc=bigbang,dc=mil"
+  #       LDAP_CUSTOM_LDIF_DIR: "/ldifs"
+  #     # slappasswd -h {MD5} -s fred
+  #     # {MD5}VwqQv7+MfqtdxdTiaDLVsQ==
+  #     customLdifFiles:
+  #       00-root.ldif: |-
+  #         dn: dc=example,dc=org
+  #         objectClass: dcObject
+  #         objectClass: organization
+  #         o: Example, Inc
+  #       01-default-group.ldif: |-
+  #         dn: cn=myGroup,dc=example,dc=org
+  #         cn: myGroup
+  #         gidnumber: 500
+  #         objectclass: posixGroup
+  #         objectclass: top
+  #       02-default-user.ldif: |-
+  #         dn: cn=Jean Dupond,dc=example,dc=org
+  #         cn: Jean Dupond
+  #         gidnumber: 500
+  #         givenname: Jean
+  #         homedirectory: /home/users/jdupond
+  #         objectclass: inetOrgPerson
+  #         objectclass: posixAccount
+  #         objectclass: top
+  #         sn: Dupond
+  #         uid: jdupond
+  #         uidnumber: 1000
+  #         userpassword: {MD5}KOULhzfBhPTq9k7a9XfCGw==      

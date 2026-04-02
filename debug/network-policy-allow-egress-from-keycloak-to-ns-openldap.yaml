@@ -1,0 +1,73 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: allow-egress-from-keycloak-to-ns-openldap
+  namespace: keycloak
+spec:
+  egress:
+  - ports:
+    - port: 1389
+      protocol: TCP
+    to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openldap
+      podSelector:
+        matchLabels:
+          app: openldap
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+  labels:
+  name: allow-ingress-to-openldap-389-from-ns-keycloak
+  namespace: openldap
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: keycloak
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: keycloak
+    ports:
+    - port: 1389
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: openldap
+  policyTypes:
+  - Ingress
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  annotations:
+  labels:
+  name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
+  namespace: openldap
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/keycloak/sa/keycloak-keycloak
+    to:
+    - operation:
+        ports:
+        - "1389"
+  selector:
+    matchLabels:
+      app: openldap

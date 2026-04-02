@@ -69,6 +69,8 @@ Bootstrap bigbang (flux.io and configured HelmReleases)
 ```
 export REGISTRY1_USERNAME=<account-name-to-access-p1-registry>
 export REGISTRY1_TOKEN=<p1-registry-cli-secret>
+export REGISTRY_UPSTREAM_USERNAME=<account-name-to-access-your-git-repo>
+export REGISTRY_UPSTREAM_PAT=<token-to-authenticate-to-git>
 bash ./run.sh up_bigbang <CLUSTER-NAME>
 ```
 
@@ -199,6 +201,10 @@ SSO is preconfigured using Keycloak with following users:
 7. [Twistlock](https://twistlock.dev.bigbang.mil/)
 8. [Neuvector](https://neuvector.dev.bigbang.mil/)
 
+# Authentication and Authorization
+
+We use an on-cluster Keycloak to address (on-cluster) clients (services) and roles (which map to RBAC). The users are sync'ed from an upstream openldap instance with 5 fixed users mapped to personas in the ldap registry.
+
 # Debug
 
 ## Template out from main chart
@@ -210,7 +216,11 @@ bash ./run.sh template_bigbang <OUTPUT>
 ## Template out a component
 
 ```
+# build-in component
 bash ./run.sh template_component <COMPONENT> <OUTPUT>
+
+# package (extension)
+bash ./run.sh template_wrapper_component openldap out.openldap.a
 ```
 
 # Extras

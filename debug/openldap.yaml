@@ -1,0 +1,238 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    meta.helm.sh/release-name: openldap
+    meta.helm.sh/release-namespace: openldap
+  creationTimestamp: "2026-03-30T13:06:17Z"
+  generation: 29
+  labels:
+    app.kubernetes.io/component: openldap
+    app.kubernetes.io/instance: openldap
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: openldap-stack-ha
+    app.kubernetes.io/version: 2.6.9
+    chart: openldap-4.3.3
+    helm.sh/chart: openldap-stack-ha-4.3.3
+    helm.toolkit.fluxcd.io/name: openldap
+    helm.toolkit.fluxcd.io/namespace: openldap
+    heritage: Helm
+    release: openldap
+  name: openldap
+  namespace: openldap
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: OrderedReady
+  replicas: 0
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: openldap
+      app.kubernetes.io/instance: openldap
+      app.kubernetes.io/name: openldap-stack-ha
+  serviceName: openldap-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap-customldif: 3c60c3bf0e35aba638d640b0562b90064ec311d5569438f5ead3aac4799ea106
+        checksum/configmap-env: d17859fed661d1183206b36cbd49d36d04b65b36704e6efb0569a752038a7ff4
+      labels:
+        app.kubernetes.io/component: openldap
+        app.kubernetes.io/instance: openldap
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: openldap-stack-ha
+        app.kubernetes.io/version: 2.6.9
+        helm.sh/chart: openldap-stack-ha-4.3.3
+        release: openldap
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: openldap
+                  app.kubernetes.io/instance: openldap
+                  app.kubernetes.io/name: openldap-stack-ha
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - env:
+        - name: LDAP_EXTRA_SCHEMAS
+          value: cosine,inetorgperson,nis,syncprov,serverid,csyncprov,rep,bsyncprov,brep,acls
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        envFrom:
+        - configMapRef:
+            name: openldap-env
+        - secretRef:
+            name: openldap
+        image: paul424/openldap:2.6.13-debian-12-r0-debug-3
+        imagePullPolicy: Always
+        restartPolicy: Never
+        livenessProbe:
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        name: openldap-stack-ha
+        ports:
+        - containerPort: 1389
+          name: ldap-port
+          protocol: TCP
+        - containerPort: 1636
+          name: ssl-ldap-port
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        resources: {}
+        startupProbe:
+          failureThreshold: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/openldap/
+          name: data
+        - mountPath: /opt/bitnami/openldap/certs
+          name: certs
+        - mountPath: /opt/bitnami/openldap/etc/schema/syncprov.ldif
+          name: replication-acls
+          subPath: syncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/serverid.ldif
+          name: replication-acls
+          subPath: serverid.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/csyncprov.ldif
+          name: replication-acls
+          subPath: csyncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/rep.ldif
+          name: replication-acls
+          subPath: rep.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/bsyncprov.ldif
+          name: replication-acls
+          subPath: bsyncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/brep.ldif
+          name: replication-acls
+          subPath: brep.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/acls.ldif
+          name: replication-acls
+          subPath: acls.ldif
+        - mountPath: /ldifs/
+          name: custom-ldif-files
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |
+          host=$(hostname)
+          if [ "$host" = "openldap-0" ]
+          then
+            echo "This is the main openldap so let's init all additional schemas and ldifs here"
+            cp -p -f /cm-schemas-acls/*.ldif /custom_config/
+            if [ -d /cm-schemas ]; then
+              cp -p -f /cm-schemas/*.ldif /custom-schemas/
+            fi
+            if [ -d /cm-ldifs ]; then
+              cp -p -f /cm-ldifs/*.ldif /custom-ldifs/
+            fi
+          else
+            cp -p -f /cm-schemas-acls/*.ldif /custom_config/
+            echo "let the replication takes care of everything :)"
+          fi
+        image: debian:trixie-slim
+        imagePullPolicy: Always
+        name: init-schema
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /cm-ldifs/
+          name: cm-custom-ldif-files
+        - mountPath: /custom-ldifs/
+          name: custom-ldif-files
+        - mountPath: /cm-schemas-acls
+          name: cm-replication-acls
+        - mountPath: /custom_config
+          name: replication-acls
+      - command:
+        - sh
+        - -c
+        - |
+          openssl req -x509 -newkey rsa:4096 -nodes -subj '/CN=example.org' -keyout /tmp-certs/tls.key -out /tmp-certs/tls.crt -days 365
+          chmod 777  /tmp-certs/*
+          cp -Lr /tmp-certs/* /certs
+          [ -e /certs/ca.crt ] || cp -a /certs/tls.crt /certs/ca.crt
+        image: docker.io/alpine/openssl:3.5.5
+        imagePullPolicy: IfNotPresent
+        name: init-tls-secret
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /certs
+          name: certs
+        - mountPath: /tmp-certs
+          name: secret-certs
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+      serviceAccount: openldap-openldap-stack-ha-foo
+      serviceAccountName: openldap-openldap-stack-ha-foo
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: openldap-replication-acls
+        name: cm-replication-acls
+      - emptyDir:
+          medium: Memory
+        name: replication-acls
+      - configMap:
+          defaultMode: 420
+          name: openldap-customldif
+        name: cm-custom-ldif-files
+      - emptyDir:
+          medium: Memory
+        name: custom-ldif-files
+      - emptyDir:
+          medium: Memory
+        name: certs
+      - emptyDir:
+          medium: Memory
+        name: secret-certs
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending

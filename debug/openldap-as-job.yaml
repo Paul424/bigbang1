@@ -1,0 +1,399 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    meta.helm.sh/release-name: openldap
+    meta.helm.sh/release-namespace: openldap
+  labels:
+    app.kubernetes.io/component: openldap
+    app.kubernetes.io/instance: openldap
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: openldap-stack-ha-0
+    app.kubernetes.io/version: 2.6.9
+    chart: openldap-4.3.3
+    helm.sh/chart: openldap-stack-ha-4.3.3
+    helm.toolkit.fluxcd.io/name: openldap
+    helm.toolkit.fluxcd.io/namespace: openldap
+    heritage: Helm
+    release: openldap
+  name: openldap
+  namespace: openldap
+spec:
+  backoffLimit: 0
+  # selector:
+  #   matchLabels:
+  #     app.kubernetes.io/component: openldap
+  #     app.kubernetes.io/instance: openldap
+  #     app.kubernetes.io/name: openldap-stack-ha-0
+  template:
+    metadata:
+      annotations:
+        checksum/configmap-customldif: 3c60c3bf0e35aba638d640b0562b90064ec311d5569438f5ead3aac4799ea106
+        checksum/configmap-env: d17859fed661d1183206b36cbd49d36d04b65b36704e6efb0569a752038a7ff4
+      labels:
+        app.kubernetes.io/component: openldap
+        app.kubernetes.io/instance: openldap
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: openldap-stack-ha-0
+        app.kubernetes.io/version: 2.6.9
+        helm.sh/chart: openldap-stack-ha-4.3.3
+        release: openldap
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: openldap
+                  app.kubernetes.io/instance: openldap
+                  app.kubernetes.io/name: openldap-stack-ha-0
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - env:
+        - name: LDAP_EXTRA_SCHEMAS
+          value: cosine,inetorgperson,nis,syncprov,serverid,csyncprov,rep,bsyncprov,brep,acls
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        envFrom:
+        - configMapRef:
+            name: openldap-env
+        - secretRef:
+            name: openldap
+        image: paul424/openldap:2.6.13-debian-12-r0-debug-3
+        imagePullPolicy: Always
+        restartPolicy: Never
+        livenessProbe:
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        name: openldap-stack-ha-0
+        ports:
+        - containerPort: 1389
+          name: ldap-port
+          protocol: TCP
+        - containerPort: 1636
+          name: ssl-ldap-port
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        resources: {}
+        startupProbe:
+          failureThreshold: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ldap-port
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/openldap/
+          name: data
+        - mountPath: /opt/bitnami/openldap/certs
+          name: certs
+        - mountPath: /opt/bitnami/openldap/etc/schema/syncprov.ldif
+          name: replication-acls
+          subPath: syncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/serverid.ldif
+          name: replication-acls
+          subPath: serverid.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/csyncprov.ldif
+          name: replication-acls
+          subPath: csyncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/rep.ldif
+          name: replication-acls
+          subPath: rep.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/bsyncprov.ldif
+          name: replication-acls
+          subPath: bsyncprov.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/brep.ldif
+          name: replication-acls
+          subPath: brep.ldif
+        - mountPath: /opt/bitnami/openldap/etc/schema/acls.ldif
+          name: replication-acls
+          subPath: acls.ldif
+        - mountPath: /ldifs/
+          name: custom-ldif-files
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |
+          host=$(hostname)
+          if [ "$host" = "openldap-0" ]
+          then
+            echo "This is the main openldap so let's init all additional schemas and ldifs here"
+            cp -p -f /cm-schemas-acls/*.ldif /custom_config/
+            if [ -d /cm-schemas ]; then
+              cp -p -f /cm-schemas/*.ldif /custom-schemas/
+            fi
+            if [ -d /cm-ldifs ]; then
+              cp -p -f /cm-ldifs/*.ldif /custom-ldifs/
+            fi
+          else
+            cp -p -f /cm-schemas-acls/*.ldif /custom_config/
+            echo "let the replication takes care of everything :)"
+          fi
+        image: debian:trixie-slim
+        imagePullPolicy: Always
+        name: init-schema
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /cm-ldifs/
+          name: cm-custom-ldif-files
+        - mountPath: /custom-ldifs/
+          name: custom-ldif-files
+        - mountPath: /cm-schemas-acls
+          name: cm-replication-acls
+        - mountPath: /custom_config
+          name: replication-acls
+      - command:
+        - sh
+        - -c
+        - |
+          openssl req -x509 -newkey rsa:4096 -nodes -subj '/CN=example.org' -keyout /tmp-certs/tls.key -out /tmp-certs/tls.crt -days 365
+          chmod 777  /tmp-certs/*
+          cp -Lr /tmp-certs/* /certs
+          [ -e /certs/ca.crt ] || cp -a /certs/tls.crt /certs/ca.crt
+        image: docker.io/alpine/openssl:3.5.5
+        imagePullPolicy: IfNotPresent
+        name: init-tls-secret
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /certs
+          name: certs
+        - mountPath: /tmp-certs
+          name: secret-certs
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+      serviceAccount: openldap-openldap-stack-ha-foo
+      serviceAccountName: openldap-openldap-stack-ha-foo
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: openldap-replication-acls
+        name: cm-replication-acls
+      - emptyDir:
+          medium: Memory
+        name: replication-acls
+      - configMap:
+          defaultMode: 420
+          name: openldap-customldif
+        name: cm-custom-ldif-files
+      - emptyDir:
+          medium: Memory
+        name: custom-ldif-files
+      - emptyDir:
+          medium: Memory
+        name: certs
+      - emptyDir:
+          medium: Memory
+        name: secret-certs
+      - name: data
+        persistentVolumeClaim:
+          claimName: data-openldap-0
+
+
+
+
+
+
+
+
+
+
+
+# metadata:
+#   annotations:
+#     batch.kubernetes.io/cronjob-scheduled-timestamp: "2026-03-31T07:00:00Z"
+#   creationTimestamp: "2026-03-31T07:37:31Z"
+#   generation: 1
+#   labels:
+#     app: bbctl-bigbang-policy
+#     app.kubernetes.io/component: bigbang-automation
+#     app.kubernetes.io/instance: bbctl-bbctl
+#     app.kubernetes.io/managed-by: Helm
+#     app.kubernetes.io/name: bbctl-bigbang-policy
+#     app.kubernetes.io/part-of: bigbang
+#     app.kubernetes.io/version: 2.3.1
+#     batch.kubernetes.io/controller-uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+#     batch.kubernetes.io/job-name: bbctl-bbctl-bigbang-policy-29582340
+#     controller-uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+#     helm.sh/chart: bbctl-3.0.1-bb.3
+#     job-name: bbctl-bbctl-bigbang-policy-29582340
+#     version: 2.3.1
+#   name: bbctl-bbctl-bigbang-policy-29582340
+#   namespace: bbctl
+#   ownerReferences:
+#   - apiVersion: batch/v1
+#     blockOwnerDeletion: true
+#     controller: true
+#     kind: CronJob
+#     name: bbctl-bbctl-bigbang-policy
+#     uid: 3e09f65b-b477-4361-b36c-347ad3dcbe1e
+#   resourceVersion: "235064"
+#   uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+# spec:
+#   backoffLimit: 6
+#   completionMode: NonIndexed
+#   completions: 1
+#   manualSelector: false
+#   parallelism: 1
+#   podReplacementPolicy: TerminatingOrFailed
+#   selector:
+#     matchLabels:
+#       batch.kubernetes.io/controller-uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+#   suspend: false
+#   template:
+#     metadata:
+#       labels:
+#         app: bbctl-bigbang-policy
+#         app.kubernetes.io/component: bigbang-automation
+#         app.kubernetes.io/instance: bbctl-bbctl
+#         app.kubernetes.io/managed-by: Helm
+#         app.kubernetes.io/name: bbctl-bigbang-policy
+#         app.kubernetes.io/part-of: bigbang
+#         app.kubernetes.io/version: 2.3.1
+#         batch.kubernetes.io/controller-uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+#         batch.kubernetes.io/job-name: bbctl-bbctl-bigbang-policy-29582340
+#         controller-uid: 0d9e6523-eba4-4e58-beee-2e0c929e114e
+#         helm.sh/chart: bbctl-3.0.1-bb.3
+#         job-name: bbctl-bbctl-bigbang-policy-29582340
+#         version: 2.3.1
+#     spec:
+#       containers:
+#       - command:
+#         - /bin/bash
+#         - -c
+#         - |
+#           echo "$(./bbctl policy --kyverno)"
+#         image: registry1.dso.mil/ironbank/big-bang/bbctl:2.3.1
+#         imagePullPolicy: Always
+#         name: bbctl
+#         resources:
+#           limits:
+#             cpu: 200m
+#             memory: 256Mi
+#           requests:
+#             cpu: 100m
+#             memory: 128Mi
+#         securityContext:
+#           capabilities:
+#             drop:
+#             - ALL
+#           readOnlyRootFilesystem: true
+#           runAsGroup: 1000
+#           runAsNonRoot: true
+#           runAsUser: 1000
+#         terminationMessagePath: /dev/termination-log
+#         terminationMessagePolicy: File
+#         volumeMounts:
+#         - mountPath: /home/bigbang/.bbctl/config.yaml
+#           name: config-volume
+#           readOnly: true
+#           subPath: config.yaml
+#         - mountPath: /home/bigbang/.kube/
+#           name: kube-config-volume
+#           readOnly: true
+#         - mountPath: /home/bigbang/.bbctl/credentials.yaml
+#           name: credentials-volume
+#           readOnly: true
+#           subPath: credentials.yaml
+#       dnsPolicy: ClusterFirst
+#       imagePullSecrets:
+#       - name: private-registry
+#       initContainers:
+#       - args:
+#         - -c
+#         - |
+#           echo "starting yq to update kubeconfig" \
+#           && export SERVICE_ACCOUNT_FOLDER=/var/run/secrets/kubernetes.io/serviceaccount \
+#           && export TOKEN=$(cat $SERVICE_ACCOUNT_FOLDER/token) \
+#           && export CACERT_FILE=$SERVICE_ACCOUNT_FOLDER/ca.crt \
+#           && export CACERT_ENCODED=$(cat $CACERT_FILE | base64) \
+#           && export KUBECONFIG=/home/bigbang/.kube/config
+#           if [ -f "$KUBECONFIG" ]; then
+#             echo "kubeconfig already exists, not updating"
+#           else
+#             cp /home/bigbang/ro.kube/config $KUBECONFIG \
+#             && chmod 700 $KUBECONFIG \
+#             && chown 1000:1000 $KUBECONFIG \
+#             && yq '.clusters[0].cluster.certificate-authority-data = "'"$CACERT_ENCODED"'"' -i $KUBECONFIG \
+#             && yq '.users[0].user.token = "'"$(echo $TOKEN)"'"' -i $KUBECONFIG \
+#             && echo "yq done updating kubeconfig"
+#           fi
+#           # curl -s -X GET --cacert "${CACERT}" --header "Authorization: Bearer ${TOKEN}" ${HOST}/api/v1/configmaps | yq -r '[.items[[] | select(.metadata.name=="kube-root-ca.crt") | .data."ca.crt"] | unique | .]'
+#         command:
+#         - /bin/sh
+#         image: registry1.dso.mil/ironbank/opensource/yq/yq:4.50.1
+#         imagePullPolicy: Always
+#         name: bbctl-bbctl-bigbang-policy-init
+#         resources: {}
+#         securityContext:
+#           capabilities:
+#             drop:
+#             - ALL
+#           readOnlyRootFilesystem: true
+#           runAsGroup: 1000
+#           runAsNonRoot: true
+#           runAsUser: 1000
+#         terminationMessagePath: /dev/termination-log
+#         terminationMessagePolicy: File
+#         volumeMounts:
+#         - mountPath: /home/bigbang/.bbctl/config.yaml
+#           name: config-volume
+#           readOnly: true
+#           subPath: config.yaml
+#         - mountPath: /home/bigbang/ro.kube/
+#           name: ro-kube-config-volume
+#           readOnly: true
+#         - mountPath: /home/bigbang/.kube/
+#           name: kube-config-volume
+#         - mountPath: /tmp
+#           name: tmp
+#       restartPolicy: Never
+#       schedulerName: default-scheduler
+#       securityContext: {}
+#       serviceAccount: bbctl-bbctl-bigbang-policy
+#       serviceAccountName: bbctl-bbctl-bigbang-policy
+#       terminationGracePeriodSeconds: 30
+#       volumes:
+#       - configMap:
+#           defaultMode: 420
+#           name: bbctl-bbctl-bigbang-policy-config
+#         name: config-volume
+#       - configMap:
+#           defaultMode: 420
+#           name: bbctl-bbctl-bigbang-policy-kube-config
+#         name: ro-kube-config-volume
+#       - emptyDir: {}
+#         name: kube-config-volume
+#       - emptyDir: {}
+#         name: tmp
+#       - name: credentials-volume
+#         secret:
+#           defaultMode: 420
+#           secretName: bbctl-bbctl-credentials

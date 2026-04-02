@@ -33,7 +33,12 @@ function up_kind_lb {
 function up_bigbang {
     CLUSTER_NAME=${1}  # To map the kind context
     export REPO1_LOCATION=$BASE/upstream
-    bash ./quickstart.sh --host $CLUSTER_NAME --deploy -- -f $BASE/bigbang.yaml
+    bash ./quickstart.sh --host $CLUSTER_NAME --deploy -- \
+        --set helmRepositories[0].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[0].password=${REGISTRY_UPSTREAM_PAT} \
+        --set helmRepositories[1].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[1].password=${REGISTRY_UPSTREAM_PAT} \
+        -f $BASE/bigbang.yaml
 }
 
 function up_hacks {
@@ -46,7 +51,10 @@ function template_bigbang {
     echo "Templating bigbang to $OUTPUT"
     rm -rf ./$OUTPUT
     helm template ./upstream/big-bang/bigbang/chart \
-        -n bigbang --create-namespace \
+        -n bigbang \
+        --create-namespace \
+        --set registryCredentials.username=${REGISTRY1_USERNAME} \
+        --set registryCredentials.password=${REGISTRY1_TOKEN} \
         -f $BASE/bigbang.yaml \
         -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
         --output-dir ./$OUTPUT
@@ -55,8 +63,8 @@ function template_bigbang {
 }
 
 function template_component_extract_values {
-    OUTPUT=${1}
-    COMPONENT=${2}
+    local OUTPUT=${1}
+    local COMPONENT=${2}
     echo "Extracting values for $COMPONENT from $OUTPUT"
     mkdir -p ./$OUTPUT/$COMPONENT
     # equivalent of:
@@ -64,13 +72,25 @@ function template_component_extract_values {
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.common' > ./$OUTPUT/$COMPONENT/values-common.yaml
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.defaults' > ./$OUTPUT/$COMPONENT/values-defaults.yaml
     cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData.overlays' > ./$OUTPUT/$COMPONENT/values-overlays.yaml
+    # wrapper exceptions
+    cat ./$OUTPUT/bigbang/templates/$COMPONENT/values.yaml | yq e '.stringData."values.yaml"' > ./$OUTPUT/$COMPONENT/values.yaml
+}
+
+function template_wrapper_component_extract_values {
+    local OUTPUT=${1}
+    local COMPONENT=${2}
+    echo "Extracting values for $COMPONENT (wrapper) from $OUTPUT"
+    mkdir -p ./$OUTPUT/wrapper
+    cat ./$OUTPUT/bigbang/templates/wrapper/values.yaml | yq e '.stringData."values.yaml"' > ./$OUTPUT/wrapper/values.yaml
+    mkdir -p ./$OUTPUT/$COMPONENT
+    cat ./$OUTPUT/wrapper/values.yaml | yq e '.package.values' > ./$OUTPUT/$COMPONENT/values.yaml
 }
 
 function checkout_component_repo {
-    COMPONENT=${1}
-    GIT_REMOTE=${2}
-    ARG_VERSION=${3}
-    REPO_PATH=./upstream/${COMPONENT}
+    local COMPONENT=${1}
+    local GIT_REMOTE=${2}
+    local ARG_VERSION=${3}
+    local REPO_PATH=./upstream/${COMPONENT}
     if [[ ! -d ${REPO_PATH} ]]; then
         mkdir -p ${REPO_PATH}
         git clone $GIT_REMOTE ${REPO_PATH}
@@ -87,8 +107,8 @@ function checkout_component_repo {
 }
 
 function template_component {
-    OUTPUT=${1}
-    COMPONENT=${2}
+    local OUTPUT=${1}
+    local COMPONENT=${2}
 
     # Umbrella chart to generate the values (and gitops confs)
     template_bigbang $OUTPUT
@@ -128,9 +148,41 @@ function template_component {
         --output-dir ./$OUTPUT
 }
 
+function template_wrapper_component {
+    local OUTPUT=${1}
+    local COMPONENT=${2}
+
+    # Umbrella chart to generate the values (and gitops confs)
+    template_bigbang $OUTPUT
+
+    # Extract the values from gitops resources
+    template_wrapper_component_extract_values $OUTPUT $COMPONENT
+
+    # Setup clone for the wrapper upstream (from GitRepository resource)
+    # Extract remote from the GitRepository resource
+    GIT_REMOTE=$(yq e '.spec.url' $OUTPUT/bigbang/templates/wrapper/gitrepository.yaml)
+    ARG_VERSION=$(yq e '.spec.ref.tag' $OUTPUT/bigbang/templates/wrapper/gitrepository.yaml)
+    NAMESPACE=$(yq e '.spec.targetNamespace' $OUTPUT/bigbang/templates/wrapper/helmrelease.yaml)
+    checkout_component_repo wrapper $GIT_REMOTE $ARG_VERSION
+    
+    # Template out for the wrapper
+    echo "Templating wrapper ($COMPONENT) to $OUTPUT/wrapper"
+    # rm -rf ./$OUTPUT/$COMPONENT
+    helm template ./upstream/wrapper/chart \
+        -f ./$OUTPUT/wrapper/values.yaml \
+        -n $NAMESPACE \
+        --output-dir ./$OUTPUT
+
+    # Setup clone for the component upstream (from GitRepository resource)
+    # todo: Needs support for git/helmrepo upstream :-(
+
+    # Template out for the function
+    # todo...
+}
+
 function install_component {
-    OUTPUT=${1}
-    COMPONENT=${2}
+    local OUTPUT=${1}
+    local COMPONENT=${2}
 
     # Umbrella chart to generate the values (and gitops confs)
     template_bigbang $OUTPUT
@@ -248,6 +300,13 @@ case "$COMMAND" in
         OUTPUT=${2:-out};
         shift
         template_component $OUTPUT $COMPONENT
+        ;;
+
+    template_wrapper_component)
+        COMPONENT=${1:-openldap};
+        OUTPUT=${2:-out};
+        shift
+        template_wrapper_component $OUTPUT $COMPONENT
         ;;
 
     install_component)

@@ -109,14 +109,18 @@ kyvernoPolicies:
           - local-path-storage
           names:
           - helper-pod-create-pvc-*
-      # openldap
       - resources:
           namespaces:
           - openldap
           names:
           - openldap-*
           - dev-openldap-*
-
+      - resources:
+          namespaces:
+          - freeipa
+          names:
+          - freeipa-*
+          - dev-freeipa-*
     policies:
       restrict-image-registries:
         parameters:
@@ -430,96 +434,71 @@ packages:
     configMaps: {}
     # values: {}
 
-  # https://artifacthub.io/packages/helm/helm-openldap/openldap-stack-ha
-  # https://github.com/jp-gouin/helm-openldap => https://github.com/bitnami/containers/tree/main/bitnami/openldap
-  # This instance didn't work since the initial setup fails and registry from the cm is never loaded
-  # openldap:
+  # freeipa:
   #   enabled: true
-  #   sourceType: "helmRepo"
+  #   sourceType: "git"
+  #   git:
+  #     repo: https://github.com/Paul424/freeipa.git
+  #     path: "./manifests"
+  #     branch: main
+  #   kustomize: true
+  #   passBigBangValues: false
   #   wrapper:
   #     enabled: true
   #     postRenderers: []
-  #   helmRepo:
-  #     repoName: openldap
-  #     chartName: openldap-stack-ha
-  #     tag: 4.3.3
   #   flux:
   #     timeout: 5m
   #   postRenderers: []
   #   dependsOn: []
-  #   istio:
-  #     hosts:
-  #       - names:
-  #           - openldap
-  #         gateways:
-  #           - istio-gateway/passthrough-ingressgateway
-  #         destination:
-  #           protocol: tcp
-  #           service: openldap
-  #           port: 389
+  #   # istio:
+  #   #   hosts:
+  #   #     - names:
+  #   #         - freeipa
+  #   #       gateways:
+  #   #         - istio-gateway/passthrough-ingressgateway
+  #   #       destination:
+  #   #         protocol: tcp
+  #   #         service: openldap
+  #   #         port: 1389
+  #     # hardened:
+  #     #   customAuthorizationPolicies:
+  #     #     - name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
+  #     #       enabled: true
+  #     #       spec:
+  #     #         action: ALLOW
+  #     #         rules:
+  #     #         - from:
+  #     #           - source:
+  #     #               principals:
+  #     #               - cluster.local/ns/keycloak/sa/keycloak-keycloak
+  #     #           to:
+  #     #           - operation:
+  #     #               ports:
+  #     #               - "1389"
+  #     #         selector:
+  #     #           matchLabels:
+  #     #             app: openldap
   #   monitor: {}
-  #   network: {}
+  #   # network:
+  #   #   additionalPolicies:
+  #   #     - name: allow-ingress-to-openldap-1389-from-ns-keycloak
+  #   #       spec:
+  #   #         ingress:
+  #   #         - from:
+  #   #           - namespaceSelector:
+  #   #               matchLabels:
+  #   #                 kubernetes.io/metadata.name: keycloak
+  #   #             podSelector:
+  #   #               matchLabels:
+  #   #                 app.kubernetes.io/name: keycloak
+  #   #           ports:
+  #   #           - port: 1389
+  #   #             protocol: TCP
+  #   #         podSelector:
+  #   #           matchLabels:
+  #   #             app: openldap
+  #   #         policyTypes:
+  #   #         - Ingress
   #   secrets: {}
   #   configMaps: {}
-  #   values:
-  #     replicaCount: 1
-  #     global:
-  #       ldapDomain: "example.org"
-  #       # ldapDomain: "dev.bigbang.mil"
-  #       adminPassword: admin
-  #       configPassword: admin
-  #     image:
-  #       repository: paul424/openldap
-  #       # tag: 2.6.x-debian-12-r0
-  #       tag: 2.6.13-debian-12-r0-debug-1
-  #     logLevel: info
-  #     initialSchema: "cosine,inetorgperson,nis"
-  #     initSchema:
-  #       image: 
-  #         # repository: debian
-  #         tag: trixie-slim
-  #     initTLSSecret:
-  #       tls_enabled: false
-  #       image:
-  #         # registry: docker.io
-  #         # repository: alpine/openssl
-  #         tag: 3.5.5
-  #     # https://github.com/bitnami/containers/blob/main/bitnami/openldap/README.md#bootstrapping
-  #     # openldap data is in a PVC (data-openldap-0/1/2) and data from /ldifs is only loaded once, so for any change make sure to wipe first
-  #     env:
-  #       BITNAMI_DEBUG: "true"
-  #       LDAP_LOGLEVEL: "-1"  # 256
-  #       LDAP_REQUIRE_TLS: "false"
-  #       LDAPTLS_REQCERT: "never"
-  #       LDAP_ENABLE_TLS: "yes"
-  #       LDAP_SKIP_DEFAULT_TREE: "yes"
-  #       LDAP_ALLOW_ANON_BINDING: "yes"
-  #       # LDAP_ROOT: "dc=example,dc=org"   # "dc=dev,dc=bigbang,dc=mil"
-  #       LDAP_CUSTOM_LDIF_DIR: "/ldifs"
-  #     # slappasswd -h {MD5} -s fred
-  #     # {MD5}VwqQv7+MfqtdxdTiaDLVsQ==
-  #     customLdifFiles:
-  #       00-root.ldif: |-
-  #         dn: dc=example,dc=org
-  #         objectClass: dcObject
-  #         objectClass: organization
-  #         o: Example, Inc
-  #       01-default-group.ldif: |-
-  #         dn: cn=myGroup,dc=example,dc=org
-  #         cn: myGroup
-  #         gidnumber: 500
-  #         objectclass: posixGroup
-  #         objectclass: top
-  #       02-default-user.ldif: |-
-  #         dn: cn=Jean Dupond,dc=example,dc=org
-  #         cn: Jean Dupond
-  #         gidnumber: 500
-  #         givenname: Jean
-  #         homedirectory: /home/users/jdupond
-  #         objectclass: inetOrgPerson
-  #         objectclass: posixAccount
-  #         objectclass: top
-  #         sn: Dupond
-  #         uid: jdupond
-  #         uidnumber: 1000
-  #         userpassword: {MD5}KOULhzfBhPTq9k7a9XfCGw==      
+  #   # values: {}

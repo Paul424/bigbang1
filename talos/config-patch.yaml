@@ -1,7 +1,13 @@
+---
 cluster:
   # Do not install flannel (default)
   network:
     cni:
       name: none
+
   # Since we only have 2 nodes; allow to schedule workloads to control-plane nodes
   allowSchedulingOnControlPlanes: true
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off

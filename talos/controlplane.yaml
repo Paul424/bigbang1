@@ -238,13 +238,6 @@ cluster:
         # The service subnet CIDR.
         serviceSubnets:
             - 10.96.0.0/12
-        
-        # # The CNI used.
-        # cni:
-        #     name: custom # Name of CNI to use.
-        #     # URLs containing manifests to apply for the CNI.
-        #     urls:
-        #         - https://docs.projectcalico.org/archive/v3.20/manifests/canal.yaml
     token: zh4fs9.emzx7px5abgxq0e0 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
     secretboxEncryptionSecret: 0WVOXSzDKErFdAmyq86J1GHkmDOUb/3+H/4jb0ACxTU= # A key used for the [encryption of secret data at rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/).
     # The base64 encoded root certificate authority used by Kubernetes.
@@ -393,7 +386,7 @@ cluster:
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
-auto: stable # A method to automatically generate a hostname for the machine.
+auto: off # A method to automatically generate a hostname for the machine.
 
 # # A static hostname to set for the machine.
 # hostname: controlplane1

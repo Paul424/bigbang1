@@ -30,6 +30,15 @@ function up_kind_lb {
     cloud-provider-kind > ./log/cloud-provider-kind.log 2>&1
 }
 
+function up_proxmox_talos {
+    # we need a cli to connect with proxmox
+    # then we need to create VM's; just hardcoded for now
+    # we need to issue a few commands; template the talos confs and fill in the correct IP's / endpoints
+    # then fetch the kube config
+    # also we would need to setup LB
+    
+}
+
 function up_bigbang {
     CLUSTER_NAME=${1}  # To map the kind context
     export REPO1_LOCATION=$BASE/upstream
@@ -277,6 +286,12 @@ case "$COMMAND" in
         up_kind_lb
         ;;
     
+    up_proxmox_talos)
+        CLUSTER_NAME=${1:-bb1};
+        shift
+        up_proxmox_talos $CLUSTER_NAME
+        ;;
+
     up_bigbang)
         CLUSTER_NAME=${1:-bb1};
         shift

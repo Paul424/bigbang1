@@ -5,6 +5,16 @@ cluster:
     cni:
       name: none
 
+  # Configure OIDC
+  # apiServer:
+  #   extraArgs:
+  #     authentication-config: /opt/authentication-configuration.yaml
+  #   extraVolumes:
+  #     - name: authentication-configuration
+  #       hostPath: /opt/authentication-configuration.yaml
+  #       mountPath: /opt/authentication-configuration.yaml
+  #       readOnly: true
+
   # Since we only have 2 nodes; allow to schedule workloads to control-plane nodes
   allowSchedulingOnControlPlanes: true
 ---

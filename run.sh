@@ -31,12 +31,14 @@ function up_kind_lb {
 }
 
 function up_proxmox_talos {
-    # we need a cli to connect with proxmox
-    # then we need to create VM's; just hardcoded for now
-    # we need to issue a few commands; template the talos confs and fill in the correct IP's / endpoints
+    # we need a cli to connect with proxmox (can maybe be done over ssh?)
+    # then we need to create VM's
+    # we need to generate the confs, bootstrap
     # then fetch the kube config
-    # also we would need to setup LB
-    
+    # apply the CNI (cilium)
+    # deploy storage (csi) using rook/ceph
+    # and metallb for LB
+    echo todo
 }
 
 function up_bigbang {

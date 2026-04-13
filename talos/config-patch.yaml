@@ -16,7 +16,7 @@ cluster:
   #       readOnly: true
 
   # Since we only have 2 nodes; allow to schedule workloads to control-plane nodes
-  allowSchedulingOnControlPlanes: true
+  # allowSchedulingOnControlPlanes: true
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

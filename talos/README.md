@@ -3,18 +3,29 @@
 First (ad-hoc) approach 
 
 ```
-export CTL1_IP=192.168.50.102
-export WRK1_IP=192.168.50.227
-export WRK2_IP=192.168.50.92
-export WRK3_IP=192.168.50.37
+HW:
+  p1: i5(6vcpu)|256(nvme)|512(ssd)|32GB
+    ctl1: 6vcpu|16GB(nvme)|4GB
+    wrk1: 6vcpu|16GB(nvme)|480(ssd)|28GB
+  p2: i5(6vcpu)|256(nvme)|512(ssd)|32GB
+    ctl2: 6vcpu|16GB(nvme)|4GB
+    wrk2: 6vcpu|16GB(nvme)|480(ssd)|28GB
+  p3: i5(6vcpu)|256(nvme)|512(ssd)|8GB
+    ctl3: 6vcpu|16GB(nvme)|4GB
+    wrk3: 6vcpu|16GB(nvme)|480(ssd)|8GB
+
+export CTL1_IP=192.168.50.173
+export CTL2_IP=192.168.50.62
+export CTL3_IP=192.168.50.56
+export WRK1_IP=192.168.50.146
+export WRK2_IP=192.168.50.114
+export WRK3_IP=192.168.50.205
 
 talosctl get disks --nodes $CTL1_IP --insecure
 talosctl get disks --nodes $WRK1_IP --insecure
-talosctl get disks --nodes $WRK2_IP --insecure
-talosctl get disks --nodes $WRK3_IP --insecure
 
 talosctl gen config \
-  talos-proxmox-cluster \
+  bb9 \
   https://$CTL1_IP:6443 \
   --output-dir ./talos \
   --config-patch @./talos/config-patch.yaml \
@@ -23,18 +34,20 @@ talosctl gen config \
   --force
 
 talosctl apply-config --nodes $CTL1_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl1.yaml --insecure
+talosctl apply-config --nodes $CTL2_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl2.yaml --insecure
+talosctl apply-config --nodes $CTL3_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl3.yaml --insecure
 talosctl apply-config --nodes $WRK1_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk1.yaml --insecure
 talosctl apply-config --nodes $WRK2_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk2.yaml --insecure
 talosctl apply-config --nodes $WRK3_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk3.yaml --insecure
 
 export TALOSCONFIG="./talos/talosconfig"
-talosctl config endpoint $CTL1_IP
-talosctl config node $CTL1_IP
-talosctl bootstrap
+talosctl config endpoint $CTL1_IP $CTL2_IP $CTL3_IP
+talosctl config node $CTL1_IP $CTL2_IP $CTL3_IP
+talosctl bootstrap --nodes $CTL1_IP
 
 # Fetch kube config and merge into default + a fixed location for bb to pickup
-talosctl kubeconfig --merge
-talosctl kubeconfig --merge ~/.kube/bb9-dev-quickstart-config
+talosctl kubeconfig --merge --nodes $CTL1_IP
+talosctl kubeconfig --merge --nodes $CTL1_IP ~/.kube/bb9-dev-quickstart-config
 
 # Install the CNI
 helm repo add cilium https://helm.cilium.io/
@@ -54,9 +67,11 @@ helm install \
 
 # Rook / Ceph
 helm repo add rook-release https://charts.rook.io/release
-helm install --create-namespace --namespace rook-ceph rook-ceph rook-release/rook-ceph
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph rook-release/rook-ceph
 kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
-helm install --create-namespace --namespace rook-ceph rook-ceph-cluster --set operatorNamespace=rook-ceph rook-release/rook-ceph-cluster
+# Somehow upgrade runs into conflicts; while template-out + apply did work!?
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/rook-ceph.yaml rook-release/rook-ceph-cluster --debug
+helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/rook-ceph.yaml rook-release/rook-ceph-cluster --debug --output-dir ./debug/out.ceph-cluster
 
 # Metallb
 helm repo add metallb https://metallb.github.io/metallb

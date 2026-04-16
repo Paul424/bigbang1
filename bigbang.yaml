@@ -12,17 +12,6 @@ helmRepositories:
     # username: 
     # password: 
 
-istiod:
-  values:
-    hardened:
-      # Enable istio hardened so we generate AuthorizationPolicies for the components
-      enabled: true
-    upstream:
-      meshConfig:
-        defaultConfig:
-          proxyMetadata:
-            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
-
 sso:
   name: keycloak
   url: https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
@@ -98,6 +87,70 @@ sso:
       sycX
       -----END CERTIFICATE-----
 
+flux: {}
+
+networkPolicies: {}
+
+istioCNI: {}
+istioCRDs: {}
+istiod:
+  values:
+    hardened:
+      # Enable istio hardened so we generate AuthorizationPolicies for the components
+      enabled: true
+    upstream:
+      meshConfig:
+        defaultConfig:
+          proxyMetadata:
+            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
+  # postRenderers:
+  # # Allow api-server access /w Cilium (not supporting ipBlocks)
+  # - kustomize: &patch-nwpol-to-kube-api
+  #     patches:
+  #     - target:
+  #         group: networking.k8s.io
+  #         version: v1
+  #         kind: NetworkPolicy
+  #         name: ".*allow-egress-from-.*-to-kubeapi"
+  #       patch: |-
+  #         - op: remove
+  #           path: /spec/egress/0/to
+  #         - op: add
+  #           path: /spec/egress/0/ports
+  #           value:
+  #             - port: 6443
+  #               protocol: TCP
+
+istioGateway: {}
+
+kiali:
+  sso:
+    enabled: true
+    client_id: kind-kiali
+    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
+  # values:
+  #   upstream:
+  #     debug:
+  #       enabled: true
+  #       verbosity: "9"
+
+gatekeeper: {}
+
+# kyverno:
+#   postRenderers:
+#   # Allow api-server access /w Cilium (not supporting ipBlocks)
+#   - kustomize: *patch-nwpol-to-kube-api
+#   - kustomize: &patch-nwpol-from-kube-api
+#       patches:
+#       - target:
+#           group: networking.k8s.io
+#           version: v1
+#           kind: NetworkPolicy
+#           name: ".*allow-.*-from-kubeapi"
+#         patch: |-
+#           - op: remove
+#             path: /spec/ingress/0/from
+
 # Overrides / Confs for this specific deployment
 kyvernoPolicies:
   values:
@@ -109,18 +162,31 @@ kyvernoPolicies:
           - local-path-storage
           names:
           - helper-pod-create-pvc-*
+      # rook/ceph on talos
+      - resources:
+          namespaces:
+          - rook-ceph
+          names:
+          - "*"
+      # metallb on talos
+      - resources:
+          namespaces:
+          - metallb-system
+          names:
+          - "*"
+      # control-plane (/w cilium) on talos
+      - resources:
+          namespaces:
+          - kube-system
+          names:
+          - cilium*
+          - kube*
       - resources:
           namespaces:
           - openldap
           names:
           - openldap-*
           - dev-openldap-*
-      - resources:
-          namespaces:
-          - freeipa
-          names:
-          - freeipa-*
-          - dev-freeipa-*
     policies:
       restrict-image-registries:
         parameters:
@@ -146,29 +212,53 @@ kyvernoPolicies:
               - openldap
               names:
               - openldap-*
+  # postRenderers:
+  # # Allow wait-job to connect to kube api
+  # - kustomize: &patch-nwpol-to-anywhere
+  #     patches:
+  #     - target:
+  #         group: networking.k8s.io
+  #         version: v1
+  #         kind: NetworkPolicy
+  #         name: ".*allow-egress-from-.*-to-anywhere.*"
+  #       patch: |-
+  #         - op: remove
+  #           path: /spec/egress/0/to
 
-kiali:
+kyvernoReporter: {}
+
+elasticsearchKibana: {}
+eckOperator: {}
+fluentbit: {}
+alloy: {}
+loki: {}
+
+# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
+neuvector:
+  enabled: false
   sso:
     enabled: true
-    client_id: kind-kiali
-    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
-  # values:
-  #   upstream:
-  #     debug:
-  #       enabled: true
-  #       verbosity: "9"
+    client_id: kind-neuvector
+    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
+    default_role: null
+  values:
+    upstream:
+      controller:
+        secret:
+          data:
+            oidcinitcfg.yaml:
+              group_claim: groups
+              group_mapped_roles:
+                - group: neuvector-admins 
+                  global_role: admin 
+                - group: neuvector-developers
+                  global_role: ciops
+                - group: neuvector-viewers
+                  global_role: reader
 
-# elasticsearchKibana:
-#   sso:
-#     enabled: true
-#     client_id: 
-#   license:
-#     trial: true
+tempo: {}
 
-# tempo:
-#   sso:
-#     enabled: true
-#     client_id: 
+prometheusOperatorCRDs: {}
 
 monitoring:
   sso:
@@ -179,6 +269,9 @@ monitoring:
     alertmanager:
       client_id: "kind-alertmanager"
       client_secret: "o4TdJfYuom979hGDrcpXdy7lrVZg4GTm"
+  # postRenderers:
+  # # Allow api-server access /w Cilium (not supporting ipBlocks)
+  # - kustomize: *patch-nwpol-to-kube-api
 
 grafana:
   sso:
@@ -213,28 +306,7 @@ twistlock:
   #         role: "devOps"
   #         authType: "saml"
 
-# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
-neuvector:
-  enabled: false
-  sso:
-    enabled: true
-    client_id: kind-neuvector
-    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
-    default_role: null
-  values:
-    upstream:
-      controller:
-        secret:
-          data:
-            oidcinitcfg.yaml:
-              group_claim: groups
-              group_mapped_roles:
-                - group: neuvector-admins 
-                  global_role: admin 
-                - group: neuvector-developers
-                  global_role: ciops
-                - group: neuvector-viewers
-                  global_role: reader
+bbctl: {}
 
 addons:
   metricsServer:
@@ -433,6 +505,7 @@ packages:
     secrets: {}
     configMaps: {}
     # values: {}
+
 
   # freeipa:
   #   enabled: true

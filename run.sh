@@ -66,6 +66,10 @@ function template_bigbang {
         --create-namespace \
         --set registryCredentials.username=${REGISTRY1_USERNAME} \
         --set registryCredentials.password=${REGISTRY1_TOKEN} \
+        --set helmRepositories[0].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[0].password=${REGISTRY_UPSTREAM_PAT} \
+        --set helmRepositories[1].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[1].password=${REGISTRY_UPSTREAM_PAT} \
         -f $BASE/bigbang.yaml \
         -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
         --output-dir ./$OUTPUT

@@ -2,6 +2,8 @@
 
 
 operatorNamespace: rook-ceph
+toolbox:
+  enabled: true
 cephClusterSpec:
   dashboard:
     enabled: true

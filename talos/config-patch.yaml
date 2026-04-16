@@ -1,22 +1,25 @@
 ---
+machine:
+  network:
+    extraHostEntries:
+      - ip: 192.168.50.252
+        aliases:
+          - keycloak.dev.bigbang.mil
+          - openldap.dev.bigbang.mil
+
 cluster:
   # Do not install flannel (default)
   network:
     cni:
       name: none
 
-  # Configure OIDC
-  # apiServer:
-  #   extraArgs:
-  #     authentication-config: /opt/authentication-configuration.yaml
-  #   extraVolumes:
-  #     - name: authentication-configuration
-  #       hostPath: /opt/authentication-configuration.yaml
-  #       mountPath: /opt/authentication-configuration.yaml
-  #       readOnly: true
+  apiServer:
+    admissionControl:
+      - name: PodSecurity
+        configuration:
+          defaults:
+            enforce: privileged
 
-  # Since we only have 2 nodes; allow to schedule workloads to control-plane nodes
-  # allowSchedulingOnControlPlanes: true
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

@@ -103,25 +103,18 @@ istiod:
         defaultConfig:
           proxyMetadata:
             SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
-  # postRenderers:
-  # # Allow api-server access /w Cilium (not supporting ipBlocks)
-  # - kustomize: &patch-nwpol-to-kube-api
-  #     patches:
-  #     - target:
-  #         group: networking.k8s.io
-  #         version: v1
-  #         kind: NetworkPolicy
-  #         name: ".*allow-egress-from-.*-to-kubeapi"
-  #       patch: |-
-  #         - op: remove
-  #           path: /spec/egress/0/to
-  #         - op: add
-  #           path: /spec/egress/0/ports
-  #           value:
-  #             - port: 6443
-  #               protocol: TCP
 
-istioGateway: {}
+istioGateway:
+  values:
+    gateways:
+      public:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.251
+      passthrough:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.252
 
 kiali:
   sso:
@@ -136,20 +129,7 @@ kiali:
 
 gatekeeper: {}
 
-# kyverno:
-#   postRenderers:
-#   # Allow api-server access /w Cilium (not supporting ipBlocks)
-#   - kustomize: *patch-nwpol-to-kube-api
-#   - kustomize: &patch-nwpol-from-kube-api
-#       patches:
-#       - target:
-#           group: networking.k8s.io
-#           version: v1
-#           kind: NetworkPolicy
-#           name: ".*allow-.*-from-kubeapi"
-#         patch: |-
-#           - op: remove
-#             path: /spec/ingress/0/from
+kyverno: {}
 
 # Overrides / Confs for this specific deployment
 kyvernoPolicies:
@@ -212,18 +192,6 @@ kyvernoPolicies:
               - openldap
               names:
               - openldap-*
-  # postRenderers:
-  # # Allow wait-job to connect to kube api
-  # - kustomize: &patch-nwpol-to-anywhere
-  #     patches:
-  #     - target:
-  #         group: networking.k8s.io
-  #         version: v1
-  #         kind: NetworkPolicy
-  #         name: ".*allow-egress-from-.*-to-anywhere.*"
-  #       patch: |-
-  #         - op: remove
-  #           path: /spec/egress/0/to
 
 kyvernoReporter: {}
 
@@ -411,7 +379,14 @@ addons:
               to:
                 k8s:
                   openldap/*:1389: true
-    #   upstream:
+      upstream:
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
     #     args:
     #       - "start"
     #       - "--debug"

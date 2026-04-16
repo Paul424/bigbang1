@@ -254,11 +254,12 @@ kubectl apply --kustomize ./talos/calico/
 ## Storage (Block, fs, s3) using Rook / Ceph
 ```
 helm repo add rook-release https://charts.rook.io/release
-helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph rook-release/rook-ceph
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
+helm template --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph --debug --output-dir ./debug/out.rook-ceph
 helm plugin install ./talos/ceph/kustomize-plugin
 kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
-helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug
-# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug --output-dir ./debug/out.ceph-cluster
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug
+# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug --output-dir ./debug/out.rook-ceph-cluster
 ```
 
 ## Load balancer using Metallb

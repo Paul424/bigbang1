@@ -256,10 +256,19 @@ kubectl apply --kustomize ./talos/calico/
 helm repo add rook-release https://charts.rook.io/release
 helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
 helm template --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph --debug --output-dir ./debug/out.rook-ceph
-helm plugin install ./talos/ceph/kustomize-plugin
+helm plugin install ./talos/ceph/kustomize-ceph-plugin
 kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
-helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug
-# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization --debug --output-dir ./debug/out.rook-ceph-cluster
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug
+# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug --output-dir ./debug/out.rook-ceph-cluster
+```
+
+## DNS Server (bind9) for static .mil addresses
+```
+helm repo add unxwares https://helm.unxwares.studio
+helm plugin install ./talos/bind9/kustomize-bind9-plugin
+helm upgrade --install --create-namespace --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug
+helm template --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug --output-dir ./debug/out.bind9
+
 ```
 
 ## Load balancer using Metallb

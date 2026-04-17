@@ -154,6 +154,12 @@ kyvernoPolicies:
           - metallb-system
           names:
           - "*"
+      # bind9 on talos
+      - resources:
+          namespaces:
+          - bind9
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:

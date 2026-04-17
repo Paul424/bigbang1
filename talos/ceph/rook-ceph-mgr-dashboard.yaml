@@ -17,4 +17,4 @@ spec:
     mgr_role: active
     rook_cluster: rook-ceph
   type: LoadBalancer
-  loadBalancerIP: 192.168.50.250
+  loadBalancerIP: 192.168.50.253

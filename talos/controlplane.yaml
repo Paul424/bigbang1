@@ -415,3 +415,10 @@ auto: off # A method to automatically generate a hostname for the machine.
 # # A static hostname to set for the machine.
 # hostname: controlplane1
 # hostname: controlplane1.example.org
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+# A list of nameservers (DNS servers) to use for resolving domain names.
+nameservers:
+    - address: 192.168.50.250 # The IP address of the nameserver.
+    - address: 192.168.50.1 # The IP address of the nameserver.

@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- helm-output.yaml
+
+namespace: bind9
+
+patches:
+- target:
+    kind: Service
+    name: bind9
+  patch: |-
+    - op: add
+      path: /spec/loadBalancerIP
+      value: 192.168.50.250
+- target:
+    kind: Deployment
+    name: bind9
+  patch: |-
+    - op: add
+      path: /spec/template/spec/volumes/-
+      value:
+        emptyDir: {}
+        name: bind-cache
+    - op: add
+      path: /spec/template/spec/containers/0/volumeMounts/-
+      value:
+        mountPath: /var/cache/bind
+        name: bind-cache

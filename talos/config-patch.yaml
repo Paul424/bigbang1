@@ -1,12 +1,4 @@
 ---
-machine:
-  network:
-    extraHostEntries:
-      - ip: 192.168.50.252
-        aliases:
-          - keycloak.dev.bigbang.mil
-          - openldap.dev.bigbang.mil
-
 cluster:
   # Do not install flannel (default)
   network:
@@ -24,3 +16,9 @@ cluster:
 apiVersion: v1alpha1
 kind: HostnameConfig
 auto: off
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+    - address: 192.168.50.250
+    - address: 192.168.50.1

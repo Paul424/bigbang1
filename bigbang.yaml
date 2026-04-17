@@ -160,6 +160,12 @@ kyvernoPolicies:
           - bind9
           names:
           - "*"
+      # Calico
+      - resources:
+          namespaces:
+          - calico-system
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:

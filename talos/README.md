@@ -233,6 +233,13 @@ talosctl apply-config --nodes $WRK1_IP --file ./talos/worker.yaml --config-patch
 talosctl apply-config --nodes $WRK2_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk2.yaml --insecure
 talosctl apply-config --nodes $WRK3_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk3.yaml --insecure
 
+talosctl apply-config --nodes $CTL1_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl1.yaml
+talosctl apply-config --nodes $CTL2_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl2.yaml
+talosctl apply-config --nodes $CTL3_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl3.yaml
+talosctl apply-config --nodes $WRK1_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk1.yaml
+talosctl apply-config --nodes $WRK2_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk2.yaml
+talosctl apply-config --nodes $WRK3_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk3.yaml
+
 export TALOSCONFIG="./talos/talosconfig"
 talosctl config endpoint $CTL1_IP $CTL2_IP $CTL3_IP
 talosctl config node $CTL1_IP $CTL2_IP $CTL3_IP
@@ -286,4 +293,24 @@ kubectl get ipaddresspool -n metallb-system
 
 # Ceph UI can be found at: https://192.168.50.250:8443/#/login
 # User=admin and Password can be found here: kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
+```
+
+# Network Access
+
+For a talos setup the endpoints are accessible to the local network, so no tunnels are required.
+
+But you do need to provide a static DNS name mapping:
+
+```
+192.168.50.253  ceph.dev.bigbang.mil
+192.168.50.252  keycloak.dev.bigbang.mil
+192.168.50.252  openldap.dev.bigbang.mil
+192.168.50.251  kiali.dev.bigbang.mil
+192.168.50.251  grafana.dev.bigbang.mil
+192.168.50.251  prometheus.dev.bigbang.mil
+192.168.50.251  alertmanager.dev.bigbang.mil
+192.168.50.251  headlamp.dev.bigbang.mil
+192.168.50.251  neuvector.dev.bigbang.mil
+192.168.50.251  twistlock.dev.bigbang.mil
+192.168.50.251  chat.dev.bigbang.mil
 ```

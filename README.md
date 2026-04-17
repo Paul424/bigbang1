@@ -1,6 +1,6 @@
 # Bigbang1
 
-Just a test / demo setup to run bigbang on KinD and Talos.
+Just a test / demo setup to run bigbang on KinD and Talos (on Proxmox).
 
 We are using the bigbang quickstart script mostly but since we want to use our own kind and Talos setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
 
@@ -22,30 +22,6 @@ We are using the bigbang quickstart script mostly but since we want to use our o
 - jq
 - yq
 
-## Config
-
-Increase the max open file limit
-```
-# /etc/systemd/system.conf
-DefaultLimitNOFILE=524288
-```
-
-Increase max file watches (See: https://open-docs.neuvector.com/basics/requirements#adding-scaling-constraints-for-large-workload-environments)
-```
-# Append to /etc/sysctl.d/99-sysctl.conf and reload using sysctl -p
-fs.inotify.max_queued_events=616384
-fs.inotify.max_user_instances=512
-fs.inotify.max_user_watches=786432
-```
-
-Override for WSL2 confs
-```
-# C:\Users\<your-username>\.wslconfig
-[wsl2]
-kernelCommandLine = cgroup_no_v1=all
-memory=24GB
-```
-
 ## Accounts
 
 Access to the git versioned scripts (of this repo)
@@ -54,15 +30,19 @@ Access to the git versioned scripts (of this repo)
 Access to the upstream charts and images
 - [p1 registry account](https://registry1.dso.mil/)
 
-# Setup
+# Infrastructure (provider)
 
 ## Kind cluster
-When using a kind cluster (as infra provider), see [kind / wsl guidelines](./kind/README.md)
+When using a kind cluster, see [kind / wsl guidelines](./kind/README.md)
 
 ## Talos (on Proxmox) cluster
 When using Talos, see [Talos guidelines](./talos/README.md)
 
-## Bootstrap bigbang
+# Bootstrap bigbang
+
+Once the infrastructure is in place (meaning you have a container platform running on either kind or talos /w a working .kube/config and also there is support for DNS, storage and load-balancing), then you can proceed to bootstrap bigbang.
+
+## GitOps
 
 Bootstrap bigbang (flux.io and configured HelmReleases)
 ```
@@ -88,59 +68,31 @@ Open the [kaycloak UI](https://keycloak.dev.bigbang.mil/auth/admin/master/consol
 
 ## Setup kubectl context using OIDC
 
-By default KinD creates a kube config with just signed certificates giving you admin access to the api-server. Since the api-server is configured with OIDC (backed by keycloak) we can also add a context per User defined in keycloak:
+By default KinD and Talos create a kube config with just signed certificates giving you admin access to the api-server. Since the api-server is configured with OIDC (backed by keycloak) we can also add a context per User defined in keycloak:
 
 ```
-bash ./run.sh up_kc_config <barney|betty|fred|wilma> <CLUSTER-NAME>
-
-# Tests
+bash ./run.sh up_kc_config <barney|betty|fred|wilma> <CLUSTER-NAME=kind-bb9|bb9>
 
 kubectl get nodes --context barney
 Error from server (Forbidden): nodes is forbidden: User "barney" cannot list resource "nodes" in API group "" at the cluster scope
 
 kubectl get nodes --context fred
-NAME                STATUS   ROLES           AGE   VERSION
-bb3-control-plane   Ready    control-plane   16m   v1.35.0
-bb3-worker          Ready    <none>          16m   v1.35.0
-bb3-worker2         Ready    <none>          16m   v1.35.0
+NAME         STATUS   ROLES           AGE   VERSION
+talos-ctl1   Ready    control-plane   24h   v1.35.2
+talos-ctl2   Ready    control-plane   24h   v1.35.2
+talos-ctl3   Ready    control-plane   24h   v1.35.2
+talos-wrk1   Ready    <none>          24h   v1.35.2
+talos-wrk2   Ready    <none>          24h   v1.35.2
+talos-wrk3   Ready    <none>          24h   v1.35.2
 ```
 
-# Access
+# Access to Apps
 
-## WSL2 / Tunnel
+## Network access to endpoints
 
-The services are exposed using type: LoadBalancer to the docker network which in case of wsl2 is not visible from the host (Windows) machine. This can be solved by running a socks5 proxy icw a browser plugin to use the local proxy as a tunnel.
+When using a kind cluster, see [kind / wsl access guidelines](./kind/README.md#network-access)
 
-1. Within wsl install / configure and run a SSH server
-2. On the Windows box install putty and puttygen
-3. Using puttygen create a new keypair, save the private key to a .ppk file (for putty to use) and append the public key to the ~/.ssh/authorized_keys in the wsl box.
-4. Create a new putty session with:
-    - Server is just the ip4 address of the eth0 adapter
-    - Port is the default tcp/22
-    - On connection - data set Auto-login username to your username
-    - On connection - SSH - Auth - Credentials point the private key for authentication to the .ppk file.
-    - On connection - SSH - Tunnels add a dynamic port forwarding on local port tcp/12345
-5. Save and run this new session and confirm you can login.
-6. Install foxyproxy on Chrome and add a proxy named wsl2 with:
-    - type: SOCKS5
-    - hostname: localhost
-    - port: 12345
-    - Add a proxy-by-pattern to include any request matching ```https://*.dev.bigbang.mil/```
-7. Open a new tab and access one of the apps, for instance: ```https://prometheus.dev.bigbang.mil/``` and make sure foxyproxy is active for this tab.
-8. In C:\Windows\System32\drivers\etc\hosts create (fake) DNS mapping for instance:
-```
-172.18.0.6      keycloak.dev.bigbang.mil
-172.18.0.5      kiali.dev.bigbang.mil
-172.18.0.5      grafana.dev.bigbang.mil
-172.18.0.5      prometheus.dev.bigbang.mil
-172.18.0.5      alertmanager.dev.bigbang.mil
-172.18.0.5      headlamp.dev.bigbang.mil
-172.18.0.5      neuvector.dev.bigbang.mil
-172.18.0.5      twistlock.dev.bigbang.mil
-172.18.0.5      chat.dev.bigbang.mil
-```
-
-[More info on DNS](https://docs-bigbang.dso.mil/latest/docs/installation/environments/quick-start/#fix-dns-to-access-the-services-in-your-browser)
+When using Talos, see [Talos access guidelines](./talos/README.md#network-access)
 
 ## Credentials
 
@@ -150,12 +102,14 @@ SSO is preconfigured using Keycloak with following users:
 
 | Username | Password | AuthZ |
 | --- | ----------- | --- |
-| barney | barney | read-only access to some resources |
-| fred | fred | admin access to all (most) resources |
+| fred | fred | platform administrators (kube admins) |
+| wilma | wilma | infra-structure operator |
+| barney | barney | application operators |
+| betty | betty | platform administrators |
+| pebbles | pebbles | application operators |
 
 > [!NOTE]
 > When logging out in an app, the OIDC session still exists and attemts to login using SSO will reuse the existing session. To switch users, [login to keycloak](https://keycloak.dev.bigbang.mil/auth/admin/master/console/#/me-yoda/sessions) to remove the session manually.
-
 
 ## App Links
 
@@ -168,11 +122,16 @@ SSO is preconfigured using Keycloak with following users:
 7. [Twistlock](https://twistlock.dev.bigbang.mil/)
 8. [Neuvector](https://neuvector.dev.bigbang.mil/)
 
+Talos specific:
+
+1. [Ceph](https://ceph.dev.bigbang.mil:8443/)
+
+
 # Authentication and Authorization
 
 We use an on-cluster Keycloak to address (on-cluster) clients (services) and roles (which map to RBAC). The users are sync'ed from an upstream openldap instance with 5 fixed users mapped to personas in the ldap registry.
 
-# Debug
+# Debugging
 
 ## Template out from main chart
 

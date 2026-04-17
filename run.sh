@@ -272,7 +272,7 @@ function up_kc_config {
         --auth-provider-arg=id-token=$ID_TOKEN \
         --auth-provider-arg=refresh-token=$REFRESH_TOKEN \
         --auth-provider-arg=idp-certificate-authority-data=$CA_DATA
-    kubectl config set-context $USERNAME --cluster=kind-$CLUSTER_NAME --user=$USERNAME
+    kubectl config set-context $USERNAME --cluster=$CLUSTER_NAME --user=$USERNAME
 }
 
 case "$COMMAND" in

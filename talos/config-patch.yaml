@@ -1,0 +1,24 @@
+---
+cluster:
+  # Do not install flannel (default)
+  network:
+    cni:
+      name: none
+
+  apiServer:
+    admissionControl:
+      - name: PodSecurity
+        configuration:
+          defaults:
+            enforce: privileged
+
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+    - address: 192.168.50.250
+    - address: 192.168.50.1

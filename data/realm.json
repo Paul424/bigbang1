@@ -3043,7 +3043,7 @@
             "uid"
           ],
           "bindCredential": [
-            "**********"
+            "admin"
           ],
           "bindDn": [
             "cn=admin,dc=example,dc=org"

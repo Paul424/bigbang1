@@ -12,17 +12,6 @@ helmRepositories:
     # username: 
     # password: 
 
-istiod:
-  values:
-    hardened:
-      # Enable istio hardened so we generate AuthorizationPolicies for the components
-      enabled: true
-    upstream:
-      meshConfig:
-        defaultConfig:
-          proxyMetadata:
-            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
-
 sso:
   name: keycloak
   url: https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
@@ -98,6 +87,50 @@ sso:
       sycX
       -----END CERTIFICATE-----
 
+flux: {}
+
+networkPolicies: {}
+
+istioCNI: {}
+istioCRDs: {}
+istiod:
+  values:
+    hardened:
+      # Enable istio hardened so we generate AuthorizationPolicies for the components
+      enabled: true
+    upstream:
+      meshConfig:
+        defaultConfig:
+          proxyMetadata:
+            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
+
+istioGateway:
+  values:
+    gateways:
+      public:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.251
+      passthrough:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.252
+
+kiali:
+  sso:
+    enabled: true
+    client_id: kind-kiali
+    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
+  # values:
+  #   upstream:
+  #     debug:
+  #       enabled: true
+  #       verbosity: "9"
+
+gatekeeper: {}
+
+kyverno: {}
+
 # Overrides / Confs for this specific deployment
 kyvernoPolicies:
   values:
@@ -109,18 +142,37 @@ kyvernoPolicies:
           - local-path-storage
           names:
           - helper-pod-create-pvc-*
+      # rook/ceph on talos
+      - resources:
+          namespaces:
+          - rook-ceph
+          names:
+          - "*"
+      # metallb on talos
+      - resources:
+          namespaces:
+          - metallb-system
+          names:
+          - "*"
+      # bind9 on talos
+      - resources:
+          namespaces:
+          - bind9
+          names:
+          - "*"
+      # control-plane (/w cilium) on talos
+      - resources:
+          namespaces:
+          - kube-system
+          names:
+          - cilium*
+          - kube*
       - resources:
           namespaces:
           - openldap
           names:
           - openldap-*
           - dev-openldap-*
-      - resources:
-          namespaces:
-          - freeipa
-          names:
-          - freeipa-*
-          - dev-freeipa-*
     policies:
       restrict-image-registries:
         parameters:
@@ -147,28 +199,40 @@ kyvernoPolicies:
               names:
               - openldap-*
 
-kiali:
+kyvernoReporter: {}
+
+elasticsearchKibana: {}
+eckOperator: {}
+fluentbit: {}
+alloy: {}
+loki: {}
+
+# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
+neuvector:
+  enabled: false
   sso:
     enabled: true
-    client_id: kind-kiali
-    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
-  # values:
-  #   upstream:
-  #     debug:
-  #       enabled: true
-  #       verbosity: "9"
+    client_id: kind-neuvector
+    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
+    default_role: null
+  values:
+    upstream:
+      controller:
+        secret:
+          data:
+            oidcinitcfg.yaml:
+              group_claim: groups
+              group_mapped_roles:
+                - group: neuvector-admins 
+                  global_role: admin 
+                - group: neuvector-developers
+                  global_role: ciops
+                - group: neuvector-viewers
+                  global_role: reader
 
-# elasticsearchKibana:
-#   sso:
-#     enabled: true
-#     client_id: 
-#   license:
-#     trial: true
+tempo: {}
 
-# tempo:
-#   sso:
-#     enabled: true
-#     client_id: 
+prometheusOperatorCRDs: {}
 
 monitoring:
   sso:
@@ -179,6 +243,9 @@ monitoring:
     alertmanager:
       client_id: "kind-alertmanager"
       client_secret: "o4TdJfYuom979hGDrcpXdy7lrVZg4GTm"
+  # postRenderers:
+  # # Allow api-server access /w Cilium (not supporting ipBlocks)
+  # - kustomize: *patch-nwpol-to-kube-api
 
 grafana:
   sso:
@@ -213,28 +280,7 @@ twistlock:
   #         role: "devOps"
   #         authType: "saml"
 
-# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
-neuvector:
-  enabled: false
-  sso:
-    enabled: true
-    client_id: kind-neuvector
-    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
-    default_role: null
-  values:
-    upstream:
-      controller:
-        secret:
-          data:
-            oidcinitcfg.yaml:
-              group_claim: groups
-              group_mapped_roles:
-                - group: neuvector-admins 
-                  global_role: admin 
-                - group: neuvector-developers
-                  global_role: ciops
-                - group: neuvector-viewers
-                  global_role: reader
+bbctl: {}
 
 addons:
   metricsServer:
@@ -339,7 +385,14 @@ addons:
               to:
                 k8s:
                   openldap/*:1389: true
-    #   upstream:
+      upstream:
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
     #     args:
     #       - "start"
     #       - "--debug"
@@ -433,6 +486,7 @@ packages:
     secrets: {}
     configMaps: {}
     # values: {}
+
 
   # freeipa:
   #   enabled: true

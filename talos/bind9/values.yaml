@@ -1,0 +1,58 @@
+service:
+  type: LoadBalancer
+  ports:
+    dnsTcp: 53
+    dnsUdp: 53
+    rndc: 953
+    # If using a NodePort, you can set the port here
+    dnsTcpNodePort: null
+    dnsUdpNodePort: null
+    rndcNodePort: null
+    # metrics: 9119
+
+persistence:
+  enabled: false
+  emptyDirSizeLimit: ""
+
+securityContext:
+  readOnlyRootFilesystem: true
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+
+bind:
+  namedConf: |
+    options {
+      directory "/var/cache/bind";
+      listen-on { any; };
+      recursion no;
+    };
+
+    zone "dev.bigbang.mil" {
+      type master;
+      file "/etc/bind/dev-bigbang-mil.zone";
+    };
+
+  zones:
+    dev-bigbang-mil: |
+      $TTL 3600
+      @       IN      SOA     dev.bigbang.mil. admin.dev.bigbang.mil. (
+                              2024020101 ; Serial
+                              3600       ; Refresh
+                              900        ; Retry
+                              604800     ; Expire
+                              86400 )    ; Minimum TTL
+      ;
+      @       IN      NS      dev.bigbang.mil.
+      @       IN      A       192.168.50.250
+      ns1     IN      A       192.168.50.250
+      keycloak     IN      A       192.168.50.252
+      openldap     IN      A       192.168.50.252
+      kiali        IN      A       192.168.50.251
+      grafana      IN      A       192.168.50.251
+      prometheus   IN      A       192.168.50.251
+      alertmanager IN      A       192.168.50.251
+      headlamp     IN      A       192.168.50.251
+      neuvector    IN      A       192.168.50.251
+      twistlock    IN      A       192.168.50.251
+      chat         IN      A       192.168.50.251

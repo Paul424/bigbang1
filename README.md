@@ -1,8 +1,8 @@
 # Bigbang1
 
-Just a test / demo setup to run bigbang on KinD.
+Just a test / demo setup to run bigbang on KinD and Talos.
 
-We are using the bigbang quickstart script mostly but since we want to use our own kind setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
+We are using the bigbang quickstart script mostly but since we want to use our own kind and Talos setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
 
 # Prerequisites
 
@@ -57,11 +57,10 @@ Access to the upstream charts and images
 # Setup
 
 ## Kind cluster
+When using a kind cluster (as infra provider), see [kind / wsl guidelines](./kind/README.md)
 
-Setup the infrastructure (foundation using kind):
-```
-bash ./run.sh up_kind <CLUSTER-NAME>
-```
+## Talos (on Proxmox) cluster
+When using Talos, see [Talos guidelines](./talos/README.md)
 
 ## Bootstrap bigbang
 
@@ -79,38 +78,6 @@ bash ./run.sh up_bigbang <CLUSTER-NAME>
 This is to overcome issue's with the upstream
 ```
 bash ./run.sh up_hacks
-```
-
-## Kind load balancer support
-
-Run the cloud-provider-kind package to listen to services of type: LoadBalancer and expose the svc over a proxy / load-balancer running on the docker network.
-
-```
-bash ./run.sh up_kind_lb
-```
-
-Then find the IP's on which the LB is exposing:
-```
-kubectl get svc -n istio-gateway
-NAME                         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                      AGE
-passthrough-ingressgateway   LoadBalancer   10.96.10.33     172.18.0.5    15021:32735/TCP,80:32292/TCP,443:31843/TCP   143m
-public-ingressgateway        LoadBalancer   10.96.140.121   172.18.0.6    15021:30373/TCP,80:31342/TCP,443:31088/TCP   160m
-```
-
-Add the aliases to your /etc/hosts as fake DNS service
-```
-172.18.0.5      keycloak.dev.bigbang.mil
-172.18.0.6      kiali.dev.bigbang.mil
-172.18.0.6      grafana.dev.bigbang.mil
-172.18.0.6      prometheus.dev.bigbang.mil
-172.18.0.6      alertmanager.dev.bigbang.mil
-172.18.0.6      headlamp.dev.bigbang.mil
-```
-
-And test access from the terminal using:
-```
-curl -I https://kiali.dev.bigbang.mil/kiali/
-HTTP/2 200 
 ```
 
 ## Load realm into keycloak

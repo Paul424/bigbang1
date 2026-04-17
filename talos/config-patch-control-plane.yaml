@@ -1,0 +1,33 @@
+---
+# https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config
+machine:
+  files:
+    - content: |
+        apiVersion: apiserver.config.k8s.io/v1beta1
+        kind: AuthenticationConfiguration
+        jwt:
+        - issuer:
+            url: https://keycloak.dev.bigbang.mil/auth/realms/me-yoda
+            audiences:
+            - kind-headlamp
+            - kubernetes
+            audienceMatchPolicy: MatchAny
+          claimMappings:
+            username:
+              claim: preferred_username
+              prefix: ""
+            groups:
+              claim: groups
+              prefix: ""
+          claimValidationRules: []
+      permissions: 0o444
+      path: /var/authentication-configuration.yaml
+      op: create
+cluster:
+  apiServer:
+    extraArgs:
+      authentication-config: /var/authentication-configuration.yaml
+    extraVolumes:
+      - hostPath: /var/authentication-configuration.yaml
+        mountPath: /var/authentication-configuration.yaml
+        readonly: true

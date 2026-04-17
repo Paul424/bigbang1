@@ -30,6 +30,17 @@ function up_kind_lb {
     cloud-provider-kind > ./log/cloud-provider-kind.log 2>&1
 }
 
+function up_proxmox_talos {
+    # we need a cli to connect with proxmox (can maybe be done over ssh?)
+    # then we need to create VM's
+    # we need to generate the confs, bootstrap
+    # then fetch the kube config
+    # apply the CNI (cilium)
+    # deploy storage (csi) using rook/ceph
+    # and metallb for LB
+    echo todo
+}
+
 function up_bigbang {
     CLUSTER_NAME=${1}  # To map the kind context
     export REPO1_LOCATION=$BASE/upstream
@@ -55,6 +66,10 @@ function template_bigbang {
         --create-namespace \
         --set registryCredentials.username=${REGISTRY1_USERNAME} \
         --set registryCredentials.password=${REGISTRY1_TOKEN} \
+        --set helmRepositories[0].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[0].password=${REGISTRY_UPSTREAM_PAT} \
+        --set helmRepositories[1].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[1].password=${REGISTRY_UPSTREAM_PAT} \
         -f $BASE/bigbang.yaml \
         -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
         --output-dir ./$OUTPUT
@@ -277,6 +292,12 @@ case "$COMMAND" in
         up_kind_lb
         ;;
     
+    up_proxmox_talos)
+        CLUSTER_NAME=${1:-bb1};
+        shift
+        up_proxmox_talos $CLUSTER_NAME
+        ;;
+
     up_bigbang)
         CLUSTER_NAME=${1:-bb1};
         shift

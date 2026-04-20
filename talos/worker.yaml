@@ -4,10 +4,10 @@ persist: true
 # Provides machine specific configuration options.
 machine:
     type: worker # Defines the role of the machine within the cluster.
-    token: aqic6q.okxbhy6n4uxp82ap # The `token` is used by a machine to join the PKI of the cluster.
+    token: 51yoh5.8471via2yrflo978 # The `token` is used by a machine to join the PKI of the cluster.
     # The root certificate authority of the PKI.
     ca:
-        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQekNCOHFBREFnRUNBaEVBNUNITjBCVjRqOHN5ZUR6TEFMVmZHekFGQmdNclpYQXdFREVPTUF3R0ExVUUKQ2hNRmRHRnNiM013SGhjTk1qWXdOREUyTURnek9EQXpXaGNOTXpZd05ERXpNRGd6T0RBeldqQVFNUTR3REFZRApWUVFLRXdWMFlXeHZjekFxTUFVR0F5dGxjQU1oQUdaVVE2Z29lN2pLbm9aMTJZdGVaUDdGWGtpN2lJVGxxOGRGCmR6WjRQZldMbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQW9Rd0hRWURWUjBsQkJZd0ZBWUlLd1lCQlFVSEF3RUcKQ0NzR0FRVUZCd01DTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRkZTenlTNm83T1RHU0orWApaelJxR0ZBejJPL1lNQVVHQXl0bGNBTkJBQk1LVkw1ejFQRG4zVGJMOGY0VEEvTkNyaGtibGNRQVhQWHV4ajBMCmN0cTJ6dndoQ01KOHRxU2FNSTlabk9BOFl3NlRjNE5BK3h5UkFnUUVGOHo0NVFBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQekNCOHFBREFnRUNBaEVBdFFLV0tOeXY0REhNdUU3WnF1VFk5REFGQmdNclpYQXdFREVPTUF3R0ExVUUKQ2hNRmRHRnNiM013SGhjTk1qWXdOREl3TURjeE9USTVXaGNOTXpZd05ERTNNRGN4T1RJNVdqQVFNUTR3REFZRApWUVFLRXdWMFlXeHZjekFxTUFVR0F5dGxjQU1oQUp1dEZycDFNdVgyeUtRS0d0RGE0dG1VeW8vM2l5M0hmOWZsCmFoclpmSmxJbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQW9Rd0hRWURWUjBsQkJZd0ZBWUlLd1lCQlFVSEF3RUcKQ0NzR0FRVUZCd01DTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRkpoUSszMGE4eVYxU2l6TQpSYVZoYm90a2JGWktNQVVHQXl0bGNBTkJBSUN0UjdyRlhMTlNSN0YrVjUxYkZlZVpKQytFVWZqQlZjeWpJWXJTCkVMVFRrdTdCRlJIM0NWUUlvTGxCaUVXa0syUWszSzBsSmZyN2dhNGs4MEVFeWdBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
         key: ""
     # Extra certificate subject alternative names for the machine's certificate.
     certSANs: []
@@ -224,8 +224,8 @@ machine:
     #     exampleTaint: exampleTaintValue:NoSchedule
 # Provides cluster specific configuration options.
 cluster:
-    id: WSoKGrc3DuPbhpnyza2QRoeGvFHg9O8_yk9wpvqIwpI= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
-    secret: 2cxCbx6WS7PvdsX0w9Rke+Bgc+pbmlQ8Qpq93nmw4D0= # Shared secret of cluster (base64 encoded random 32 bytes).
+    id: Y0LegrkEF80N76CBQU039G0MBO_ySsgBL3FjtGJ0zds= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
+    secret: K/xgEt2s5wneCLBjrx/HDDPXNZ0k6LvxpvU+gtv36Zc= # Shared secret of cluster (base64 encoded random 32 bytes).
     # Provides control plane specific configuration options.
     controlPlane:
         endpoint: https://192.168.50.180:6443 # Endpoint is the canonical controlplane endpoint, which can be an IP address or a DNS hostname.
@@ -242,10 +242,10 @@ cluster:
         # The service subnet CIDR.
         serviceSubnets:
             - 10.96.0.0/12
-    token: dbdru7.2jizwavdde9wrr6c # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
+    token: ioshc5.noeke48jg1688xtm # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
     # The base64 encoded root certificate authority used by Kubernetes.
     ca:
-        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJpakNDQVRDZ0F3SUJBZ0lSQU5WVWlnYndvcXA0c0JoaFFKaGZ4VjB3Q2dZSUtvWkl6ajBFQXdJd0ZURVQKTUJFR0ExVUVDaE1LYTNWaVpYSnVaWFJsY3pBZUZ3MHlOakEwTVRZd09ETTRNRE5hRncwek5qQTBNVE13T0RNNApNRE5hTUJVeEV6QVJCZ05WQkFvVENtdDFZbVZ5Ym1WMFpYTXdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CCkJ3TkNBQVJvRXFSYm9leU5tZDdXd01pMkhjTSs3Q054Z3EzaEd6a0MzZk5hQThOR3U0SitGdEM3VUZFelc3U1QKbk9aOWdubzVFb3MyWVduZFBudEwyeUIwRXVVTW8yRXdYekFPQmdOVkhROEJBZjhFQkFNQ0FvUXdIUVlEVlIwbApCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPCkJCWUVGUDR2Qzk4RFhWbDR3UGtJMmQzMzVpTC9FQlc1TUFvR0NDcUdTTTQ5QkFNQ0EwZ0FNRVVDSUV3UTVsazQKZmtSdU9OcGd3YXdwVVR0NnZEdG1IVUVKS0ltRWU4MlpKSHgvQWlFQTZzeW5DdmdiN0dzSVQ4SHI1cG54b3BtNgowMEVhZSt3V1pkeFRYWnJpZFBnPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJpVENDQVRDZ0F3SUJBZ0lSQUoxMTVGRm50ZnRlSWZ1UVhqRUdmMWd3Q2dZSUtvWkl6ajBFQXdJd0ZURVQKTUJFR0ExVUVDaE1LYTNWaVpYSnVaWFJsY3pBZUZ3MHlOakEwTWpBd056RTVNamxhRncwek5qQTBNVGN3TnpFNQpNamxhTUJVeEV6QVJCZ05WQkFvVENtdDFZbVZ5Ym1WMFpYTXdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CCkJ3TkNBQVJlamEwMk5BYUYvMVZDVEpVNzQ0M20rdHo4TjdUMlU0L083VGY2VjU5dUdlb0pxRFVEY1ZMZkc0NlkKZVVHRmlGTEpCVGZ4dkx6a1JldUdWaE80SlgyUW8yRXdYekFPQmdOVkhROEJBZjhFQkFNQ0FvUXdIUVlEVlIwbApCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPCkJCWUVGQTRpRmdRL25DSXg1VDZyRlRSOGM5OGpmMHp0TUFvR0NDcUdTTTQ5QkFNQ0EwY0FNRVFDSUN6TjBsUDAKU214djRYZzdDZ3hXdVU2UkRUWlE2SXU5emp4ZmM2UW95cHNOQWlBeThUUmxyOVJtSU9oN0lFb0lQRnFWR0ZuMgpWL29jai83WEk3b1ZBSXJJRWc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
         key: ""
     # API server specific configuration options.
     apiServer:

@@ -296,6 +296,41 @@ addons:
         # Fixes on kind: Failed to scrape node" err="Get \"https://172.18.0.3:10250/metrics/resource\": tls: failed to verify certificate: x509: cannot  │lida ││ validate certificate for 172.18.0.3 because it doesn't contain any IP SANs" node="bb1-control-plane" 
         - --kubelet-insecure-tls
 
+  harbor:
+    enabled: true
+    values:
+      istio:
+        serviceEntries:
+          custom:
+          - name: trivy-service-entry
+            spec:
+              hosts:
+              - ghcr.io
+              - mirror.gcr.io
+              location: MESH_EXTERNAL
+              ports:
+              - number: 443
+                protocol: TLS
+                name: https
+              resolution: DNS
+      networkPolicies:
+        additionalPolicies:
+        - name: allow-egress-from-trivy-to-any-ns-any-pod-any-port
+          spec:
+            podSelector: {}
+            policyTypes:
+            - Egress
+            egress:
+            - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  except:
+                  - 169.254.169.254/32
+      upstream:
+        # We should configure trivy to use the harbor oci registry and in the readme provide upload instructions
+        trivy:
+          gitHubToken: "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"
+
   authservice:
     enabled: true
 

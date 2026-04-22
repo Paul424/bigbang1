@@ -61,7 +61,7 @@ qm create ${VM_CTL1_ID} \
   --memory 4096 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -79,7 +79,7 @@ qm create ${VM_WRK1_ID} \
   --memory 12288 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -97,7 +97,7 @@ qm create ${VM_WRK2_ID} \
   --memory 12288 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -146,7 +146,7 @@ qm create ${VM_CTL2_ID} \
   --memory 4096 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -164,7 +164,7 @@ qm create ${VM_WRK3_ID} \
   --memory 14336 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -182,7 +182,7 @@ qm create ${VM_WRK4_ID} \
   --memory 14336 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -231,7 +231,7 @@ qm create ${VM_CTL3_ID} \
   --memory 4096 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -249,7 +249,7 @@ qm create ${VM_WRK5_ID} \
   --memory 16384 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0
@@ -267,7 +267,7 @@ qm create ${VM_WRK6_ID} \
   --memory 16384 \
   --onboot no \
   --sockets 1 \
-  --cpu x86-64-v2-AES \
+  --cpu x86-64-v3 \
   --cores 6 \
   --boot "order=scsi0;ide2;net0" \
   --numa 0

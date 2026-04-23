@@ -209,3 +209,5 @@ __marimo__/
 out
 out.a
 out.b
+
+env-no-commit.sh

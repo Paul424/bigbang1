@@ -331,6 +331,31 @@ addons:
         trivy:
           gitHubToken: "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"
 
+  backstage:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: "kind-backstage"
+      client_secret: "J8bUA8JIsqTFc96XvghAXVuakIwkZzPn"
+    # Grafana secret wasn't sync'ed to backstage (by Kyverno) due to background controller not running
+    # postRenderers:
+    #   - kustomize:
+    #       patches:
+    #         - target:
+    #             kind: Deployment
+    #             name: release-name-backstage
+    #           patch: |-
+    #             - op: replace
+    #               path: /spec/template/spec/initContainers/0/env/2
+    #               value:
+    #                 name: GRAFANA_ADMIN
+    #                 value: admin
+    #             - op: replace
+    #               path: /spec/template/spec/initContainers/0/env/3
+    #               value:
+    #                 name: GRAFANA_PASS
+    #                 value: prom-operator
+
   authservice:
     enabled: true
 

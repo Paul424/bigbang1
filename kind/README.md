@@ -88,6 +88,7 @@ The services are exposed using type: LoadBalancer to the docker network which in
 
 ```
 172.18.0.6      keycloak.dev.bigbang.mil
+172.18.0.5      backstage.dev.bigbang.mil
 172.18.0.5      kiali.dev.bigbang.mil
 172.18.0.5      grafana.dev.bigbang.mil
 172.18.0.5      prometheus.dev.bigbang.mil

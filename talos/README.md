@@ -408,6 +408,7 @@ But you do need to provide a static DNS name mapping:
 192.168.50.253  ceph.dev.bigbang.mil
 192.168.50.252  keycloak.dev.bigbang.mil
 192.168.50.252  openldap.dev.bigbang.mil
+192.168.50.251  backstage.dev.bigbang.mil
 192.168.50.251  kiali.dev.bigbang.mil
 192.168.50.251  grafana.dev.bigbang.mil
 192.168.50.251  prometheus.dev.bigbang.mil

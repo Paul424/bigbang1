@@ -471,6 +471,7 @@
           "attributes": {}
         }
       ],
+      "kind-backstage": [],
       "kind-mattermost": [],
       "kind-kiali": [],
       "kind-grafana": [],
@@ -1162,6 +1163,67 @@
         "acr",
         "roles",
         "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "grafana",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "a6f3fc4e-1221-4e65-88a9-a99bdd65ad95",
+      "clientId": "kind-backstage",
+      "name": "Backstage",
+      "description": "",
+      "rootUrl": "https://backstage.dev.bigbang.mil",
+      "adminUrl": "https://backstage.dev.bigbang.mil",
+      "baseUrl": "/",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "J8bUA8JIsqTFc96XvghAXVuakIwkZzPn",
+      "redirectUris": [
+        "/api/auth/keycloak/handler/frame"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "logout.confirmation.enabled": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1776934397",
+        "backchannel.logout.session.required": "true",
+        "standard.token.exchange.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "groups",
         "basic",
         "email"
       ],
@@ -2676,12 +2738,12 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-property-mapper",
             "oidc-full-name-mapper",
-            "oidc-address-mapper",
             "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-property-mapper",
+            "oidc-usermodel-attribute-mapper",
             "saml-user-attribute-mapper",
+            "oidc-address-mapper",
             "saml-role-list-mapper"
           ]
         }
@@ -2753,14 +2815,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
             "saml-role-list-mapper",
+            "saml-user-attribute-mapper",
+            "saml-user-property-mapper",
             "oidc-full-name-mapper",
             "oidc-address-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
@@ -2829,29 +2891,29 @@
                 "membership.user.ldap.attribute": [
                   "uid"
                 ],
-                "membership.ldap.attribute": [
-                  "uniqueMember"
-                ],
                 "preserve.group.inheritance": [
                   "false"
+                ],
+                "membership.ldap.attribute": [
+                  "uniqueMember"
                 ],
                 "ignore.missing.groups": [
                   "false"
                 ],
-                "groups.dn": [
-                  "ou=groups,dc=example,dc=org"
-                ],
                 "memberof.ldap.attribute": [
                   "memberOf"
+                ],
+                "groups.dn": [
+                  "ou=groups,dc=example,dc=org"
                 ],
                 "group.object.classes": [
                   "groupOfUniqueNames"
                 ],
-                "drop.non.existing.groups.during.sync": [
-                  "false"
-                ],
                 "groups.path": [
                   "/roles"
+                ],
+                "drop.non.existing.groups.during.sync": [
+                  "false"
                 ]
               }
             },
@@ -2963,10 +3025,10 @@
                 "ldap.attribute": [
                   "givenName"
                 ],
-                "attribute.force.default": [
+                "is.mandatory.in.ldap": [
                   "true"
                 ],
-                "is.mandatory.in.ldap": [
+                "attribute.force.default": [
                   "true"
                 ],
                 "is.binary.attribute": [
@@ -3009,11 +3071,11 @@
           ]
         },
         "config": {
-          "pagination": [
-            "true"
-          ],
           "fullSyncPeriod": [
             "-1"
+          ],
+          "pagination": [
+            "true"
           ],
           "connectionTrace": [
             "false"
@@ -3021,11 +3083,11 @@
           "startTls": [
             "false"
           ],
-          "usersDn": [
-            "ou=users,dc=example,dc=org"
-          ],
           "connectionPooling": [
             "true"
+          ],
+          "usersDn": [
+            "ou=users,dc=example,dc=org"
           ],
           "cachePolicy": [
             "DEFAULT"

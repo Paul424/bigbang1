@@ -190,3 +190,6 @@ csi:
           cpu: 50m
         limits:
           memory: 1Gi
+
+# To allow creating a bucket using CRD ObjectBucketClaim with owner assignment
+obcAllowAdditionalConfigFields: "maxObjects,maxSize,bucketOwner"

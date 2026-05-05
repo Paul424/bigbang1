@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
 - helm-output.yaml
 - rook-ceph-mgr-dashboard.yaml
+- rook-ceph-dashboard-password.yaml
+- ceph-object-store-user-gitlab.yaml
 
 # patches:
 # - target:

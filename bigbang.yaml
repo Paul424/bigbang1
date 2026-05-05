@@ -179,6 +179,11 @@ kyvernoPolicies:
           names:
           - openldap-*
           - dev-openldap-*
+      - resources:
+          namespaces:
+          - gitlab
+          names:
+          - awscli*
     policies:
       restrict-image-registries:
         parameters:
@@ -236,7 +241,14 @@ neuvector:
                 - group: neuvector-viewers
                   global_role: reader
 
-tempo: {}
+tempo:
+  values:
+    upstream:
+      tempo:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
 
 prometheusOperatorCRDs: {}
 
@@ -289,6 +301,96 @@ twistlock:
 bbctl: {}
 
 addons:
+  gitlab:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: "kind-gitlab"
+      client_secret: "Il5XZjQIhl5XXNgv2hHuZvm2YO99sjc2"
+      # scopes:
+      #   - Gitlab
+
+      # -- Fill out the groups block below and populate with Keycloak groups according to your desired Gitlab membership requirements. The default groupsAttribute is "groups".
+      # Full documentation: https://docs.gitlab.com/ee/administration/auth/oidc.html?tab=Linux+package+%28Omnibus%29#configure-users-based-on-oidc-group-membership
+      # groups: []
+      #   groupsAttribute: ""
+      #   requiredGroups: []
+      #   externalGroups: []
+      #   auditorGroups: []
+      #   adminGroups: []
+
+    objectStorage:
+      type: "minio"  # sets path_style: true
+      endpoint: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local:80"
+      region: "us-east-1"
+      accessKey: "access"
+      accessSecret: "secret"
+      bucketPrefix: ""
+
+    # smtp:
+    #   # -- Passwords should be placed in an encrypted file. Example: environment-bb-secret.enc.yaml
+    #   # If a value is provided BigBang will create a k8s secret named gitlab-smtp-password in the gitlab namespace
+    #   password: ""
+
+    redis:
+      password: "password"
+
+    # -- Rails plain text secret to define. If empty (""), the gitlab charts will create the gitlab-rails-secret with randomized data.
+    # Read the following for more information on setting Gitlab rails secrets: https://docs.gitlab.com/charts/installation/secrets#gitlab-rails-secret
+    railsSecret: ""
+
+    values:
+      upstream:
+        upgradeCheck:
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
+
+        # Settings for the Let's Encrypt ACME Issuer
+
+        ## Configuration of Redis
+        ## https://docs.gitlab.com/charts/architecture/decisions#redis
+        ## https://docs.gitlab.com/charts/installation/deployment.html#redis
+
+        postgresql:
+          primary:
+            resources:
+              limits:
+                cpu: 500m
+                memory: 500Mi
+              requests:
+                cpu: 200m
+                memory: 500Mi
+        registry:
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1024Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+        gitlab:
+          sidekiq:
+            resources:
+              requests:
+                memory: 1G
+                cpu: 500m
+              limits:
+                memory: 3G
+                cpu: 1500m
+          gitaly:
+            resources:
+              requests:
+                cpu: 300m
+                memory: 256Mi
+              limits:
+                cpu: 400m
+                memory: 600Mi
+
   metricsServer:
     values:
       upstream:
@@ -332,7 +434,7 @@ addons:
           gitHubToken: "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"
 
   backstage:
-    enabled: true
+    enabled: false
     sso:
       enabled: true
       client_id: "kind-backstage"

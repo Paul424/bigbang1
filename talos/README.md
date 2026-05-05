@@ -7,19 +7,19 @@ Following is an (ad-hoc) manual to run bigbang on Proxmox/Talos
 ```
 HW:
   p1: i5(6vcpu)|256(nvme)|512(ssd)|32GB
-    ctl1: 192.168.50.180|BC:24:11:F7:7E:11|6vcpu|16GB(nvme)|4GB
-    wrk1: 192.168.50.183|BC:24:11:F7:7E:12|6vcpu|16GB(nvme)|240(ssd)|12GB(12288)
-    wrk2: 192.168.50.184|BC:24:11:F7:7E:13|6vcpu|16GB(nvme)|240(ssd)|12GB(12288)
+    ctl1: 192.168.50.180|BC:24:11:F7:7E:11|6vcpu|32GB(nvme)|8GB
+    wrk1: 192.168.50.183|BC:24:11:F7:7E:12|6vcpu|32GB(nvme)|240(ssd)|12GB(12288)
+    wrk2: 192.168.50.184|BC:24:11:F7:7E:13|6vcpu|32GB(nvme)|240(ssd)|12GB(12288)
 
   p2: i5(6vcpu)|256(nvme)|512(ssd)|40GB
-    ctl2: 192.168.50.181|BC:24:11:F7:7E:21|6vcpu|16GB(nvme)|4GB
-    wrk3: 192.168.50.185|BC:24:11:F7:7E:22|6vcpu|16GB(nvme)|240(ssd)|16GB(16384)
-    wrk4: 192.168.50.186|BC:24:11:F7:7E:23|6vcpu|16GB(nvme)|240(ssd)|16GB
+    ctl2: 192.168.50.181|BC:24:11:F7:7E:21|6vcpu|32GB(nvme)|8GB
+    wrk3: 192.168.50.185|BC:24:11:F7:7E:22|6vcpu|32GB(nvme)|240(ssd)|16GB(16384)
+    wrk4: 192.168.50.186|BC:24:11:F7:7E:23|6vcpu|32GB(nvme)|240(ssd)|16GB
 
   p3: i5(6vcpu)|256(nvme)|512(ssd)|40GB
-    ctl3: 192.168.50.182|BC:24:11:F7:7E:31|6vcpu|16GB(nvme)|4GB
-    wrk5: 192.168.50.187|BC:24:11:F7:7E:32|6vcpu|16GB(nvme)|240(ssd)|16GB
-    wrk6: 192.168.50.188|BC:24:11:F7:7E:33|6vcpu|16GB(nvme)|240(ssd)|16GB
+    ctl3: 192.168.50.182|BC:24:11:F7:7E:31|6vcpu|32GB(nvme)|8GB
+    wrk5: 192.168.50.187|BC:24:11:F7:7E:32|6vcpu|32GB(nvme)|240(ssd)|16GB
+    wrk6: 192.168.50.188|BC:24:11:F7:7E:33|6vcpu|32GB(nvme)|240(ssd)|16GB
 ```
 ### DHCP
 
@@ -43,9 +43,9 @@ export VM_CTL1_ID=201
 export VM_WRK1_ID=202
 export VM_WRK2_ID=203
 
-pvesm alloc local-lvm $VM_CTL1_ID vm-${VM_CTL1_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK1_ID vm-${VM_WRK1_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK2_ID vm-${VM_WRK2_ID}-disk-0 16G
+pvesm alloc local-lvm $VM_CTL1_ID vm-${VM_CTL1_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK1_ID vm-${VM_WRK1_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK2_ID vm-${VM_WRK2_ID}-disk-0 32G
 pvesm alloc data $VM_WRK1_ID vm-${VM_WRK1_ID}-disk-1 240G
 pvesm alloc data $VM_WRK2_ID vm-${VM_WRK2_ID}-disk-1 240G
 
@@ -54,11 +54,11 @@ qm create ${VM_CTL1_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_CTL1_NAME} \
   --net0 virtio=BC:24:11:F7:7E:11,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_CTL1_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_CTL1_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
   --machine q35 \
-  --memory 4096 \
+  --memory 8192 \
   --onboot no \
   --sockets 1 \
   --cpu x86-64-v3 \
@@ -71,7 +71,7 @@ qm create ${VM_WRK1_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK1_NAME} \
   --net0 virtio=BC:24:11:F7:7E:12,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK1_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK1_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK1_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -89,7 +89,7 @@ qm create ${VM_WRK2_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK2_NAME} \
   --net0 virtio=BC:24:11:F7:7E:13,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK2_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK2_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK2_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -128,9 +128,9 @@ export VM_CTL2_ID=204
 export VM_WRK3_ID=205
 export VM_WRK4_ID=206
 
-pvesm alloc local-lvm $VM_CTL2_ID vm-${VM_CTL2_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK3_ID vm-${VM_WRK3_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK4_ID vm-${VM_WRK4_ID}-disk-0 16G
+pvesm alloc local-lvm $VM_CTL2_ID vm-${VM_CTL2_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK3_ID vm-${VM_WRK3_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK4_ID vm-${VM_WRK4_ID}-disk-0 32G
 pvesm alloc data $VM_WRK3_ID vm-${VM_WRK3_ID}-disk-1 240G
 pvesm alloc data $VM_WRK4_ID vm-${VM_WRK4_ID}-disk-1 240G
 
@@ -139,11 +139,11 @@ qm create ${VM_CTL2_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_CTL2_NAME} \
   --net0 virtio=BC:24:11:F7:7E:21,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_CTL2_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_CTL2_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
   --machine q35 \
-  --memory 4096 \
+  --memory 8192 \
   --onboot no \
   --sockets 1 \
   --cpu x86-64-v3 \
@@ -156,7 +156,7 @@ qm create ${VM_WRK3_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK3_NAME} \
   --net0 virtio=BC:24:11:F7:7E:22,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK3_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK3_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK3_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -174,7 +174,7 @@ qm create ${VM_WRK4_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK4_NAME} \
   --net0 virtio=BC:24:11:F7:7E:23,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK4_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK4_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK4_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -213,9 +213,9 @@ export VM_CTL3_ID=207
 export VM_WRK5_ID=208
 export VM_WRK6_ID=209
 
-pvesm alloc local-lvm $VM_CTL3_ID vm-${VM_CTL3_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK5_ID vm-${VM_WRK5_ID}-disk-0 16G
-pvesm alloc local-lvm $VM_WRK6_ID vm-${VM_WRK6_ID}-disk-0 16G
+pvesm alloc local-lvm $VM_CTL3_ID vm-${VM_CTL3_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK5_ID vm-${VM_WRK5_ID}-disk-0 32G
+pvesm alloc local-lvm $VM_WRK6_ID vm-${VM_WRK6_ID}-disk-0 32G
 pvesm alloc data $VM_WRK5_ID vm-${VM_WRK5_ID}-disk-1 240G
 pvesm alloc data $VM_WRK6_ID vm-${VM_WRK6_ID}-disk-1 240G
 
@@ -224,11 +224,11 @@ qm create ${VM_CTL3_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_CTL3_NAME} \
   --net0 virtio=BC:24:11:F7:7E:31,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_CTL3_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_CTL3_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
   --machine q35 \
-  --memory 4096 \
+  --memory 8192 \
   --onboot no \
   --sockets 1 \
   --cpu x86-64-v3 \
@@ -241,7 +241,7 @@ qm create ${VM_WRK5_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK5_NAME} \
   --net0 virtio=BC:24:11:F7:7E:32,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK5_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK5_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK5_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -259,7 +259,7 @@ qm create ${VM_WRK6_ID} \
   --ide2 local:iso/metal-amd64.iso,media=cdrom,size=308556K \
   --name ${VM_WRK6_NAME} \
   --net0 virtio=BC:24:11:F7:7E:33,bridge=${BRIDGE},firewall=1 \
-  --scsi0 local-lvm:vm-${VM_WRK6_ID}-disk-0,size=16G \
+  --scsi0 local-lvm:vm-${VM_WRK6_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK6_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -393,7 +393,6 @@ kubectl get ipaddresspool -n metallb-system
 ```
 
 ## Decommission a node
-
 ```
 talosctl -n $WRK3_IP reset
 ```
@@ -408,6 +407,9 @@ But you do need to provide a static DNS name mapping:
 192.168.50.253  ceph.dev.bigbang.mil
 192.168.50.252  keycloak.dev.bigbang.mil
 192.168.50.252  openldap.dev.bigbang.mil
+192.168.50.251  gitlab.dev.bigbang.mil
+192.168.50.251  registry.dev.bigbang.mil
+192.168.50.251  harbor.dev.bigbang.mil
 192.168.50.251  backstage.dev.bigbang.mil
 192.168.50.251  kiali.dev.bigbang.mil
 192.168.50.251  grafana.dev.bigbang.mil

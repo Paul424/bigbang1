@@ -1,3 +1,5 @@
+# https://rook.io/docs/rook/latest/CRDs/Object-Storage/ceph-object-store-user-crd/
+# https://github.com/rook/rook/blob/master/Documentation/Storage-Configuration/Object-Storage-RGW/ceph-object-bucket-claim.md
 ---
 apiVersion: v1
 kind: Secret

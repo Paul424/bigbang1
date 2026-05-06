@@ -123,6 +123,7 @@ SSO is preconfigured using Keycloak with following users:
 8. [Headlamp](https://headlamp.dev.bigbang.mil/)
 9. [Twistlock](https://twistlock.dev.bigbang.mil/)
 10. [Neuvector](https://neuvector.dev.bigbang.mil/)
+11. [Gitlab](https://gitlab.dev.bigbang.mil/)
 
 Talos specific:
 

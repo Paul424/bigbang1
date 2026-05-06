@@ -393,9 +393,72 @@ kubectl get ipaddresspool -n metallb-system
 ```
 
 ## Decommission a node
+
+Decommissioning a node on the talos setup (/w Ceph running on workers) is not trivial, follow these steps for safe decommissioning a node.
+
+1. Check Ceph cluster health
+
+Within the ceph toolbox pod, run following:
 ```
-talosctl -n $WRK3_IP reset
+$ ceph --status
+cluster:
+  health: HEALTH_OK
 ```
+
+2. Take OSD's for the node out one-by-one
+
+Use the Ceph dashboard to identify the OSD's running on the node and take them out 1-by-1:
+```
+$ ceph osd out osd.<X>
+marked out osd.<X>.
+```
+
+3. Wait untill all PG's are `active+clean`
+```
+$ ceph --watch
+  data:
+    pgs:     489 active+clean
+```
+
+4. Drain and stop the node using Talos
+
+```
+$ talosctl -n $WRK<X>_IP reset
+watching nodes: [192.168.50.188]
+    * 192.168.50.188: events check condition met
+```
+
+5. Remove the node from Kubernetes
+
+```
+$ kubectl delete node talos-wrk<X>
+node "talos-wrk<X>" deleted
+```
+
+6. Remove the node from Proxmox
+
+Run following in a shell on the host
+```
+root@p3:~# qm destroy ${VM_WRK<X>_ID}
+  Logical volume "vm-209-disk-0" successfully removed.
+  Logical volume "vm-209-disk-1" successfully removed.
+```
+
+7. Purge the OSD
+
+On the Ceph toolbox remove the OSD from the administration.
+```
+$ ceph osd purge <X> --yes-i-really-mean-it
+purged osd.<X>
+```
+
+## Commission a node
+
+Just create a new node (on Proxmox) and boot into Talos. Then push the config to tell it to join the cluster. After some minutes the node will popup in Kubernetes and the CNI and storage services will be deployed to the node.
+
+The rook operator will discover the new (raw) volumes and initialize an OSD, as soon as it's `in` the cluster will rebalance.
+
+Check the storage cluster health for all PG's to become healthy `active+clean`
 
 # Network Access
 

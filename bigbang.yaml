@@ -629,6 +629,14 @@ packages:
     configMaps: {}
     # values: {}
 
+  # Crossplane is a community addition and has been abandoned over a year now, so for now don't bother trying.
+  crossplane:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/big-bang/product/community/crossplane.git
+      tag: 1.20.0-bb.0
+      path: chart
+    values: {}
 
   # freeipa:
   #   enabled: true

@@ -460,6 +460,16 @@ The rook operator will discover the new (raw) volumes and initialize an OSD, as 
 
 Check the storage cluster health for all PG's to become healthy `active+clean`
 
+## Upgrade Talos
+
+```
+ceph osd out osd.3
+ceph --watch
+talosctl upgrade --stage --nodes $WRK6_IP --image ghcr.io/siderolabs/installer:v1.13.0
+ceph --watch
+ceph osd in osd.3
+```
+
 # Network Access
 
 For a talos setup the endpoints are accessible to the local network, so no tunnels are required.

@@ -21,6 +21,7 @@ We are using the bigbang quickstart script mostly but since we want to use our o
 - sops
 - jq
 - yq
+- sops
 
 ## Accounts
 
@@ -41,6 +42,53 @@ When using Talos, see [Talos guidelines](./talos/README.md)
 # Bootstrap bigbang
 
 Once the infrastructure is in place (meaning you have a container platform running on either kind or talos /w a working .kube/config and also there is support for DNS, storage and load-balancing), then you can proceed to bootstrap bigbang.
+
+## Initialize SOPS
+
+See [Generate SOPS (GPG) key](https://fluxcd.io/flux/guides/mozilla-sops/#generating-a-gpg-key) how to generate a SOPS GPG key-pair which is used to encrypt secrets locally and decrypt on-cluster.
+
+Example:
+```
+export KEY_NAME="dev.bigbang.mil"
+export KEY_COMMENT="flux secrets"
+
+gpg --batch --full-generate-key <<EOF
+%no-protection
+Key-Type: 1
+Key-Length: 4096
+Subkey-Type: 1
+Subkey-Length: 4096
+Expire-Date: 0
+Name-Comment: ${KEY_COMMENT}
+Name-Real: ${KEY_NAME}
+EOF
+
+# List the key
+gpg --list-secret-keys "${KEY_NAME}"
+gpg: checking the trustdb
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+sec   rsa4096 2026-05-07 [SCEAR]
+      34A9C8BD30F32BD9A57F75B5CCB51805C7DD7D1D
+uid           [ultimate] dev.bigbang.mil (flux secrets)
+ssb   rsa4096 2026-05-07 [SEA]
+
+# Capture the fingerprint
+export KEY_FP=34A9C8BD30F32BD9A57F75B5CCB51805C7DD7D1D
+
+# Set the finger-print in the .sops.yaml config.
+sed -i "s/pgp: .*/pgp: ${KEY_FP}/" .sops.yaml
+```
+
+## Encrupt secrets
+
+Use SOPS to encrypt the secrets in base and environments.
+
+```
+sops --encrypt environments/base/common-bb-secret.yaml > environments/base/common-bb-secret.enc.yaml
+sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/secrets/dev-bb-secret.enc.yaml
+```
+
 
 ## GitOps
 

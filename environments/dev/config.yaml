@@ -1,0 +1,621 @@
+domain: dev.bigbang.mil
+
+flux: {}
+
+networkPolicies: {}
+
+istioCNI: {}
+istioCRDs: {}
+istiod:
+  values:
+    hardened:
+      # Enable istio hardened so we generate AuthorizationPolicies for the components
+      enabled: true
+    upstream:
+      meshConfig:
+        defaultConfig:
+          proxyMetadata:
+            SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
+
+istioGateway:
+  values:
+    gateways:
+      public:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.251
+      passthrough:
+        upstream:
+          service:
+            loadBalancerIP: 192.168.50.252
+
+kiali:
+  sso:
+    enabled: true
+    client_id: kind-kiali
+    client_secret: pevmeCXwQRaqP2Ca2IC0BWsDu0oZdCRy
+  # values:
+  #   upstream:
+  #     debug:
+  #       enabled: true
+  #       verbosity: "9"
+
+gatekeeper: {}
+
+kyverno: {}
+
+# Overrides / Confs for this specific deployment
+kyvernoPolicies:
+  values:
+    exclude:
+      any:
+      # Kind cluster have a helper-pod-create-pvc-*** in namespace local-path-storage to setup storage backed by the host
+      - resources:
+          namespaces:
+          - local-path-storage
+          names:
+          - helper-pod-create-pvc-*
+      # rook/ceph on talos
+      - resources:
+          namespaces:
+          - rook-ceph
+          names:
+          - "*"
+      # metallb on talos
+      - resources:
+          namespaces:
+          - metallb-system
+          names:
+          - "*"
+      # bind9 on talos
+      - resources:
+          namespaces:
+          - bind9
+          names:
+          - "*"
+      # Calico
+      - resources:
+          namespaces:
+          - calico-system
+          names:
+          - "*"
+      # control-plane (/w cilium) on talos
+      - resources:
+          namespaces:
+          - kube-system
+          names:
+          - cilium*
+          - kube*
+      - resources:
+          namespaces:
+          - openldap
+          names:
+          - openldap-*
+          - dev-openldap-*
+      - resources:
+          namespaces:
+          - gitlab
+          names:
+          - awscli*
+    policies:
+      restrict-image-registries:
+        parameters:
+          allow:
+          # - registry1.dso.mil
+          # - registry.dso.mil
+          - nicolaka  # netshoot debug image
+          # - ghcr.io/kubelauncher/openldap  # openldap
+          # - jpgouin/openldap  # openldap
+          # - bitnami/openldap  # openldap
+          # - debian  # openldap
+      restrict-host-path-mount-pv:
+        parameters:
+          # Kind cluster is using local-path-provisioner configured to map volumes to /var/local-path-provisioner
+          allow:
+          - /var/local-path-provisioner
+          - /var/local-path-provisioner/*
+      require-non-root-user:
+        exclude:
+          any:
+          - resources:
+              namespaces:
+              - openldap
+              names:
+              - openldap-*
+
+kyvernoReporter: {}
+
+elasticsearchKibana: {}
+eckOperator: {}
+fluentbit: {}
+alloy: {}
+loki: {}
+
+# Probably better for now to switch off neuvector completely because multiple issues here and we could do without the function.
+neuvector:
+  enabled: false
+  sso:
+    enabled: true
+    client_id: kind-neuvector
+    client_secret: qrDDs3fVMTasvKGgw3MiY7FqKOHxcWxY
+    default_role: null
+  values:
+    upstream:
+      controller:
+        secret:
+          data:
+            oidcinitcfg.yaml:
+              group_claim: groups
+              group_mapped_roles:
+                - group: neuvector-admins 
+                  global_role: admin 
+                - group: neuvector-developers
+                  global_role: ciops
+                - group: neuvector-viewers
+                  global_role: reader
+
+tempo:
+  values:
+    upstream:
+      tempo:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+
+prometheusOperatorCRDs: {}
+
+monitoring:
+  sso:
+    enabled: true
+    prometheus:
+      client_id: kind-prometheus
+      client_secret: UDNNtdoy2tNkjxU0rd1b1wfOi2NbPvMZ
+    alertmanager:
+      client_id: "kind-alertmanager"
+      client_secret: "o4TdJfYuom979hGDrcpXdy7lrVZg4GTm"
+  # postRenderers:
+  # # Allow api-server access /w Cilium (not supporting ipBlocks)
+  # - kustomize: *patch-nwpol-to-kube-api
+
+grafana:
+  sso:
+    enabled: true
+    grafana:
+      client_id: kind-grafana
+      client_secret: W3PEfhtMZHV3qEjNx81pGzSKdb993bXC
+      scopes: "openid grafana"
+  values:
+    upstream:
+      grafana.ini:
+        auth.generic_oauth:
+          # Map Keycloak roles (show up as multi-value groups claim) to Grafana roles (GrafanaAdmin, Admin, Editor, Viewer)
+          role_attribute_path: contains(groups[*], 'monitoring-admins') && 'GrafanaAdmin' || contains(groups[*], 'monitoring-developers') && 'Editor' || 'Viewer'
+          # Allow users to be assigned the Grafana admin role
+          allow_assign_grafana_admin: true
+          # User (group) to Organisation mapping
+          org_attribute_path: teams[?starts_with(@, '/teams')]
+          # Notice the named orgs need to be precreated in Grafana
+          org_mapping: "/teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow"
+
+twistlock:
+  enabled: false
+  sso:
+    enabled: true
+    client_id: kind-twistlock
+  # values:
+  #   console:
+  #     license: ""
+  #     additionalUsers:
+  #       - username: "fred"
+  #         role: "devOps"
+  #         authType: "saml"
+
+bbctl: {}
+
+addons:
+  gitlab:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: "kind-gitlab"
+      client_secret: "Il5XZjQIhl5XXNgv2hHuZvm2YO99sjc2"
+    objectStorage:
+      type: "minio"  # sets path_style: true
+      endpoint: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local:80"
+      region: "us-east-1"
+      accessKey: "access"
+      accessSecret: "secret"
+      bucketPrefix: ""
+    redis:
+      password: "password"
+    railsSecret: ""
+    values:
+      upstream:
+        upgradeCheck:
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
+        postgresql:
+          primary:
+            resources:
+              limits:
+                cpu: 500m
+                memory: 500Mi
+              requests:
+                cpu: 200m
+                memory: 500Mi
+        registry:
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1024Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+        gitlab:
+          sidekiq:
+            resources:
+              requests:
+                memory: 1G
+                cpu: 500m
+              limits:
+                memory: 3G
+                cpu: 1500m
+          gitaly:
+            resources:
+              requests:
+                cpu: 300m
+                memory: 256Mi
+              limits:
+                cpu: 400m
+                memory: 600Mi
+
+  gitlabRunner:
+    enabled: true
+
+  metricsServer:
+    values:
+      upstream:
+        args:
+        # Fixes on kind: Failed to scrape node" err="Get \"https://172.18.0.3:10250/metrics/resource\": tls: failed to verify certificate: x509: cannot  │lida ││ validate certificate for 172.18.0.3 because it doesn't contain any IP SANs" node="bb1-control-plane" 
+        - --kubelet-insecure-tls
+
+  harbor:
+    enabled: true
+    values:
+      istio:
+        serviceEntries:
+          custom:
+          - name: trivy-service-entry
+            spec:
+              hosts:
+              - ghcr.io
+              - mirror.gcr.io
+              location: MESH_EXTERNAL
+              ports:
+              - number: 443
+                protocol: TLS
+                name: https
+              resolution: DNS
+      networkPolicies:
+        additionalPolicies:
+        - name: allow-egress-from-trivy-to-any-ns-any-pod-any-port
+          spec:
+            podSelector: {}
+            policyTypes:
+            - Egress
+            egress:
+            - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  except:
+                  - 169.254.169.254/32
+      upstream:
+        # We should configure trivy to use the harbor oci registry and in the readme provide upload instructions
+        trivy:
+          gitHubToken: "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"
+
+  backstage:
+    enabled: false
+    sso:
+      enabled: true
+      client_id: "kind-backstage"
+      client_secret: "J8bUA8JIsqTFc96XvghAXVuakIwkZzPn"
+    # Grafana secret wasn't sync'ed to backstage (by Kyverno) due to background controller not running
+    # postRenderers:
+    #   - kustomize:
+    #       patches:
+    #         - target:
+    #             kind: Deployment
+    #             name: release-name-backstage
+    #           patch: |-
+    #             - op: replace
+    #               path: /spec/template/spec/initContainers/0/env/2
+    #               value:
+    #                 name: GRAFANA_ADMIN
+    #                 value: admin
+    #             - op: replace
+    #               path: /spec/template/spec/initContainers/0/env/3
+    #               value:
+    #                 name: GRAFANA_PASS
+    #                 value: prom-operator
+
+  authservice:
+    enabled: true
+
+  headlamp:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: kind-headlamp
+      # Headlamp uses PKCE (public client) - no client_secret required
+    values:
+      upstream:
+        env:
+          - name: HEADLAMP_CONFIG_LOG_LEVEL
+            value: "debug"
+        config:
+          oidc:
+            scopes: "openid,email,profile,groups"
+      
+      bigbang:
+        rbac:
+          enabled: true
+          clusterRoles:
+            - name: headlamp-viewer
+              create: true
+              rules:
+                - apiGroups: [""]
+                  resources: ["pods", "services", "configmaps", "namespaces"]
+                  verbs: ["get", "list", "watch"]
+                - apiGroups: ["apps"]
+                  resources:
+                    - deployments
+                    - daemonsets
+                    - replicasets
+                    - statefulsets
+                  verbs: ["get", "list", "watch"]
+          #   # See issue https://repo1.dso.mil/big-bang/product/packages/headlamp/-/issues/81 but since fred is an admin (existing role it's not an issue for now)
+          #   - name: headlamp-developer
+          #     create: true
+          #     rules:
+          #       - apiGroups: [""]
+          #         resources: 
+          #           - pods
+          #           - pods/log
+          #           - services
+          #           - configmaps
+          #           - events
+          #           - namespaces
+          #           - nodes
+          #           - persistentvolumeclaims
+          #           - persistentvolumes                  
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["apps"]
+          #         resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["batch"]
+          #         resources:
+          #           - jobs
+          #           - cronjobs
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+          #       - apiGroups: ["networking.k8s.io"]
+          #         resources:
+          #           - ingresses
+          #           - networkpolicies
+          #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+          clusterRoleBindings:
+            - name: headlamp-viewers-binding
+              roleRef: headlamp-viewer
+              subjects:
+                - kind: Group
+                  name: "headlamp-viewers"
+                  apiGroup: rbac.authorization.k8s.io
+            # - name: headlamp-developers-binding
+            #   roleRef: headlamp-developer
+            #   subjects:
+            #     - kind: Group
+            #       name: "headlamp-developers"
+            #       apiGroup: rbac.authorization.k8s.io
+            - name: headlamp-admin-binding
+              roleRef: cluster-admin
+              subjects:
+                - kind: Group
+                  name: "headlamp-admins"
+                  apiGroup: rbac.authorization.k8s.io
+
+  keycloak:
+    enabled: true
+    values:
+      networkPolicies:
+        egress:
+          from:
+            keycloak:
+              to:
+                k8s:
+                  openldap/*:1389: true
+      upstream:
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
+    #     args:
+    #       - "start"
+    #       - "--debug"
+    #       - "--verbose"
+        #   - "--import <path>"
+
+  minio:
+    enabled: false
+
+  mattermost:
+    enabled: false
+    sso:
+      enabled: true
+      client_id: kind-mattermost
+      client_secret: "Mu5htteQAnFv1hEwoM9p1qgi38dkXsSz"
+    values:
+      resources:
+        limits:
+          cpu: 50m
+          memory: 4Gi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+
+packages:
+  openldap:
+    enabled: true
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/openldap.git
+      path: "./manifests"
+      branch: main
+    kustomize: true
+    passBigBangValues: false
+    wrapper:
+      enabled: true
+      postRenderers: []
+    flux:
+      timeout: 5m
+    postRenderers: []
+    dependsOn: []
+    istio:
+      hosts:
+        - names:
+            - openldap
+          gateways:
+            - istio-gateway/passthrough-ingressgateway
+          destination:
+            protocol: tcp
+            service: openldap
+            port: 1389
+      hardened:
+        customAuthorizationPolicies:
+          - name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
+            enabled: true
+            spec:
+              action: ALLOW
+              rules:
+              - from:
+                - source:
+                    principals:
+                    - cluster.local/ns/keycloak/sa/keycloak-keycloak
+                to:
+                - operation:
+                    ports:
+                    - "1389"
+              selector:
+                matchLabels:
+                  app: openldap
+    monitor: {}
+    network:
+      additionalPolicies:
+        - name: allow-ingress-to-openldap-1389-from-ns-keycloak
+          spec:
+            ingress:
+            - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: keycloak
+                podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: keycloak
+              ports:
+              - port: 1389
+                protocol: TCP
+            podSelector:
+              matchLabels:
+                app: openldap
+            policyTypes:
+            - Ingress
+    secrets: {}
+    configMaps: {}
+    # values: {}
+
+  # Crossplane is a community addition and has been abandoned over a year now, so for now don't bother trying.
+  crossplane:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/big-bang/product/community/crossplane.git
+      tag: 1.20.0-bb.0
+      path: chart
+    values: {}
+
+  # freeipa:
+  #   enabled: true
+  #   sourceType: "git"
+  #   git:
+  #     repo: https://github.com/Paul424/freeipa.git
+  #     path: "./manifests"
+  #     branch: main
+  #   kustomize: true
+  #   passBigBangValues: false
+  #   wrapper:
+  #     enabled: true
+  #     postRenderers: []
+  #   flux:
+  #     timeout: 5m
+  #   postRenderers: []
+  #   dependsOn: []
+  #   # istio:
+  #   #   hosts:
+  #   #     - names:
+  #   #         - freeipa
+  #   #       gateways:
+  #   #         - istio-gateway/passthrough-ingressgateway
+  #   #       destination:
+  #   #         protocol: tcp
+  #   #         service: openldap
+  #   #         port: 1389
+  #     # hardened:
+  #     #   customAuthorizationPolicies:
+  #     #     - name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
+  #     #       enabled: true
+  #     #       spec:
+  #     #         action: ALLOW
+  #     #         rules:
+  #     #         - from:
+  #     #           - source:
+  #     #               principals:
+  #     #               - cluster.local/ns/keycloak/sa/keycloak-keycloak
+  #     #           to:
+  #     #           - operation:
+  #     #               ports:
+  #     #               - "1389"
+  #     #         selector:
+  #     #           matchLabels:
+  #     #             app: openldap
+  #   monitor: {}
+  #   # network:
+  #   #   additionalPolicies:
+  #   #     - name: allow-ingress-to-openldap-1389-from-ns-keycloak
+  #   #       spec:
+  #   #         ingress:
+  #   #         - from:
+  #   #           - namespaceSelector:
+  #   #               matchLabels:
+  #   #                 kubernetes.io/metadata.name: keycloak
+  #   #             podSelector:
+  #   #               matchLabels:
+  #   #                 app.kubernetes.io/name: keycloak
+  #   #           ports:
+  #   #           - port: 1389
+  #   #             protocol: TCP
+  #   #         podSelector:
+  #   #           matchLabels:
+  #   #             app: openldap
+  #   #         policyTypes:
+  #   #         - Ingress
+  #   secrets: {}
+  #   configMaps: {}
+  #   # values: {}

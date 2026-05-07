@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+  - behavior: merge
+    files:
+      - values.yaml=config.yaml
+    name: common
+
+resources:
+  - https://repo1.dso.mil/platform-one/big-bang/bigbang.git/base?ref=3.22.1  # Allow to upgrade to 3.23.0
+  - flux-components.yaml
+
+patches:
+  - path: common-bb-secret.enc.yaml

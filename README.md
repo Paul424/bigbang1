@@ -80,14 +80,41 @@ export KEY_FP=34A9C8BD30F32BD9A57F75B5CCB51805C7DD7D1D
 sed -i "s/pgp: .*/pgp: ${KEY_FP}/" .sops.yaml
 ```
 
-## Encrupt secrets
+## Encrypt secrets
 
 Use SOPS to encrypt the secrets in base and environments.
-
 ```
 sops --encrypt environments/base/common-bb-secret.yaml > environments/base/common-bb-secret.enc.yaml
 sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/secrets/dev-bb-secret.enc.yaml
 ```
+
+## Bootstrap flux
+
+Bootstrap flux (one-time-only) using the upstream.
+```
+git clone https://repo1.dso.mil/big-bang/bigbang.git ./upstream/bigbang
+./upstream/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+```
+
+## Bootstrap secrets
+
+```
+# SOPS key
+kubectl create ns bigbang
+gpg --export-secret-key --armor "${KEY_FP}" | kubectl create secret generic sops-gpg -n bigbang --from-file=bigbangkey.asc=/dev/stdin
+
+# Git (private) repo credentials
+kubectl create secret generic private-git -n bigbang \
+  --from-literal=username=$REGISTRY_UPSTREAM_USERNAME \
+  --from-literal=password=$REGISTRY_UPSTREAM_PAT
+```
+
+## Deploy the environment
+
+```
+kubectl apply -f environments/dev/bigbang.yaml
+```
+
 
 
 ## GitOps

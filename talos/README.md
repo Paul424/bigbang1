@@ -31,7 +31,7 @@ Assign fixed addresses to the hosts and vm's
 
 ## Proxmox
 
-Shell into the proxmox node (one-by-one) using the gui and create the vm's
+Shell into the proxmox node (one-by-one) using the gui and create the vm's using a preloaded [image from talos](https://factory.talos.dev/).
 
 ### Host P1
 ```
@@ -42,6 +42,13 @@ export VM_WRK2_NAME=bb9-wrk2
 export VM_CTL1_ID=201
 export VM_WRK1_ID=202
 export VM_WRK2_ID=203
+
+qm stop ${VM_CTL1_ID}
+qm destroy ${VM_CTL1_ID}
+qm stop ${VM_WRK1_ID}
+qm destroy ${VM_WRK1_ID}
+qm stop ${VM_WRK2_ID}
+qm destroy ${VM_WRK2_ID}
 
 pvesm alloc local-lvm $VM_CTL1_ID vm-${VM_CTL1_ID}-disk-0 32G
 pvesm alloc local-lvm $VM_WRK1_ID vm-${VM_WRK1_ID}-disk-0 32G
@@ -109,13 +116,6 @@ qm start ${VM_WRK2_ID}
 qm agent ${VM_CTL1_ID} network-get-interfaces
 qm agent ${VM_WRK1_ID} network-get-interfaces
 qm agent ${VM_WRK2_ID} network-get-interfaces
-<...>
-qm stop ${VM_CTL1_ID}
-qm destroy ${VM_CTL1_ID}
-qm stop ${VM_WRK1_ID}
-qm destroy ${VM_WRK1_ID}
-qm stop ${VM_WRK2_ID}
-qm destroy ${VM_WRK2_ID}
 ```
 
 ### Host P2
@@ -127,6 +127,13 @@ export VM_WRK4_NAME=bb9-wrk4
 export VM_CTL2_ID=204
 export VM_WRK3_ID=205
 export VM_WRK4_ID=206
+
+qm stop ${VM_CTL2_ID}
+qm destroy ${VM_CTL2_ID}
+qm stop ${VM_WRK3_ID}
+qm destroy ${VM_WRK3_ID}
+qm stop ${VM_WRK4_ID}
+qm destroy ${VM_WRK4_ID}
 
 pvesm alloc local-lvm $VM_CTL2_ID vm-${VM_CTL2_ID}-disk-0 32G
 pvesm alloc local-lvm $VM_WRK3_ID vm-${VM_WRK3_ID}-disk-0 32G
@@ -194,13 +201,6 @@ qm start ${VM_WRK4_ID}
 qm agent ${VM_CTL2_ID} network-get-interfaces
 qm agent ${VM_WRK3_ID} network-get-interfaces
 qm agent ${VM_WRK4_ID} network-get-interfaces
-<...>
-qm stop ${VM_CTL2_ID}
-qm destroy ${VM_CTL2_ID}
-qm stop ${VM_WRK3_ID}
-qm destroy ${VM_WRK3_ID}
-qm stop ${VM_WRK4_ID}
-qm destroy ${VM_WRK4_ID}
 ```
 
 ### Host P3
@@ -212,6 +212,13 @@ export VM_WRK6_NAME=bb9-wrk6
 export VM_CTL3_ID=207
 export VM_WRK5_ID=208
 export VM_WRK6_ID=209
+
+qm stop ${VM_CTL3_ID}
+qm destroy ${VM_CTL3_ID}
+qm stop ${VM_WRK5_ID}
+qm destroy ${VM_WRK5_ID}
+qm stop ${VM_WRK6_ID}
+qm destroy ${VM_WRK6_ID}
 
 pvesm alloc local-lvm $VM_CTL3_ID vm-${VM_CTL3_ID}-disk-0 32G
 pvesm alloc local-lvm $VM_WRK5_ID vm-${VM_WRK5_ID}-disk-0 32G
@@ -279,13 +286,6 @@ qm start ${VM_WRK6_ID}
 qm agent ${VM_CTL3_ID} network-get-interfaces
 qm agent ${VM_WRK5_ID} network-get-interfaces
 qm agent ${VM_WRK6_ID} network-get-interfaces
-<...>
-qm stop ${VM_CTL3_ID}
-qm destroy ${VM_CTL3_ID}
-qm stop ${VM_WRK5_ID}
-qm destroy ${VM_WRK5_ID}
-qm stop ${VM_WRK6_ID}
-qm destroy ${VM_WRK6_ID}
 ```
 
 ## Bootstrap Talos (Kubernetes)

@@ -227,8 +227,8 @@ addons:
       accessKey: "access"
       accessSecret: "secret"
       bucketPrefix: ""
-    redis:
-      password: "password"
+    # redis:
+    #   password: "password"
     railsSecret: ""
     values:
       upstream:

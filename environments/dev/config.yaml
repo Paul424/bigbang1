@@ -509,7 +509,7 @@ packages:
       timeout: 5m
     # postRenderers: []
     dependsOn:
-      - metallb
+      - name: metallb
     # istio: {}
     # monitor: {}
     # secrets: {}

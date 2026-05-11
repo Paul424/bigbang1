@@ -473,13 +473,13 @@ addons:
           memory: 128Mi
 
 packages:
-  calico-crds:
+  metallb:
     enabled: true
     sourceType: "helmRepo"
     helmRepo:
-      repoName: calico
-      chartName: projectcalico.org.v3
-      tag: v3.32.0
+      repoName: metallb
+      chartName: metallb
+      tag: v0.15.3
     # passBigBangValues: false
     # wrapper:
     #   enabled: false
@@ -493,6 +493,34 @@ packages:
     # secrets: {}
     # configMaps: {}
     values: {}
+  
+  metallb-config:
+    enabled: true
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: metallb-config
+      chartName: metallb-config
+      tag: main
+    # passBigBangValues: false
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    dependsOn:
+      - metallb
+    # istio: {}
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      defaultAddressPool:
+        enabled: true
+        addresses:
+          - 192.168.50.250-192.168.50.253
+      defaultL2Advertisement:
+        enabled: true
 
   # metallb (use a wrapper chart to add L2 configs; and to either deploy before the webhooks or wait for the controllers before applying the L2 configs)
   # volgens mij kan het met een helm hook postinstall (ensure controller is running) icm een wrapper/subchart

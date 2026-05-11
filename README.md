@@ -45,75 +45,41 @@ Once the infrastructure is in place (meaning you have a container platform runni
 
 ## Initialize SOPS
 
-See [Generate SOPS (GPG) key](https://fluxcd.io/flux/guides/mozilla-sops/#generating-a-gpg-key) how to generate a SOPS GPG key-pair which is used to encrypt secrets locally and decrypt on-cluster.
+A SOPS / GPG key must be generated to encrypt secrets.
 
-Example:
 ```
-export KEY_NAME="dev.bigbang.mil"
-export KEY_COMMENT="flux secrets"
-
-gpg --batch --full-generate-key <<EOF
-%no-protection
-Key-Type: 1
-Key-Length: 4096
-Subkey-Type: 1
-Subkey-Length: 4096
-Expire-Date: 0
-Name-Comment: ${KEY_COMMENT}
-Name-Real: ${KEY_NAME}
-EOF
-
-# List the key
-gpg --list-secret-keys "${KEY_NAME}"
-gpg: checking the trustdb
-gpg: marginals needed: 3  completes needed: 1  trust model: pgp
-gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-sec   rsa4096 2026-05-07 [SCEAR]
-      34A9C8BD30F32BD9A57F75B5CCB51805C7DD7D1D
-uid           [ultimate] dev.bigbang.mil (flux secrets)
-ssb   rsa4096 2026-05-07 [SEA]
-
-# Capture the fingerprint
-export KEY_FP=34A9C8BD30F32BD9A57F75B5CCB51805C7DD7D1D
-
-# Set the finger-print in the .sops.yaml config.
-sed -i "s/pgp: .*/pgp: ${KEY_FP}/" .sops.yaml
+bash ./run.sh generate_sops_keys
 ```
 
 ## Encrypt secrets
 
-Use SOPS to encrypt the secrets in base and environments.
+Use SOPS to encrypt the secrets in base and the supported environments. Notice on a vanilla install the are no encrypted secrets in the git archive (.enc) and also plain text secrets are not in the archive.
 ```
 sops --encrypt environments/base/common-bb-secret.yaml > environments/base/common-bb-secret.enc.yaml
 sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/secrets/dev-bb-secret.enc.yaml
 ```
 
-## Bootstrap flux
+## Bootstrap gitops (flux)
 
-Bootstrap flux (one-time-only) using the upstream.
-```
-git clone https://repo1.dso.mil/big-bang/bigbang.git ./upstream/bigbang
-./upstream/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
-```
-
-## Bootstrap secrets
+Bigbang is deployed using gitops for which we need to bootstrap flux. This step will deploy the flux controllers, the initial reconciler configuration with the secrets it requires to access the remotes.
 
 ```
-# SOPS key
-kubectl create ns bigbang
-gpg --export-secret-key --armor "${KEY_FP}" | kubectl create secret generic sops-gpg -n bigbang --from-file=bigbangkey.asc=/dev/stdin
-
-# Git (private) repo credentials
-kubectl create secret generic private-git -n bigbang \
-  --from-literal=username=$REGISTRY_UPSTREAM_USERNAME \
-  --from-literal=password=$REGISTRY_UPSTREAM_PAT
+export REGISTRY1_USERNAME=<account-name-to-access-p1-registry>
+export REGISTRY1_TOKEN=<p1-registry-cli-secret>
+export REGISTRY_UPSTREAM_USERNAME=<account-name-to-access-your-git-repo>
+export REGISTRY_UPSTREAM_PAT=<token-to-authenticate-to-git>
+bash ./run.sh bootstrap
 ```
 
-## Deploy the environment
+todo:
+- also next steps is to seperate kind from talos by env; so the talos env should also have metallb, ceph and calico
+- and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
 
-```
-kubectl apply -f environments/dev/bigbang.yaml
-```
+
+
+
+
+
 
 
 

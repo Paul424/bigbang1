@@ -10,6 +10,8 @@ BASE=$(dirname $(realpath $0))
 COMMAND="$1"
 shift
 
+SOPS_KEY_NAME="dev.bigbang.mil"
+
 function up_kind {
     CLUSTER_NAME=${1}
     kind create cluster --config=kind.yaml --name $CLUSTER_NAME --verbosity 2
@@ -30,16 +32,62 @@ function up_kind_lb {
     cloud-provider-kind > ./log/cloud-provider-kind.log 2>&1
 }
 
-function up_proxmox_talos {
-    # we need a cli to connect with proxmox (can maybe be done over ssh?)
-    # then we need to create VM's
-    # we need to generate the confs, bootstrap
-    # then fetch the kube config
-    # apply the CNI (cilium)
-    # deploy storage (csi) using rook/ceph
-    # and metallb for LB
-    echo todo
+function generate_sops_keys {
+    KEY_COMMENT="flux secrets"
+
+    gpg --batch --full-generate-key <<EOF
+%no-protection
+Key-Type: 1
+Key-Length: 4096
+Subkey-Type: 1
+Subkey-Length: 4096
+Expire-Date: 0
+Name-Comment: ${KEY_COMMENT}
+Name-Real: ${SOPS_KEY_NAME}
+EOF
+
+FP=$(gpg --fingerprint --with-colons "$SOPS_KEY_NAME" | awk -F: '/^fpr:/ { print $10; exit }')
+if [ -z "$FP" ]; then
+    echo "Fingerprint not found"
+    exit 1
+else
+    echo "Fingerprint: $FP"
+fi
+
+# Set the finger-print in the .sops.yaml config.
+sed -i "s/pgp: .*/pgp: ${FP}/" $BASE/.sops.yaml
+
 }
+
+function bootstrap {
+    CLUSTER_NAME=${1}
+    export REPO1_LOCATION=$BASE/upstream
+
+    # Create the namespace for initial secrets
+    kubectl create namespace bigbang --dry-run=client -o yaml | kubectl apply -f -
+
+    # Export the SOPS key to the cluster
+    gpg --export-secret-key --armor "${SOPS_KEY_NAME}" | kubectl create secret generic sops-gpg -n bigbang --from-file=bigbangkey.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
+
+    # Git (private) repo credentials
+    kubectl create secret generic private-git -n bigbang \
+        --from-literal=username=$REGISTRY_UPSTREAM_USERNAME \
+        --from-literal=password=$REGISTRY_UPSTREAM_PAT \
+        --dry-run=client -o yaml | kubectl apply -f -
+
+    # Deploy flux
+    git clone https://repo1.dso.mil/big-bang/bigbang.git $REPO1_LOCATION/bigbang
+    $REPO1_LOCATION/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+
+    # The top level reconciler
+    kubectl apply -f environments/dev/bigbang.yaml
+}
+
+
+
+
+
+
 
 function up_bigbang {
     CLUSTER_NAME=${1}  # To map the kind context
@@ -292,10 +340,14 @@ case "$COMMAND" in
         up_kind_lb
         ;;
     
-    up_proxmox_talos)
+    generate_sops_keys)
+        generate_sops_keys
+        ;;
+
+    bootstrap)
         CLUSTER_NAME=${1:-bb1};
         shift
-        up_proxmox_talos $CLUSTER_NAME
+        bootstrap $CLUSTER_NAME
         ;;
 
     up_bigbang)

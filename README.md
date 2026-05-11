@@ -21,7 +21,6 @@ We are using the bigbang quickstart script mostly but since we want to use our o
 - sops
 - jq
 - yq
-- sops
 
 ## Accounts
 
@@ -75,28 +74,9 @@ todo:
 - also next steps is to seperate kind from talos by env; so the talos env should also have metallb, ceph and calico
 - and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
 
-
-
-
-
-
-
-
-
-## GitOps
-
-Bootstrap bigbang (flux.io and configured HelmReleases)
-```
-export REGISTRY1_USERNAME=<account-name-to-access-p1-registry>
-export REGISTRY1_TOKEN=<p1-registry-cli-secret>
-export REGISTRY_UPSTREAM_USERNAME=<account-name-to-access-your-git-repo>
-export REGISTRY_UPSTREAM_PAT=<token-to-authenticate-to-git>
-bash ./run.sh up_bigbang <CLUSTER-NAME>
-```
-
 ## Apply Hacks
 
-This is to overcome issue's with the upstream
+This is to overcome issue's with the upstream; currently only a fix for RBAC.
 ```
 bash ./run.sh up_hacks
 ```
@@ -179,6 +159,7 @@ We use an on-cluster Keycloak to address (on-cluster) clients (services) and rol
 
 ## Template out from main chart
 
+Template out is based on old-style (push based / non-gitops) so not sure if this is all still valid.
 ```
 bash ./run.sh template_bigbang <OUTPUT>
 ```

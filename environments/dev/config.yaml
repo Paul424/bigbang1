@@ -473,6 +473,54 @@ addons:
           memory: 128Mi
 
 packages:
+  calico-crds:
+    enabled: true
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: calico
+      chartName: projectcalico.org.v3
+      tag: v3.32.0
+    # passBigBangValues: false
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    # dependsOn: []
+    # istio: {}
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values: {}
+
+  # metallb (use a wrapper chart to add L2 configs; and to either deploy before the webhooks or wait for the controllers before applying the L2 configs)
+  # volgens mij kan het met een helm hook postinstall (ensure controller is running) icm een wrapper/subchart
+  # 
+  # helm upgrade --install --namespace metallb-system metallb-confs . --debug
+  # metallb-config:
+  #   enabled: true
+  #   sourceType: "git"
+  #   git:
+  #     repo: https://github.com/Paul424/metallb-config.git
+  #     path: "./charts/metallb-config"
+  #     branch: main
+  #   passBigBangValues: false
+  #   wrapper:
+  #     enabled: false
+  #     postRenderers: []
+  #   flux:
+  #     timeout: 5m
+  #   postRenderers: []
+  #   dependsOn: []
+  #   istio: {}
+  #   monitor: {}
+  #   secrets: {}
+  #   configMaps: {}
+  #   values: {}
+
+  # bind9
+  # rook/ceph (here you need to wait for a long time for all storage components to become up)
   openldap:
     enabled: true
     sourceType: "git"

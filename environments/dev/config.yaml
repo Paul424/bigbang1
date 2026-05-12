@@ -642,6 +642,8 @@ packages:
       tag: v1.19.3
     wrapper:
       enabled: true
+    network:
+      policies: false
     flux:
       timeout: 5m
     # postRenderers:
@@ -867,6 +869,8 @@ packages:
       tag: v1.19.3
     wrapper:
       enabled: true
+    network:
+      policies: false
     flux:
       timeout: 20m
     # postRenderers:
@@ -1128,6 +1132,8 @@ packages:
     wrapper:
       enabled: true
       postRenderers: []
+    # network:
+    #   policies: false
     flux:
       timeout: 5m
     postRenderers: []

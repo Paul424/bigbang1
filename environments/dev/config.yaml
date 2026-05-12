@@ -64,7 +64,7 @@ kyvernoPolicies:
       # metallb on talos
       - resources:
           namespaces:
-          - metallb-system
+          - metallb
           names:
           - "*"
       # bind9 on talos
@@ -475,6 +475,8 @@ addons:
 packages:
   metallb:
     enabled: true
+    namespace:
+      name: metallb
     sourceType: "helmRepo"
     helmRepo:
       repoName: metallb
@@ -496,6 +498,8 @@ packages:
   
   metallb-config:
     enabled: true
+    namespace:
+      name: metallb
     sourceType: "helmRepo"
     helmRepo:
       repoName: metallb-config

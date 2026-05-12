@@ -1081,6 +1081,7 @@ packages:
     # configMaps: {}
     values:
       service:
+        type: LoadBalancer
         loadBalancerIP: 192.168.50.253
       objectStoreUsers:
         - name: gitlab

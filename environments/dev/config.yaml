@@ -491,8 +491,7 @@ packages:
     # postRenderers: []
     # dependsOn: []
     istio:
-      injection:
-        enabled: false
+      injection: disabled
     # monitor: {}
     # secrets: {}
     # configMaps: {}

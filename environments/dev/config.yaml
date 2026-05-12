@@ -490,7 +490,9 @@ packages:
       timeout: 5m
     # postRenderers: []
     # dependsOn: []
-    # istio: {}
+    istio:
+      injection:
+        enabled: false
     # monitor: {}
     # secrets: {}
     # configMaps: {}

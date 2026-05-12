@@ -500,6 +500,7 @@ packages:
     enabled: true
     namespace:
       name: metallb
+      create: false
     sourceType: "helmRepo"
     helmRepo:
       repoName: metallb-config

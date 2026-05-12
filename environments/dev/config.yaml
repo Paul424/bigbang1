@@ -631,11 +631,6 @@ packages:
             twistlock    IN      A       192.168.50.251
             chat         IN      A       192.168.50.251
 
-  # rook/ceph (here you need to wait for a long time for all storage components to become up)
-#   helm repo add rook-release https://charts.rook.io/release
-# helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
-# # helm template --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph --debug --output-dir ./debug/out.rook-ceph
-
   rook-ceph:
     enabled: true
     namespace:
@@ -648,7 +643,7 @@ packages:
     wrapper:
       enabled: true
     flux:
-      timeout: 10m
+      timeout: 5m
     # postRenderers:
     #   - kustomize:
     #       patches:
@@ -860,14 +855,206 @@ packages:
       # To allow creating a bucket using CRD ObjectBucketClaim with owner assignment
       obcAllowAdditionalConfigFields: "maxObjects,maxSize,bucketOwner"
 
-
-
-# helm plugin install ./talos/ceph/kustomize-ceph-plugin
-# # kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
-# helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug
-# # helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug --output-dir ./debug/out.rook-ceph-cluster
-
-
+  rook-ceph-cluster:
+    enabled: true
+    namespace:
+      name: rook-ceph
+      create: false
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: rook
+      chartName: rook-ceph-cluster
+      tag: v1.19.3
+    wrapper:
+      enabled: true
+    flux:
+      timeout: 20m
+    # postRenderers:
+    #   - kustomize:
+    #       patches:
+    # dependsOn: []
+    istio:
+      injection: disabled
+    # monitor: {}
+    secrets: {}
+    # configMaps: {}
+    values:
+      operatorNamespace: rook-ceph
+      toolbox:
+        enabled: true
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "16Mi"  
+      cephClusterSpec:
+        dashboard:
+          enabled: true
+        healthCheck:
+          daemonHealth:
+            mon:
+              interval: 45s
+            osd:
+              interval: 1m0s
+            status:
+              interval: 1m0s
+        resources:
+          mgr:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 150m
+              memory: 128Mi
+          mon:
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 150m
+              memory: 512Mi
+          osd:
+            limits:
+              memory: 4Gi
+            requests:
+              cpu: 150m
+              memory: 512Mi
+          crashcollector:
+            limits:
+              memory: "60Mi"
+            requests:
+              cpu: "50m"
+              memory: "60Mi"
+          logcollector:
+            limits:
+              memory: "1Gi"
+            requests:
+              cpu: "50m"
+              memory: "100Mi"
+      cephFileSystems:
+        - name: ceph-filesystem
+          # see https://github.com/rook/rook/blob/master/Documentation/CRDs/Shared-Filesystem/ceph-filesystem-crd.md#filesystem-settings for available configuration
+          spec:
+            metadataPool:
+              replicated:
+                size: 3
+            dataPools:
+              - failureDomain: host
+                replicated:
+                  size: 3
+                # Optional and highly recommended, 'data0' by default, see https://github.com/rook/rook/blob/master/Documentation/CRDs/Shared-Filesystem/ceph-filesystem-crd.md#pools
+                name: data0
+            metadataServer:
+              activeCount: 1
+              activeStandby: true
+              resources:
+                limits:
+                  memory: "4Gi"
+                requests:
+                  cpu: "100m"
+                  memory: "256Mi"
+              priorityClassName: system-cluster-critical
+          storageClass:
+            enabled: true
+            isDefault: false
+            name: ceph-filesystem
+            # (Optional) specify a data pool to use, must be the name of one of the data pools above, 'data0' by default
+            pool: data0
+            reclaimPolicy: Delete
+            allowVolumeExpansion: true
+            volumeBindingMode: "Immediate"
+            annotations: {}
+            labels: {}
+            mountOptions: []
+            # see https://github.com/rook/rook/blob/master/Documentation/Storage-Configuration/Shared-Filesystem-CephFS/filesystem-storage.md#provision-storage for available configuration
+            parameters:
+              # The secrets contain Ceph admin credentials.
+              csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+              csi.storage.k8s.io/provisioner-secret-namespace: "{{ .Release.Namespace }}"
+              csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+              csi.storage.k8s.io/controller-expand-secret-namespace: "{{ .Release.Namespace }}"
+              csi.storage.k8s.io/controller-publish-secret-name: rook-csi-cephfs-provisioner
+              csi.storage.k8s.io/controller-publish-secret-namespace: "{{ .Release.Namespace }}"
+              csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+              csi.storage.k8s.io/node-stage-secret-namespace: "{{ .Release.Namespace }}"
+              # Specify the filesystem type of the volume. If not specified, csi-provisioner
+              # will set default as `ext4`. Note that `xfs` is not recommended due to potential deadlock
+              # in hyperconverged settings where the volume is mounted on the same node as the osds.
+              csi.storage.k8s.io/fstype: ext4
+      cephObjectStores:
+        - name: ceph-objectstore
+          # see https://github.com/rook/rook/blob/master/Documentation/CRDs/Object-Storage/ceph-object-store-crd.md#object-store-settings for available configuration
+          spec:
+            metadataPool:
+              failureDomain: host
+              replicated:
+                size: 3
+            dataPool:
+              failureDomain: host
+              erasureCoded:
+                dataChunks: 2
+                codingChunks: 1
+              parameters:
+                bulk: "true"
+            preservePoolsOnDelete: true
+            gateway:
+              port: 80
+              resources:
+                limits:
+                  memory: "2Gi"
+                requests:
+                  cpu: "100m"
+                  memory: "256Mi"
+              # securePort: 443
+              # sslCertificateRef:
+              instances: 1
+              priorityClassName: system-cluster-critical
+              # opsLogSidecar:
+              #   resources:
+              #     limits:
+              #       memory: "100Mi"
+              #     requests:
+              #       cpu: "100m"
+              #       memory: "40Mi"
+          storageClass:
+            enabled: true
+            name: ceph-bucket
+            reclaimPolicy: Delete
+            volumeBindingMode: "Immediate"
+            annotations: {}
+            labels: {}
+            # see https://github.com/rook/rook/blob/master/Documentation/Storage-Configuration/Object-Storage-RGW/ceph-object-bucket-claim.md#storageclass for available configuration
+            parameters:
+              # note: objectStoreNamespace and objectStoreName are configured by the chart
+              region: us-east-1
+          ingress:
+            # Enable an ingress for the ceph-objectstore
+            enabled: false
+            # The ingress port by default will be the object store's "securePort" (if set), or the gateway "port".
+            # To override those defaults, set this ingress port to the desired port.
+            # port: 80
+            # annotations: {}
+            # host:
+            #   name: objectstore.example.com
+            #   path: /
+            #   pathType: Prefix
+            # tls:
+            # - hosts:
+            #     - objectstore.example.com
+            #   secretName: ceph-objectstore-tls
+            # ingressClassName: nginx
+          route:
+            # Enable an ingress for the ceph-objectstore
+            enabled: false
+            # The ingress port by default will be the object store's "securePort" (if set), or the gateway "port".
+            # To override those defaults, set this ingress port to the desired port.
+            # port: 80
+            # annotations: {}
+            # host:
+            #   name: objectstore.example.com
+            #   path: /
+            #   pathType: PathPrefix
+            # parentRefs:
+            #   - name: internal
+            #     namespace: kube-system
+            #     sectionName: https
 
   openldap:
     enabled: true

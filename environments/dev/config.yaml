@@ -532,32 +532,105 @@ packages:
       defaultL2Advertisement:
         enabled: true
 
-  # metallb (use a wrapper chart to add L2 configs; and to either deploy before the webhooks or wait for the controllers before applying the L2 configs)
-  # volgens mij kan het met een helm hook postinstall (ensure controller is running) icm een wrapper/subchart
-  # 
-  # helm upgrade --install --namespace metallb-system metallb-confs . --debug
-  # metallb-config:
-  #   enabled: true
-  #   sourceType: "git"
-  #   git:
-  #     repo: https://github.com/Paul424/metallb-config.git
-  #     path: "./charts/metallb-config"
-  #     branch: main
-  #   passBigBangValues: false
-  #   wrapper:
-  #     enabled: false
-  #     postRenderers: []
-  #   flux:
-  #     timeout: 5m
-  #   postRenderers: []
-  #   dependsOn: []
-  #   istio: {}
-  #   monitor: {}
-  #   secrets: {}
-  #   configMaps: {}
-  #   values: {}
+  bind9:
+    enabled: true
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: bind9
+      chartName: bind9
+      tag: 2026.3.22
+    # passBigBangValues: false
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    postRenderers:
+      - kustomize:
+          patches:
+          - target:
+              kind: Service
+              name: bind9
+            patch: |-
+              - op: add
+                path: /spec/loadBalancerIP
+                value: 192.168.50.250
+          - target:
+              kind: Deployment
+              name: bind9
+            patch: |-
+              - op: add
+                path: /spec/template/spec/volumes/-
+                value:
+                  emptyDir: {}
+                  name: bind-cache
+              - op: add
+                path: /spec/template/spec/containers/0/volumeMounts/-
+                value:
+                  mountPath: /var/cache/bind
+                  name: bind-cache
+    # dependsOn: []
+    istio:
+      injection: disabled
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      service:
+        type: LoadBalancer
+        ports:
+          dnsTcp: 53
+          dnsUdp: 53
+          rndc: 953
+          dnsTcpNodePort: null
+          dnsUdpNodePort: null
+          rndcNodePort: null
+      metrics:
+        serviceMonitor:
+          enabled: false
+      persistence:
+        enabled: false
+        emptyDirSizeLimit: ""
+      securityContext:
+        readOnlyRootFilesystem: true
+        capabilities:
+          add:
+            - NET_BIND_SERVICE
+      bind:
+        namedConf: |
+          options {
+            directory "/var/cache/bind";
+            listen-on { any; };
+            recursion no;
+          };
+          zone "dev.bigbang.mil" {
+            type master;
+            file "/etc/bind/dev-bigbang-mil.zone";
+          };
+        zones:
+          dev-bigbang-mil: |
+            $TTL 3600
+            @       IN      SOA     dev.bigbang.mil. admin.dev.bigbang.mil. (
+                                    2024020101 ; Serial
+                                    3600       ; Refresh
+                                    900        ; Retry
+                                    604800     ; Expire
+                                    86400 )    ; Minimum TTL
+            ;
+            @       IN      NS      dev.bigbang.mil.
+            @       IN      A       192.168.50.250
+            ns1     IN      A       192.168.50.250
+            keycloak     IN      A       192.168.50.252
+            openldap     IN      A       192.168.50.252
+            kiali        IN      A       192.168.50.251
+            grafana      IN      A       192.168.50.251
+            prometheus   IN      A       192.168.50.251
+            alertmanager IN      A       192.168.50.251
+            headlamp     IN      A       192.168.50.251
+            neuvector    IN      A       192.168.50.251
+            twistlock    IN      A       192.168.50.251
+            chat         IN      A       192.168.50.251
 
-  # bind9
   # rook/ceph (here you need to wait for a long time for all storage components to become up)
   openldap:
     enabled: true

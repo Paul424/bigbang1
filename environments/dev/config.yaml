@@ -651,12 +651,12 @@ packages:
     istio:
       injection: disabled
     # monitor: {}
-    secrets:
-      - name: rook-ceph-dashboard-password
-        type: Opaque
-        data:
-          # admin / admin
-          password: YWRtaW4K
+    secrets: {}
+      # - name: rook-ceph-dashboard-password
+      #   type: Opaque
+      #   data:
+      #     # admin / admin
+      #     password: YWRtaW4K
     # configMaps: {}
     values:
       csi:
@@ -1055,6 +1055,65 @@ packages:
             #   - name: internal
             #     namespace: kube-system
             #     sectionName: https
+
+  rook-ceph-cluster-config:
+    enabled: true
+    namespace:
+      name: rook-ceph
+      create: false
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/rook-ceph-config.git
+      path: "./charts/rook-ceph-config"
+      branch: main
+    # passBigBangValues: false
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    dependsOn:
+      - name: rook-ceph-cluster
+    # istio: {}
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      service:
+        loadBalancerIP: 192.168.50.253
+      objectStoreUsers:
+        - name: gitlab
+          keys:
+            - accessKeyRef:
+                key: access-key
+                name: gitlab-object-store-user-keys
+              secretKeyRef:
+                key: secret-key
+                name: gitlab-object-store-user-keys    
+      buckets:
+        - name: gitlab-artifacts
+          owner: gitlab
+        - name: gitlab-backup
+          owner: gitlab
+        - name: gitlab-backup-tmp
+          owner: gitlab
+        - name: gitlab-dependency-proxy
+          owner: gitlab
+        - name: gitlab-mr-diffs
+          owner: gitlab
+        - name: gitlab-lfs
+          owner: gitlab
+        - name: gitlab-packages
+          owner: gitlab
+        - name: gitlab-pseudo
+          owner: gitlab
+        - name: gitlab-terraform-state
+          owner: gitlab
+        - name: gitlab-uploads
+          owner: gitlab
+        - name: gitlab-registry
+          owner: gitlab
 
   openldap:
     enabled: true

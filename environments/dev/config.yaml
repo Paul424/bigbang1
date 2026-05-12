@@ -501,11 +501,15 @@ packages:
     namespace:
       name: metallb
       create: false
-    sourceType: "helmRepo"
-    helmRepo:
-      repoName: metallb-config
-      chartName: metallb-config
-      tag: main
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/metallb-config.git
+      path: "./charts/metallb-config"
+      branch: main
+    # helmRepo:
+    #   repoName: metallb-config
+    #   chartName: metallb-config
+    #   tag: main
     # passBigBangValues: false
     # wrapper:
     #   enabled: false

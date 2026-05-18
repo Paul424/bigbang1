@@ -348,6 +348,7 @@ talosctl kubeconfig --merge --nodes $CTL1_IP ~/.kube/bb9-dev-quickstart-config
 ```
 
 ## Install CNI
+The CNI is installed manually here (because it cannot be integrated into gitops since the flux controllers won't run without a CNI).
 ```
 # Install the CNI (Calico because we need nwpols /w ipBlock support for BB)
 kubectl apply --kustomize ./talos/calico/
@@ -355,38 +356,7 @@ kubectl apply --kustomize ./talos/calico/
 kubectl apply --kustomize ./talos/calico/
 ```
 
-## Storage (Block, fs, s3) using Rook / Ceph
 ```
-helm repo add rook-release https://charts.rook.io/release
-helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
-# helm template --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph --debug --output-dir ./debug/out.rook-ceph
-helm plugin install ./talos/ceph/kustomize-ceph-plugin
-# kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
-helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug
-# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug --output-dir ./debug/out.rook-ceph-cluster
-```
-
-## DNS Server (bind9) for static .mil addresses
-```
-helm repo add unxwares https://helm.unxwares.studio
-helm plugin install ./talos/bind9/kustomize-bind9-plugin
-helm upgrade --install --create-namespace --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug
-helm template --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug --output-dir ./debug/out.bind9
-```
-
-## Load balancer using Metallb
-```
-helm repo add metallb https://metallb.github.io/metallb
-helm repo update
-
-# Install MetalLB
-helm install metallb metallb/metallb \
-  --namespace metallb-system \
-  --create-namespace
-# kubectl label namespace metallb-system pod-security.kubernetes.io/enforce=privileged
-kubectl apply -f ./talos/metallb/metallb-l2-config.yaml
-kubectl get ipaddresspool -n metallb-system
-
 # Ceph UI can be found at: https://192.168.50.250:8443/#/login
 # User=admin and Password can be found here: 
 #    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
@@ -493,3 +463,41 @@ But you do need to provide a static DNS name mapping:
 192.168.50.251  twistlock.dev.bigbang.mil
 192.168.50.251  chat.dev.bigbang.mil
 ```
+
+# Archive
+
+These sections are outdated, i.e. no longer relevant.
+
+## Storage (Block, fs, s3) using Rook / Ceph
+```
+helm repo add rook-release https://charts.rook.io/release
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
+# helm template --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph --debug --output-dir ./debug/out.rook-ceph
+helm plugin install ./talos/ceph/kustomize-ceph-plugin
+# kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
+helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug
+# helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug --output-dir ./debug/out.rook-ceph-cluster
+```
+
+## DNS Server (bind9) for static .mil addresses
+```
+helm repo add unxwares https://helm.unxwares.studio
+helm plugin install ./talos/bind9/kustomize-bind9-plugin
+helm upgrade --install --create-namespace --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug
+helm template --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug --output-dir ./debug/out.bind9
+```
+
+## Load balancer using Metallb
+```
+helm repo add metallb https://metallb.github.io/metallb
+helm repo update
+
+# Install MetalLB
+helm install metallb metallb/metallb \
+  --namespace metallb-system \
+  --create-namespace
+# kubectl label namespace metallb-system pod-security.kubernetes.io/enforce=privileged
+kubectl apply -f ./talos/metallb/metallb-l2-config.yaml
+kubectl get ipaddresspool -n metallb-system
+
+

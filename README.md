@@ -71,8 +71,12 @@ bash ./run.sh bootstrap
 ```
 
 todo:
-- also next steps is to seperate kind from talos by env; so the talos env should also have metallb, ceph and calico
+- add a "job" to push the kc realm through the api
 - and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
+- the ceph password doesn't work
+- import realm using a CR or job
+- config dependencies (to rook / bind9)
+
 
 ## Apply Hacks
 

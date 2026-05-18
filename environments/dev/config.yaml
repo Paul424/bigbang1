@@ -274,6 +274,18 @@ addons:
               limits:
                 cpu: 400m
                 memory: 600Mi
+    postRenderers:
+      - kustomize:
+          patches:
+            - target:
+                kind: HelmRelease
+                name: gitlab
+              patch: |-
+                - op: add
+                  path: /spec/dependsOn/-
+                  value:
+                    name: rook-ceph-cluster-config
+                    namespace: rook-ceph
 
   gitlabRunner:
     enabled: true

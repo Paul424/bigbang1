@@ -53,3 +53,30 @@ patches:
                 value:
                   name: rook-ceph-cluster-config
                   namespace: rook-ceph
+          - target:
+              kind: HelmRelease
+              name: keycloak
+            patch: |-
+              - op: add
+                path: /spec/dependsOn/-
+                value:
+                  name: rook-ceph-cluster
+                  namespace: rook-ceph
+          - target:
+              kind: HelmRelease
+              name: public-ingressgateway
+            patch: |-
+              - op: add
+                path: /spec/dependsOn/-
+                value:
+                  name: metallb-config
+                  namespace: metallb
+          - target:
+              kind: HelmRelease
+              name: passthrough-ingressgateway
+            patch: |-
+              - op: add
+                path: /spec/dependsOn/-
+                value:
+                  name: metallb-config
+                  namespace: metallb

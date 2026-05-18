@@ -55,6 +55,15 @@ patches:
                   namespace: rook-ceph
           - target:
               kind: HelmRelease
+              name: monitoring
+            patch: |-
+              - op: add
+                path: /spec/dependsOn/-
+                value:
+                  name: rook-ceph-cluster
+                  namespace: rook-ceph
+          - target:
+              kind: HelmRelease
               name: keycloak
             patch: |-
               - op: add

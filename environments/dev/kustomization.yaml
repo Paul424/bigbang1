@@ -41,3 +41,15 @@ patches:
           name: environment
         - kind: Secret
           name: dev-bb-secret
+    postRenderers:
+    - kustomize:
+        patches:
+        - target:
+            kind: HelmRelease
+            name: gitlab
+          patch: |-
+            - op: add
+              path: /spec/dependsOn/-
+              value:
+                name: rook-ceph-cluster-config
+                namespace: rook-ceph

@@ -680,7 +680,8 @@ packages:
     # postRenderers:
     #   - kustomize:
     #       patches:
-    # dependsOn: []
+    dependsOn:
+      - name: rook-ceph-wrapper
     istio:
       injection: disabled
     # monitor: {}

@@ -551,6 +551,7 @@ packages:
     # postRenderers: []
     dependsOn:
       - name: keycloak
+        namespace: bigbang
     # istio: {}
     # monitor: {}
     # secrets: {}

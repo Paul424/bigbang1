@@ -679,8 +679,6 @@ packages:
       - name: rook-ceph-wrapper
     istio:
       injection: disabled
-    monitoring:
-      enabled: false
     secrets: {}
       # - name: rook-ceph-dashboard-password
       #   type: Opaque

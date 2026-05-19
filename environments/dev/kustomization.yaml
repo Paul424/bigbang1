@@ -70,6 +70,12 @@ patches:
                 path: /spec/dependsOn/1
           - target:
               kind: HelmRelease
+              name: rook-ceph-cluster-wrapper
+            patch: |-
+              - op: remove
+                path: /spec/dependsOn/1
+          - target:
+              kind: HelmRelease
               name: keycloak
             patch: |-
               - op: add

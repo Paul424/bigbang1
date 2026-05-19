@@ -74,6 +74,12 @@ todo:
 - and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
 - the ceph password doesn't work
   - still broken; i think the secret with the pass is set when the operator is already running (secret by wrapper) which depends on rook-ceph which has the operator.
+  - no admin/admin is too weak
+```
+# Ceph UI can be found at: https://192.168.50.250:8443/#/login
+# User=admin and Password can be found here: 
+#    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
+```
 
 
 ## Apply Hacks

@@ -323,20 +323,6 @@ talosctl apply-config --nodes $WRK4_IP --file ./talos/worker.yaml --config-patch
 talosctl apply-config --nodes $WRK5_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk5.yaml --insecure
 talosctl apply-config --nodes $WRK6_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk6.yaml --insecure
 
-talosctl apply-config --nodes $CTL1_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl1.yaml
-talosctl apply-config --nodes $CTL2_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl2.yaml
-talosctl apply-config --nodes $CTL3_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl3.yaml
-
-<!-- for idx in `seq 1 6`; do
-  talosctl apply-config --nodes $idx --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk1.yaml
-done -->
-talosctl apply-config --nodes $WRK1_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk1.yaml
-talosctl apply-config --nodes $WRK2_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk2.yaml
-talosctl apply-config --nodes $WRK3_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk3.yaml
-talosctl apply-config --nodes $WRK4_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk4.yaml
-talosctl apply-config --nodes $WRK5_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk5.yaml
-talosctl apply-config --nodes $WRK6_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk6.yaml
-
 export TALOSCONFIG="./talos/talosconfig"
 talosctl config endpoint $CTL1_IP $CTL2_IP $CTL3_IP
 talosctl config node $CTL1_IP $CTL2_IP $CTL3_IP
@@ -354,12 +340,6 @@ The CNI is installed manually here (because it cannot be integrated into gitops 
 kubectl apply --kustomize ./talos/calico/
 # Run twice for the crds
 kubectl apply --kustomize ./talos/calico/
-```
-
-```
-# Ceph UI can be found at: https://192.168.50.250:8443/#/login
-# User=admin and Password can be found here: 
-#    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
 ```
 
 ## Decommission a node

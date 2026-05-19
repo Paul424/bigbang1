@@ -541,7 +541,7 @@ packages:
     sourceType: "git"
     git:
       repo: https://github.com/Paul424/keycloak-realm.git
-      path: "./charts/keycloak-realms"
+      path: "./charts/keycloak-realm"
       branch: main
     # wrapper:
     #   enabled: false

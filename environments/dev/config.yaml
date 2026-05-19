@@ -532,6 +532,37 @@ packages:
       defaultL2Advertisement:
         enabled: true
 
+  keycloak-realms:
+    enabled: true
+    namespace:
+      name: keycloak
+      create: false
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/keycloak-realm.git
+      path: "./charts/keycloak-realms"
+      branch: main
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    dependsOn:
+      - name: keycloak
+    # istio: {}
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      keycloak:
+        endpoint: http://keycloak-keycloak-http.keycloak.svc.cluster.local
+        client_id: admin-cli
+        grant_type: password
+        username: ***
+        password: ***
+
+      realms: []
   bind9:
     enabled: true
     sourceType: "helmRepo"

@@ -71,11 +71,9 @@ bash ./run.sh bootstrap
 ```
 
 todo:
-- add a "job" to push the kc realm through the api
 - and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
 - the ceph password doesn't work
-- import realm using a CR or job
-- config dependencies (to rook / bind9)
+  - still broken; i think the secret with the pass is set when the operator is already running (secret by wrapper) which depends on rook-ceph which has the operator.
 
 
 ## Apply Hacks

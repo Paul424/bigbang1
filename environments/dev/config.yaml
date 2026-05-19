@@ -903,7 +903,8 @@ packages:
     # postRenderers:
     #   - kustomize:
     #       patches:
-    # dependsOn: []
+    dependsOn:
+      - name: rook-ceph
     istio:
       injection: disabled
     # monitor: {}

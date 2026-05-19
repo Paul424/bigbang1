@@ -537,6 +537,7 @@ packages:
     namespace:
       name: keycloak
       create: false
+      createRegistrySecret: false
     sourceType: "git"
     git:
       repo: https://github.com/Paul424/keycloak-realm.git
@@ -555,6 +556,7 @@ packages:
     # secrets: {}
     # configMaps: {}
     values: {}
+
   bind9:
     enabled: true
     sourceType: "helmRepo"

@@ -554,15 +554,7 @@ packages:
     # monitor: {}
     # secrets: {}
     # configMaps: {}
-    values:
-      keycloak:
-        endpoint: http://keycloak-keycloak-http.keycloak.svc.cluster.local
-        client_id: admin-cli
-        grant_type: password
-        username: ***
-        password: ***
-
-      realms: []
+    values: {}
   bind9:
     enabled: true
     sourceType: "helmRepo"

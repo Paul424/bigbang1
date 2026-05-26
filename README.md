@@ -2,7 +2,15 @@
 
 Just a test / demo setup to run bigbang on KinD and Talos (on Proxmox).
 
-We are using the bigbang quickstart script mostly but since we want to use our own kind and Talos setup (and not k3d or aws) we wrap it in our own bash script (run.sh).
+We are using gitops to provision bigbang and some infrastructure services (dns, storage, load-balancer), that means the stack is run with following three steps:
+
+1. Deploy your infrastructure (see the talos readme), or use the run.sh script to spin a kind cluster.
+2. Initialize sops and encrypt the secrets
+3. Bootstrap (flux)
+
+# Todo's
+- We need a function back to template (out) the components...; check the template script from upstream if we can use that one.
+
 
 # Prerequisites
 
@@ -70,30 +78,12 @@ export REGISTRY_UPSTREAM_PAT=<token-to-authenticate-to-git>
 bash ./run.sh bootstrap
 ```
 
-todo:
-- and we need a function back to template (out) the components...; check the template script from upstream if we can use that one.
-- the ceph password doesn't work
-  - still broken; i think the secret with the pass is set when the operator is already running (secret by wrapper) which depends on rook-ceph which has the operator.
-  - no admin/admin is too weak
-```
-# Ceph UI can be found at: https://192.168.50.250:8443/#/login
-# User=admin and Password can be found here: 
-#    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
-```
-
-
 ## Apply Hacks
 
 This is to overcome issue's with the upstream; currently only a fix for RBAC.
 ```
 bash ./run.sh up_hacks
 ```
-
-## Load realm into keycloak
-
-We run a keycloak instance within the same / single cluster which needs a realm setup with clients and users.
-
-Open the [kaycloak UI](https://keycloak.dev.bigbang.mil/auth/admin/master/console/#/master/realm-settings) and import the realm from ```./data/realm.json``` this includes the realm + clients + users.
 
 ## Setup kubectl context using OIDC
 
@@ -167,12 +157,16 @@ We use an on-cluster Keycloak to address (on-cluster) clients (services) and rol
 
 ## Template out from main chart
 
+Since we moved to gitops, there isn't a local bigbang chart any more so we cannot template-out.
+
 Template out is based on old-style (push based / non-gitops) so not sure if this is all still valid.
 ```
 bash ./run.sh template_bigbang <OUTPUT>
 ```
 
 ## Template out a component
+
+Since we moved to gitops, there isn't a local bigbang chart any more so we cannot template-out.
 
 ```
 # build-in component
@@ -262,3 +256,13 @@ Fix:
 ```
 sudo pkill envoy
 ```
+
+# Archive
+
+## Load realm into keycloak
+
+Realm is now integrated using a helm chart.
+
+We run a keycloak instance within the same / single cluster which needs a realm setup with clients and users.
+
+Open the [kaycloak UI](https://keycloak.dev.bigbang.mil/auth/admin/master/console/#/master/realm-settings) and import the realm from ```./data/realm.json``` this includes the realm + clients + users.

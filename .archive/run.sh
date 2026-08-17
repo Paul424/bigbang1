@@ -171,6 +171,26 @@ function template_bigbang {
         # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml
 }
 
+function template_bigbang_test_patches {
+    OUTPUT=${1}
+    echo "Templating bigbang to $OUTPUT"
+    rm -rf ./$OUTPUT
+    helm template ./upstream/big-bang/bigbang/chart \
+        -n bigbang \
+        --create-namespace \
+        --set registryCredentials.username=${REGISTRY1_USERNAME} \
+        --set registryCredentials.password=${REGISTRY1_TOKEN} \
+        --set helmRepositories[0].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[0].password=${REGISTRY_UPSTREAM_PAT} \
+        --set helmRepositories[1].username=${REGISTRY_UPSTREAM_USERNAME} \
+        --set helmRepositories[1].password=${REGISTRY_UPSTREAM_PAT} \
+        -f $BASE/bigbang.yaml \
+        -f ./upstream/big-bang/bigbang/chart/ingress-certs.yaml \
+        --output-dir ./$OUTPUT
+        # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/dev-sso-values.yaml
+        # -f ./upstream/big-bang/bigbang/docs/reference/configs/example/policy-overrides-k3d.yaml
+}
+
 function template_component_extract_values {
     local OUTPUT=${1}
     local COMPONENT=${2}
@@ -375,6 +395,12 @@ case "$COMMAND" in
         OUTPUT=${1:-out};
         shift
         template_bigbang $OUTPUT
+        ;;
+
+    template_bigbang_test_patches)
+        OUTPUT=${1:-out};
+        shift
+        template_bigbang_test_patches $OUTPUT
         ;;
 
     template_component)

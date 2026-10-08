@@ -1,0 +1,45 @@
+#!/bin/sh
+
+echo "> services-start"
+
+if brctl show br1; then
+    echo "configuring eth2 as untagged (501)"
+    brctl delif br0 eth2
+    brctl delif br1 eth2
+    vlanctl --mcast --if-create eth2 501
+    vlanctl --if eth2 --rx --tags 0 --set-rxif eth2.v501 --rule-append
+    ifconfig eth2.v501 up
+    brctl addif br1 eth2.v501
+fi
+
+# VLAN 20
+if ! ip link show eth1.20 >/dev/null 2>&1; then
+    ip link add link eth1 name eth1.20 type vlan id 20
+fi
+
+ip link set eth1.20 up
+
+if ! brctl show br20 >/dev/null 2>&1; then
+    brctl addbr br20
+fi
+
+if ! brctl show br20 | grep -q eth1.20; then
+    brctl addif br20 eth1.20
+fi
+
+ip link set br20 up
+
+ip addr del 192.168.20.1/24 dev br20 2>/dev/null
+ip addr add 192.168.20.1/24 dev br20
+
+# nvram items?
+# nvram set lan_ifnames="vlan1 eth1 eth2"
+# nvram set lan_ifname="br0"
+# nvram set lan1_ifnames="vlan3 wl0.2 wl1.2"
+# nvram set lan1_ifname="br1"
+#
+# killall eapd
+# eapd
+
+echo "< services-start"
+

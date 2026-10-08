@@ -1,0 +1,13 @@
+version: v1alpha1
+machine:
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: talos-ai1

@@ -1,0 +1,209 @@
+#!/bin/sh
+
+# ============================================================
+# Talos VLAN20 firewall
+#
+# LAN:     192.168.50.0/24
+# Talos:   192.168.20.0/24
+#
+# Control planes:
+#   192.168.20.10
+#   192.168.20.11
+#   192.168.20.12
+#
+# Workers:
+#   192.168.20.20 - 192.168.20.26
+# ============================================================
+
+TALOS_NET="192.168.20.0/24"
+LAN_NET="192.168.50.0/24"
+
+TALOS_BR="br20"
+LAN_BR="br0"
+
+WAN_IF="ppp0"   # "$(nvram get wan0_ifname)"
+
+# ============================================================
+# Clean up
+# ============================================================
+
+iptables -D FORWARD -j TALOS20 2>/dev/null
+iptables -D INPUT -j TALOS20 2>/dev/null
+
+iptables -F TALOS20 2>/dev/null
+iptables -X TALOS20 2>/dev/null
+
+# ------------------------------------------------------------
+# Create chain
+# ------------------------------------------------------------
+
+iptables -N TALOS20
+
+# ============================================================
+# Established connections
+# ============================================================
+
+iptables -A TALOS20 \
+    -m conntrack --ctstate ESTABLISHED,RELATED \
+    -j ACCEPT
+
+# ============================================================
+# Talos node <-> Talos node
+#
+# Covers:
+# - Talos API
+# - Kubernetes node traffic
+# - etcd
+# - kubelet
+# - Calico VXLAN UDP/4789
+# ============================================================
+
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -o "$TALOS_BR" \
+    -s "$TALOS_NET" \
+    -d "$TALOS_NET" \
+    -j ACCEPT
+
+# ============================================================
+# Management LAN -> Talos API
+# ============================================================
+
+iptables -A TALOS20 \
+    -i "$LAN_BR" \
+    -o "$TALOS_BR" \
+    -s "$LAN_NET" \
+    -d "$TALOS_NET" \
+    -p tcp --dport 50000 \
+    -j ACCEPT
+
+# ============================================================
+# Management LAN -> Kubernetes API
+# ============================================================
+
+iptables -A TALOS20 \
+    -i "$LAN_BR" \
+    -o "$TALOS_BR" \
+    -s "$LAN_NET" \
+    -d "$TALOS_NET" \
+    -p tcp --dport 6443 \
+    -j ACCEPT
+
+# ============================================================
+# Management LAN -> kubelet access
+# ============================================================
+iptables -A TALOS20 \
+    -i "$LAN_BR" \
+    -o "$TALOS_BR" \
+    -s "$LAN_NET" \
+    -d "$TALOS_NET" \
+    -p tcp --dport 10250 \
+    -j ACCEPT
+
+# ============================================================
+# Talos -> Internet
+#
+# Required for:
+# - container images
+# - updates
+# - external services
+# ============================================================
+
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -o "$WAN_IF" \
+    -s "$TALOS_NET" \
+    -j ACCEPT
+
+# ============================================================
+# TALOS -> MANAGEMENT LAN
+# ============================================================
+
+# Allow Talos nodes to initiate connections to LAN.
+#
+# Remove this if you want VLAN20 completely isolated from LAN.
+#
+iptables -A TALOS20 \
+    -i "$TALOS_BR" -o "$LAN_BR" \
+    -s "$TALOS_NET" -d "$LAN_NET" \
+    -j ACCEPT
+
+# ============================================================
+# TALOS -> ROUTER
+# ============================================================
+
+# DNS
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -s "$TALOS_NET" \
+    -p udp --dport 53 \
+    -j ACCEPT
+
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -s "$TALOS_NET" \
+    -p tcp --dport 53 \
+    -j ACCEPT
+
+# router NTP
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -s "$TALOS_NET" \
+    -p udp --dport 123 \
+    -j ACCEPT
+
+
+# DHCP (alleen nodig als Talos DHCP gebruikt)
+iptables -A TALOS20 \
+    -i "$TALOS_BR" \
+    -p udp --sport 68 --dport 67 \
+    -j ACCEPT
+
+# ============================================================
+# Attach
+# ============================================================
+
+iptables -I FORWARD 1 -j TALOS20
+iptables -I INPUT 1 -j TALOS20
+
+# ============================================================
+# NAT
+# ============================================================
+
+iptables -t nat -C POSTROUTING \
+    -s "$TALOS_NET" \
+    -o "$WAN_IF" \
+    -j MASQUERADE 2>/dev/null || \
+iptables -t nat -A POSTROUTING \
+    -s "$TALOS_NET" \
+    -o "$WAN_IF" \
+    -j MASQUERADE
+
+# ============================================================
+# VLAN20 -> PPPoE MSS clamping
+# ============================================================
+
+# Issue; Talos reporting time-sync issue: NTS session for time.cloudflare.com: key exchange: connection error: context deadline exceeded
+# Cause: MTU/MSS-probleem due to PPPoE (lowering mtu from 1500 to 1492)
+# Solution: --clamp-mss-to-pmtu reduces the mss (payload size) to the max mtu path (1460 => 1452)
+
+# iptables -t mangle -R FORWARD 1 \
+#     -i br20 \
+#     -o ppp0 \
+#     -p tcp \
+#     --tcp-flags SYN,RST SYN \
+#     -j TCPMSS --set-mss 1400
+
+iptables -t mangle -D FORWARD \
+    -i br20 \
+    -o ppp0 \
+    -p tcp \
+    --tcp-flags SYN,RST SYN \
+    -j TCPMSS --clamp-mss-to-pmtu 2>/dev/null
+
+iptables -t mangle -I FORWARD 1 \
+    -i br20 \
+    -o ppp0 \
+    -p tcp \
+    --tcp-flags SYN,RST SYN \
+    -j TCPMSS --clamp-mss-to-pmtu

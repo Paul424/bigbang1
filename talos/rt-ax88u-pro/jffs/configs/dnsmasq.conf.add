@@ -1,0 +1,17 @@
+dhcp-option=60,IPTV_RG
+dhcp-option=28,192.168.50.255
+
+interface=br20
+dhcp-range=br20,192.168.20.100,192.168.20.199,255.255.255.0,12h
+dhcp-option=br20,3,192.168.20.1
+dhcp-option=br20,6,192.168.20.1
+dhcp-host=BC:24:11:F7:7E:11,192.168.20.10,cp01,infinite
+dhcp-host=BC:24:11:F7:7E:21,192.168.20.11,cp02,infinite
+dhcp-host=BC:24:11:F7:7E:31,192.168.20.12,cp03,infinite
+dhcp-host=BC:24:11:F7:7E:12,192.168.20.20,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:13,192.168.20.21,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:22,192.168.20.22,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:23,192.168.20.23,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:32,192.168.20.24,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:33,192.168.20.25,worker01,infinite
+dhcp-host=BC:24:11:F7:7E:42,192.168.20.26,ai01,infinite

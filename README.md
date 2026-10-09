@@ -41,10 +41,10 @@ Access to the upstream charts and images
 # Infrastructure (provider)
 
 ## Kind cluster
-When using a kind cluster, see [kind / wsl guidelines](./kind/README.md)
+When using a kind cluster, see [kind / wsl guidelines](./providers/kind/README.md)
 
 ## Talos (on Proxmox) cluster
-When using Talos, see [Talos guidelines](./talos/README.md)
+When using Talos, see [Talos guidelines](./providers/talos/README.md)
 
 # Bootstrap bigbang
 

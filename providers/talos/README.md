@@ -621,6 +621,8 @@ iface nic0 inet manual
 
 ## Proxmox node becomes unreachable
 
+Mogelijke oplossing:
+
 ethtool --show-eee nic0
 ethtool --set-eee nic0 eee off
 ethtool --show-eee nic0
@@ -654,6 +656,37 @@ root@p3:~# ethtool -S nic0 | egrep -i 'err|drop|timeout|reset|hang|fail|miss'
      uncorr_ecc_errors: 0
      corr_ecc_errors: 0
      tx_hwtstamp_timeouts: 0
+
+Dag later weer een disconnect...:
+root@p3:~# ethtool -S nic0 | egrep -i 'err|drop|timeout|reset|hang|fail|miss'
+     rx_errors: 0
+     tx_errors: 0
+     tx_dropped: 0
+     rx_length_errors: 0
+     rx_over_errors: 0
+     rx_crc_errors: 0
+     rx_frame_errors: 0
+     rx_missed_errors: 52507
+     tx_aborted_errors: 0
+     tx_carrier_errors: 0
+     tx_fifo_errors: 0
+     tx_heartbeat_errors: 0
+     tx_window_errors: 0
+     tx_deferred_ok: 0
+     tx_timeout_count: 0
+     rx_long_length_errors: 0
+     rx_short_length_errors: 0
+     rx_align_errors: 0
+     tx_tcp_seg_failed: 0
+     rx_csum_offload_errors: 5
+     alloc_rx_buff_failed: 0
+     dropped_smbus: 0
+     rx_dma_failed: 0
+     tx_dma_failed: 0
+     uncorr_ecc_errors: 0
+     corr_ecc_errors: 0
+     tx_hwtstamp_timeouts: 0
+
 
 2e stap: 
   ethtool -K nic0 tso off gso off gro off

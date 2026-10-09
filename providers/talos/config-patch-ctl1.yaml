@@ -1,0 +1,24 @@
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: talos-ctl1
+
+# addresses:
+# - address: 192.168.30.10/24
+
+# apiVersion: v1alpha1
+# kind: VLANConfig
+# metadata:
+#   name: enp0s3.100
+# spec:
+#   parent: enp0s3
+#   vlanID: 30
+#   vlanMode: 802.1q
+#   mtu: 1500
+#   up: true
+#   addresses:
+#     - address: 10.100.0.10/24
+#   routes:
+#     - destination: 0.0.0.0/0
+#       gateway: 10.100.0.1

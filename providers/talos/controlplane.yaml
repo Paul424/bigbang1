@@ -4,11 +4,11 @@ persist: true
 # Provides machine specific configuration options.
 machine:
     type: controlplane # Defines the role of the machine within the cluster.
-    token: 93iaym.u9b1gu9e2sv4yh41 # The `token` is used by a machine to join the PKI of the cluster.
+    token: rlibl3.yfq6y4t900d2teq4 # The `token` is used by a machine to join the PKI of the cluster.
     # The root certificate authority of the PKI.
     ca:
-        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQekNCOHFBREFnRUNBaEVBK1pWQTdzR1c2ckUrMDl1V1BGdDZiakFGQmdNclpYQXdFREVPTUF3R0ExVUUKQ2hNRmRHRnNiM013SGhjTk1qWXhNREE0TURnek16VTFXaGNOTXpZeE1EQTFNRGd6TXpVMVdqQVFNUTR3REFZRApWUVFLRXdWMFlXeHZjekFxTUFVR0F5dGxjQU1oQVBSRVUxU0Z4WEtUZDZlUU9Lem9KejdmbXJKNk9VZ1U0TlplCjBVZ3ZDd09NbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQW9Rd0hRWURWUjBsQkJZd0ZBWUlLd1lCQlFVSEF3RUcKQ0NzR0FRVUZCd01DTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRk9Ld3dtd2VwenR6UXlaNgpIOFlwOXBMeEhualVNQVVHQXl0bGNBTkJBUHo3cGFndGhtbHFGVytrWjMzV0VMM0NRWmhodUM2ckUrL1cxOFc1Ck5KM2R0RUZYcmlyTU1FRkEwVlVYSHk5aDhlWlNlZHd6UVhJS0wxVFIrYWVvNlFNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-        key: LS0tLS1CRUdJTiBFRDI1NTE5IFBSSVZBVEUgS0VZLS0tLS0KTUM0Q0FRQXdCUVlESzJWd0JDSUVJSGkvaUQxL2I0UlpiRlZmY1R1Z3ZsYlkzQ2JuNEpBQm5aMGxzYUtlYnRPZgotLS0tLUVORCBFRDI1NTE5IFBSSVZBVEUgS0VZLS0tLS0K
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQakNCOGFBREFnRUNBaEFKazFYcEs0dHFxVGp2bGlnWGdlSlhNQVVHQXl0bGNEQVFNUTR3REFZRFZRUUsKRXdWMFlXeHZjekFlRncweU5qRXdNRGt4T1RRd05UWmFGdzB6TmpFd01EWXhPVFF3TlRaYU1CQXhEakFNQmdOVgpCQW9UQlhSaGJHOXpNQ293QlFZREsyVndBeUVBOXMzQnNWcDZYT2ZJbXM1L2t3WEEvZ1NFMU40ZEljK2FEUWF4ClNuL2lkTW1qWVRCZk1BNEdBMVVkRHdFQi93UUVBd0lDaERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVZ1oybUF0cllKUzRmT21WSApQT3ZYVlpaeHBrNHdCUVlESzJWd0EwRUFYN21TODk4UUhFYnhtMEFzQlZDMzg0dm9pQUpyaHpyUnBFS2hwWkRQCjhaWXpxWDlnczZBeWx3bzF6b2VzajVHSk5EdWJUNUZvM2tYemU3UWNicWlHQ3c9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+        key: LS0tLS1CRUdJTiBFRDI1NTE5IFBSSVZBVEUgS0VZLS0tLS0KTUM0Q0FRQXdCUVlESzJWd0JDSUVJR0Nlekc2N0JxcEhqcFFrZmJvTnU4RVB1cDNHYjhBQlR5RU9CeXJxWGNEaAotLS0tLUVORCBFRDI1NTE5IFBSSVZBVEUgS0VZLS0tLS0K
     # Extra certificate subject alternative names for the machine's certificate.
     certSANs: []
     #   # Uncomment this to enable SANs.
@@ -43,13 +43,13 @@ machine:
     #         defaultAction: SCMP_ACT_LOG
 # Provides cluster specific configuration options.
 cluster:
-    token: e7ln1d.czyuu7nlvm8uh9h4 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
+    token: zszxjm.d69nip3tzvpcgp54 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
     # Etcd specific configuration options.
     etcd:
         # The `ca` is the root certificate authority of the PKI.
         ca:
-            crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJmVENDQVNPZ0F3SUJBZ0lRVFUxMndRUVN5bCtQQ011MkVJdzNtREFLQmdncWhrak9QUVFEQWpBUE1RMHcKQ3dZRFZRUUtFd1JsZEdOa01CNFhEVEkyTVRBd09EQTRNek0xTlZvWERUTTJNVEF3TlRBNE16TTFOVm93RHpFTgpNQXNHQTFVRUNoTUVaWFJqWkRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQkZnRjN6aWNJNlZNCmIwR2pYYy8ybk1nbWkxNWttVTR6QjNEbzRXTHZKckNrTS9GSEM3eVJ2RkpUcGxURDByWjdxQkl6aXJNcEw5NHYKYnJsYVN6cW5WMkNqWVRCZk1BNEdBMVVkRHdFQi93UUVBd0lDaERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjRApBUVlJS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVaVNCUVZDQnFWNXFkCkNOeGFJenkxdHMwT2ZxTXdDZ1lJS29aSXpqMEVBd0lEU0FBd1JRSWhBUHowUk5jeGZaaFBqVXo3WmM3aW1NaVEKTk9NRTFwVm1pVFpqdnVzamszdGNBaUF3cmM0OGpXOFNudFBHVVFzTWMzNWJDSjFiakY2SEl3MHM2UzVMOGJiTgprZz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-            key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUplQmwzWDlhWGdWWFhOM1NUaGpORmNtdUNHSWdxVzdiVjNmN0lpL1FqNUVvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFV0FYZk9Kd2pwVXh2UWFOZHovYWN5Q2FMWG1TWlRqTUhjT2poWXU4bXNLUXo4VWNMdkpHOApVbE9tVk1QU3RudW9Fak9Lc3lrdjNpOXV1VnBMT3FkWFlBPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+            crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJmakNDQVNPZ0F3SUJBZ0lRSVpqQjFXYlVNM3I2MTJUMWNmNGZ3akFLQmdncWhrak9QUVFEQWpBUE1RMHcKQ3dZRFZRUUtFd1JsZEdOa01CNFhEVEkyTVRBd09URTVOREExTmxvWERUTTJNVEF3TmpFNU5EQTFObG93RHpFTgpNQXNHQTFVRUNoTUVaWFJqWkRCWk1CTUdCeXFHU000OUFnRUdDQ3FHU000OUF3RUhBMElBQk4xMDAreGtZVVRLCkU3S00rcnFYaFJFdmhoZFo4N0xybHExWTIvVFc1aDZ0UkkzT0I1MlFoSDA1OUZaSGtWVUdESlFPd0R1YzI0UkIKRFVqcWxxSjJ6aEtqWVRCZk1BNEdBMVVkRHdFQi93UUVBd0lDaERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjRApBUVlJS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVL0cvR1ZCTytkMDNVCit5R3VsZXMwU0FLWFF5d3dDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBTzdYVkJOd2dKdXc1N2RrVGFwZ0JUT3gKY0ErUWtteEhMU2RwckhaNkl6TVJBaUVBOVRCR2FOdzRvVndVd3k3USsyTldQTGs5TnZkaWpnYThMVytQVGNtZQpSTzQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+            key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA0NHVHK3hZNmRpbkdjY29NTEdOdFZmczd1VGIzTXlUdVVyOS9RSkxwbmpvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFM1hUVDdHUmhSTW9Uc296NnVwZUZFUytHRjFuenN1dVdyVmpiOU5ibUhxMUVqYzRIblpDRQpmVG4wVmtlUlZRWU1sQTdBTzV6YmhFRU5TT3FXb25iT0VnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
         
         # # The container image used to create the etcd service.
         # image: registry.k8s.io/etcd:3.7.1
@@ -77,8 +77,8 @@ endpoint: https://discovery.talos.dev/ # Discovery service endpoint to use.
 ---
 apiVersion: v1alpha1
 kind: DiscoveryIdentityConfig
-clusterID: tWoLmO9LeURc86fe61WFl2Tjjj3gyX8vyoamRqTFfIs= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
-clusterSecret: e4FK6H4vpGvieJKnV4bxSlFoGxdQNLtg4d4KoXJFd5c= # Shared secret of cluster (base64 encoded random 32 bytes).
+clusterID: chXwtmRBpTqv714YSUwazcCyxSiwaJ/PfZA1S2SAXIw= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
+clusterSecret: fVSyXIAX4nOpnZFdVlwxCJpgIS6B79nTJNOxTTBKc0E= # Shared secret of cluster (base64 encoded random 32 bytes).
 ---
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
@@ -204,21 +204,21 @@ kind: KubeAPIServerCAConfig
 issuingCA:
     cert: |
         -----BEGIN CERTIFICATE-----
-        MIIBijCCATCgAwIBAgIRAPUvu9mOnFou57+OV/rVbGkwCgYIKoZIzj0EAwIwFTET
-        MBEGA1UEChMKa3ViZXJuZXRlczAeFw0yNjEwMDgwODMzNTVaFw0zNjEwMDUwODMz
-        NTVaMBUxEzARBgNVBAoTCmt1YmVybmV0ZXMwWTATBgcqhkjOPQIBBggqhkjOPQMB
-        BwNCAASKM55lh9rU+6FDIGWSs8W2bZPLl5uqT45rtuNc7n4mS9Pd9gNqQ4xS+jSE
-        V6xhafFZ4/EAPxBDymh31oKKaFDDo2EwXzAOBgNVHQ8BAf8EBAMCAoQwHQYDVR0l
-        BBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0O
-        BBYEFAFgSpJfXDAExoR5OlPVtd/3cF3+MAoGCCqGSM49BAMCA0gAMEUCIA35t3qI
-        QRA9xyQLnimLBpw9m9obaKO6iEGveZEn+7z8AiEAq5p1Bu9w1Gkk9iGCD58ACoUO
-        fyTRVUt+2WG01y8DcMw=
+        MIIBijCCAS+gAwIBAgIQV7NdeiBDtzcK3V724NJg8jAKBggqhkjOPQQDAjAVMRMw
+        EQYDVQQKEwprdWJlcm5ldGVzMB4XDTI2MTAwOTE5NDA1NloXDTM2MTAwNjE5NDA1
+        NlowFTETMBEGA1UEChMKa3ViZXJuZXRlczBZMBMGByqGSM49AgEGCCqGSM49AwEH
+        A0IABG/GFOSwRpgEa9RGBzbchGOwHQOP3wgOeO5j+Giuhg+L9VmwaNsJruWrzJmF
+        G5ymzXIOU0GAt08tdcpPCLPEVeyjYTBfMA4GA1UdDwEB/wQEAwIChDAdBgNVHSUE
+        FjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4E
+        FgQUESqdhfTj2s93DnmNQ8hCJXTA3vowCgYIKoZIzj0EAwIDSQAwRgIhANNUFy+2
+        pSESzRHa2+C2cPsp7ZgbcAbLbPEYEgdUPpnmAiEAmOm9c0j5j6K9KdFYQDWMHTdJ
+        25ApC+zjz6TTxjXNGYo=
         -----END CERTIFICATE-----
     key: |
         -----BEGIN EC PRIVATE KEY-----
-        MHcCAQEEIBfGs0nRv2ycqK0N1/8KUfEB32+5Ssw6pKgXbUOW4oUYoAoGCCqGSM49
-        AwEHoUQDQgAEijOeZYfa1PuhQyBlkrPFtm2Ty5ebqk+Oa7bjXO5+JkvT3fYDakOM
-        Uvo0hFesYWnxWePxAD8QQ8pod9aCimhQww==
+        MHcCAQEEIO2W1sPyFTEV38xT1jH4y2FTbuhhBR7iEsXNrXf1IUrhoAoGCCqGSM49
+        AwEHoUQDQgAEb8YU5LBGmARr1EYHNtyEY7AdA4/fCA547mP4aK6GD4v1WbBo2wmu
+        5avMmYUbnKbNcg5TQYC3Ty11yk8Is8RV7A==
         -----END EC PRIVATE KEY-----
 ---
 apiVersion: v1alpha1
@@ -231,20 +231,20 @@ kind: KubeAggregatorCAConfig
 issuingCA:
     cert: |
         -----BEGIN CERTIFICATE-----
-        MIIBYDCCAQWgAwIBAgIQQ4WGjMu5jHO3HV5mBGjARTAKBggqhkjOPQQDAjAAMB4X
-        DTI2MTAwODA4MzM1NVoXDTM2MTAwNTA4MzM1NVowADBZMBMGByqGSM49AgEGCCqG
-        SM49AwEHA0IABPM+w98qUhnsKKIWjNBhpeiTSOCuC8zUFUDEfiDdT6vSx0lkf/BD
-        VxbQc7Rs+WaDWKlHuS8RolVp9T837h/PeJejYTBfMA4GA1UdDwEB/wQEAwIChDAd
+        MIIBXjCCAQWgAwIBAgIQPGwD/X75idonjPn0Y2CRtzAKBggqhkjOPQQDAjAAMB4X
+        DTI2MTAwOTE5NDA1NloXDTM2MTAwNjE5NDA1NlowADBZMBMGByqGSM49AgEGCCqG
+        SM49AwEHA0IABP4pRQCoeVAWNqPKswxEzH0g7cYOrBg4VdC2jgHlS3V5GvMcxooH
+        PpnWSarim63u2TBtiWwqtQjxp+Jo32Sf9qOjYTBfMA4GA1UdDwEB/wQEAwIChDAd
         BgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUwAwEB/zAd
-        BgNVHQ4EFgQUlwQGYphaQCmhPWxgUlRn/fvI9m0wCgYIKoZIzj0EAwIDSQAwRgIh
-        AKtwk61UD0HFsvUMEV+Ohj9KbSThmuG6omN85gwoK5SQAiEA6s+lpyWBx8OE9LH9
-        /m2x0KZstuKFjTR6tel8i4W4bhA=
+        BgNVHQ4EFgQU7NSzvinx/fdp9APzqryi4x5H9tkwCgYIKoZIzj0EAwIDRwAwRAIg
+        Ub0W+x5iGuVedGXSjUCTZEwsWZyWhexqLii297zYgUECIEatpVg13ZD3r2waKB1d
+        SAZXDc3y9oBUQ7CLZdOGP9yf
         -----END CERTIFICATE-----
     key: |
         -----BEGIN EC PRIVATE KEY-----
-        MHcCAQEEIJTBEHULPNykO7xn/UAw+pV1R2EkywYJdqvwqhVrDUlaoAoGCCqGSM49
-        AwEHoUQDQgAE8z7D3ypSGewoohaM0GGl6JNI4K4LzNQVQMR+IN1Pq9LHSWR/8ENX
-        FtBztGz5ZoNYqUe5LxGiVWn1PzfuH894lw==
+        MHcCAQEEIBr6W0QAJeqDuQ+i2F18X7aUZnYHiDaysJEh7/X4nzMAoAoGCCqGSM49
+        AwEHoUQDQgAE/ilFAKh5UBY2o8qzDETMfSDtxg6sGDhV0LaOAeVLdXka8xzGigc+
+        mdZJquKbre7ZMG2JbCq1CPGn4mjfZJ/2ow==
         -----END EC PRIVATE KEY-----
 ---
 apiVersion: v1alpha1
@@ -315,7 +315,7 @@ config:
             - secretbox:
                 keys:
                     - name: key2
-                      secret: aWsy7BdBaFhQr4sKrqFiOD1gcIBn9A/+GLk2Z35DVq4=
+                      secret: ifdqyKP4LnB5tW0vFPZI6mUtp3kT25thofJ70iL+7zw=
           resources:
             - secrets
 ---
@@ -325,55 +325,55 @@ kind: KubeServiceAccountConfig
 issuer:
     privateKey: | # The key which is used to sign the service account tokens.
         -----BEGIN RSA PRIVATE KEY-----
-        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
+        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
         -----END RSA PRIVATE KEY-----
     issuerURL: https://192.168.20.10:6443 # The issuer URL which is used to sign the service account tokens.
 ---
@@ -409,3 +409,18 @@ config: {}
 apiVersion: v1alpha1
 kind: KubeCoreDNSConfig
 enabled: true # By default, CoreDNS deployment is enabled.
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: ens18 # Name of the link (interface).
+
+# # Raw value of the DUID to use as client identifier.
+# duidRaw: 00:01:00:01:23:45:67:89:ab:cd:ef:01:23:45
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: ens18.30 # Name of the VLAN link (interface) to be created.
+vlanID: 30 # VLAN ID to be used for the VLAN link.
+vlanMode: 802.1q # Set the VLAN mode to use.
+parent: ens18 # Name of the parent link (interface) on which the VLAN link will be created.
+up: true # Bring the link up or down.

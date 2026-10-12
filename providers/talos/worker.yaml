@@ -4,10 +4,10 @@ persist: true
 # Provides machine specific configuration options.
 machine:
     type: worker # Defines the role of the machine within the cluster.
-    token: 93iaym.u9b1gu9e2sv4yh41 # The `token` is used by a machine to join the PKI of the cluster.
+    token: rlibl3.yfq6y4t900d2teq4 # The `token` is used by a machine to join the PKI of the cluster.
     # The root certificate authority of the PKI.
     ca:
-        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQekNCOHFBREFnRUNBaEVBK1pWQTdzR1c2ckUrMDl1V1BGdDZiakFGQmdNclpYQXdFREVPTUF3R0ExVUUKQ2hNRmRHRnNiM013SGhjTk1qWXhNREE0TURnek16VTFXaGNOTXpZeE1EQTFNRGd6TXpVMVdqQVFNUTR3REFZRApWUVFLRXdWMFlXeHZjekFxTUFVR0F5dGxjQU1oQVBSRVUxU0Z4WEtUZDZlUU9Lem9KejdmbXJKNk9VZ1U0TlplCjBVZ3ZDd09NbzJFd1h6QU9CZ05WSFE4QkFmOEVCQU1DQW9Rd0hRWURWUjBsQkJZd0ZBWUlLd1lCQlFVSEF3RUcKQ0NzR0FRVUZCd01DTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRk9Ld3dtd2VwenR6UXlaNgpIOFlwOXBMeEhualVNQVVHQXl0bGNBTkJBUHo3cGFndGhtbHFGVytrWjMzV0VMM0NRWmhodUM2ckUrL1cxOFc1Ck5KM2R0RUZYcmlyTU1FRkEwVlVYSHk5aDhlWlNlZHd6UVhJS0wxVFIrYWVvNlFNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQakNCOGFBREFnRUNBaEFKazFYcEs0dHFxVGp2bGlnWGdlSlhNQVVHQXl0bGNEQVFNUTR3REFZRFZRUUsKRXdWMFlXeHZjekFlRncweU5qRXdNRGt4T1RRd05UWmFGdzB6TmpFd01EWXhPVFF3TlRaYU1CQXhEakFNQmdOVgpCQW9UQlhSaGJHOXpNQ293QlFZREsyVndBeUVBOXMzQnNWcDZYT2ZJbXM1L2t3WEEvZ1NFMU40ZEljK2FEUWF4ClNuL2lkTW1qWVRCZk1BNEdBMVVkRHdFQi93UUVBd0lDaERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVZ1oybUF0cllKUzRmT21WSApQT3ZYVlpaeHBrNHdCUVlESzJWd0EwRUFYN21TODk4UUhFYnhtMEFzQlZDMzg0dm9pQUpyaHpyUnBFS2hwWkRQCjhaWXpxWDlnczZBeWx3bzF6b2VzajVHSk5EdWJUNUZvM2tYemU3UWNicWlHQ3c9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
         key: ""
     # Extra certificate subject alternative names for the machine's certificate.
     certSANs: []
@@ -43,7 +43,7 @@ machine:
     #         defaultAction: SCMP_ACT_LOG
 # Provides cluster specific configuration options.
 cluster:
-    token: e7ln1d.czyuu7nlvm8uh9h4 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
+    token: zszxjm.d69nip3tzvpcgp54 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
     
     # # Etcd specific configuration options.
     # etcd:
@@ -78,8 +78,8 @@ endpoint: https://discovery.talos.dev/ # Discovery service endpoint to use.
 ---
 apiVersion: v1alpha1
 kind: DiscoveryIdentityConfig
-clusterID: tWoLmO9LeURc86fe61WFl2Tjjj3gyX8vyoamRqTFfIs= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
-clusterSecret: e4FK6H4vpGvieJKnV4bxSlFoGxdQNLtg4d4KoXJFd5c= # Shared secret of cluster (base64 encoded random 32 bytes).
+clusterID: chXwtmRBpTqv714YSUwazcCyxSiwaJ/PfZA1S2SAXIw= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
+clusterSecret: fVSyXIAX4nOpnZFdVlwxCJpgIS6B79nTJNOxTTBKc0E= # Shared secret of cluster (base64 encoded random 32 bytes).
 ---
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
@@ -198,17 +198,32 @@ kind: KubeAPIServerCAConfig
 acceptedCAs:
     - |
       -----BEGIN CERTIFICATE-----
-      MIIBijCCATCgAwIBAgIRAPUvu9mOnFou57+OV/rVbGkwCgYIKoZIzj0EAwIwFTET
-      MBEGA1UEChMKa3ViZXJuZXRlczAeFw0yNjEwMDgwODMzNTVaFw0zNjEwMDUwODMz
-      NTVaMBUxEzARBgNVBAoTCmt1YmVybmV0ZXMwWTATBgcqhkjOPQIBBggqhkjOPQMB
-      BwNCAASKM55lh9rU+6FDIGWSs8W2bZPLl5uqT45rtuNc7n4mS9Pd9gNqQ4xS+jSE
-      V6xhafFZ4/EAPxBDymh31oKKaFDDo2EwXzAOBgNVHQ8BAf8EBAMCAoQwHQYDVR0l
-      BBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0O
-      BBYEFAFgSpJfXDAExoR5OlPVtd/3cF3+MAoGCCqGSM49BAMCA0gAMEUCIA35t3qI
-      QRA9xyQLnimLBpw9m9obaKO6iEGveZEn+7z8AiEAq5p1Bu9w1Gkk9iGCD58ACoUO
-      fyTRVUt+2WG01y8DcMw=
+      MIIBijCCAS+gAwIBAgIQV7NdeiBDtzcK3V724NJg8jAKBggqhkjOPQQDAjAVMRMw
+      EQYDVQQKEwprdWJlcm5ldGVzMB4XDTI2MTAwOTE5NDA1NloXDTM2MTAwNjE5NDA1
+      NlowFTETMBEGA1UEChMKa3ViZXJuZXRlczBZMBMGByqGSM49AgEGCCqGSM49AwEH
+      A0IABG/GFOSwRpgEa9RGBzbchGOwHQOP3wgOeO5j+Giuhg+L9VmwaNsJruWrzJmF
+      G5ymzXIOU0GAt08tdcpPCLPEVeyjYTBfMA4GA1UdDwEB/wQEAwIChDAdBgNVHSUE
+      FjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4E
+      FgQUESqdhfTj2s93DnmNQ8hCJXTA3vowCgYIKoZIzj0EAwIDSQAwRgIhANNUFy+2
+      pSESzRHa2+C2cPsp7ZgbcAbLbPEYEgdUPpnmAiEAmOm9c0j5j6K9KdFYQDWMHTdJ
+      25ApC+zjz6TTxjXNGYo=
       -----END CERTIFICATE-----
 ---
 apiVersion: v1alpha1
 kind: KubePrismConfig
 port: 7445 # KubePrism port.
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: ens18 # Name of the link (interface).
+
+# # Raw value of the DUID to use as client identifier.
+# duidRaw: 00:01:00:01:23:45:67:89:ab:cd:ef:01:23:45
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: ens18.30 # Name of the VLAN link (interface) to be created.
+vlanID: 30 # VLAN ID to be used for the VLAN link.
+vlanMode: 802.1q # Set the VLAN mode to use.
+parent: ens18 # Name of the parent link (interface) on which the VLAN link will be created.
+up: true # Bring the link up or down.

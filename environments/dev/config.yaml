@@ -528,10 +528,11 @@ packages:
       defaultAddressPool:
         enabled: true
         addresses:
-          - 192.168.50.250-192.168.50.253
+          - 192.168.30.100-192.168.30.200
       defaultL2Advertisement:
         enabled: true
-
+        interfaces:
+          - enp1s0.30
   keycloak-realms:
     enabled: true
     namespace:

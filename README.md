@@ -33,38 +33,25 @@ We are using gitops to provision bigbang and some infrastructure services (dns, 
 ## Accounts
 
 Access to the git versioned scripts (of this repo)
-- [github account](https://github.com/)
+- Create an account on [github](https://github.com/) and setup a PAT.
 
-Access to the upstream charts and images
-- [p1 registry account](https://registry1.dso.mil/)
+Access to the upstream bigbang charts and images
+- Create a [p1 registry account](https://registry1.dso.mil/) and within Harbor copy the secret from your profile.
 
-# Infrastructure (provider)
+# Infrastructure provider
 
 ## Kind cluster
 When using a kind cluster, see [kind / wsl guidelines](./providers/kind/README.md)
 
-## Talos (on Proxmox) cluster
+## Minikube cluster
+When using a minikube cluster, see [minikube guidelines](./providers/minikube/README.md)
+
+## Proxmox / Talos cluster
 When using Talos, see [Talos guidelines](./providers/talos/README.md)
 
 # Bootstrap bigbang
 
-Once the infrastructure is in place (meaning you have a container platform running on either kind or talos /w a working .kube/config and also there is support for DNS, storage and load-balancing), then you can proceed to bootstrap bigbang.
-
-## Initialize SOPS
-
-A SOPS / GPG key must be generated to encrypt secrets.
-
-```
-bash ./run.sh generate_sops_keys
-```
-
-## Encrypt secrets
-
-Use SOPS to encrypt the secrets in base and the supported environments. Notice on a vanilla install the are no encrypted secrets in the git archive (.enc) and also plain text secrets are not in the archive.
-```
-sops --encrypt environments/base/common-bb-secret.yaml > environments/base/common-bb-secret.enc.yaml
-sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/secrets/dev-bb-secret.enc.yaml
-```
+Once the infrastructure is in place (meaning you have a container platform running on either kind, minikube or talos with a cni installed and a working .kube/config), then you can proceed to bootstrap bigbang.
 
 ## Bootstrap gitops (flux)
 
@@ -75,8 +62,18 @@ export REGISTRY1_USERNAME=<account-name-to-access-p1-registry>
 export REGISTRY1_TOKEN=<p1-registry-cli-secret>
 export REGISTRY_UPSTREAM_USERNAME=<account-name-to-access-your-git-repo>
 export REGISTRY_UPSTREAM_PAT=<token-to-authenticate-to-git>
-bash ./run.sh bootstrap
+bash ./scripts/bootstrap.sh
 ```
+
+## Initialize SOPS
+
+See [sops guidelines](./docs/SOPS.md) for details how to initialize sops for secret management.
+
+
+
+
+
+
 
 ## Apply Hacks
 

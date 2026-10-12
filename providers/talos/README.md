@@ -430,27 +430,27 @@ talosctl get disks --nodes $WRK1_IP --insecure
 talosctl gen config \
   bb9 \
   https://$CTL1_IP:6443 \
-  --output-dir ./talos \
-  --config-patch @./talos/config-patch.yaml \
-  --config-patch-control-plane @./talos/config-patch-control-plane.yaml \
-  --config-patch-worker @./talos/config-patch-worker.yaml \
+  --output-dir ./providers/talos \
+  --config-patch @./providers/talos/config-patch.yaml \
+  --config-patch-control-plane @./providers/talos/config-patch-control-plane.yaml \
+  --config-patch-worker @./providers/talos/config-patch-worker.yaml \
   --install-image factory.talos.dev/metal-installer/914b38adefad3d77212f565745ed52013bf3a424e7da2730e9e7dad8ee297342:v1.14.2 \
   --force
 
 # Then remove KubeFlannelCNIConfig from the generated controlplane.yaml
 
-talosctl apply-config --nodes $CTL1_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl1.yaml --insecure
-talosctl apply-config --nodes $CTL2_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl2.yaml --insecure
-talosctl apply-config --nodes $CTL3_IP --file ./talos/controlplane.yaml --config-patch @./talos/config-patch-ctl3.yaml --insecure
-talosctl apply-config --nodes $WRK1_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk1.yaml --insecure
-talosctl apply-config --nodes $WRK2_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk2.yaml --insecure
-talosctl apply-config --nodes $WRK3_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk3.yaml --insecure
-talosctl apply-config --nodes $WRK4_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk4.yaml --insecure
-talosctl apply-config --nodes $WRK5_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk5.yaml --insecure
-talosctl apply-config --nodes $WRK6_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-wrk6.yaml --insecure
-talosctl apply-config --nodes $AI1_IP --file ./talos/worker.yaml --config-patch @./talos/config-patch-ai1.yaml --insecure
+talosctl apply-config --nodes $CTL1_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl1.yaml --insecure
+talosctl apply-config --nodes $CTL2_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl2.yaml --insecure
+talosctl apply-config --nodes $CTL3_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl3.yaml --insecure
+talosctl apply-config --nodes $WRK1_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk1.yaml --insecure
+talosctl apply-config --nodes $WRK2_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk2.yaml --insecure
+talosctl apply-config --nodes $WRK3_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk3.yaml --insecure
+talosctl apply-config --nodes $WRK4_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk4.yaml --insecure
+talosctl apply-config --nodes $WRK5_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk5.yaml --insecure
+talosctl apply-config --nodes $WRK6_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk6.yaml --insecure
+talosctl apply-config --nodes $AI1_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-ai1.yaml --insecure
 
-export TALOSCONFIG="./talos/talosconfig"
+export TALOSCONFIG="./providers/talos/talosconfig"
 talosctl config endpoint $CTL1_IP $CTL2_IP $CTL3_IP
 talosctl config node $CTL1_IP $CTL2_IP $CTL3_IP
 talosctl bootstrap --nodes $CTL1_IP
@@ -464,7 +464,7 @@ talosctl kubeconfig --merge --nodes $CTL2_IP ~/.kube/bb9-dev-quickstart-config
 The CNI is installed manually here (because it cannot be integrated into gitops since the flux controllers won't run without a CNI).
 ```
 # Install the CNI (Calico because we need nwpols /w ipBlock support for BB)
-kubectl apply --server-side --kustomize ./talos/calico/
+kubectl apply --server-side --kustomize ./providers/talos/calico/
 ```
 
 ## Decommission a node

@@ -477,6 +477,10 @@ packages:
     enabled: true
     namespace:
       name: metallb
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+        pod-security.kubernetes.io/audit: privileged
+        pod-security.kubernetes.io/warn: privileged      
     sourceType: "helmRepo"
     helmRepo:
       repoName: metallb
@@ -662,6 +666,10 @@ packages:
     enabled: true
     namespace:
       name: rook-ceph
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+        pod-security.kubernetes.io/audit: privileged
+        pod-security.kubernetes.io/warn: privileged      
     sourceType: "helmRepo"
     helmRepo:
       repoName: rook

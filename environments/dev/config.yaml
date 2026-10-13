@@ -536,7 +536,7 @@ packages:
       defaultL2Advertisement:
         enabled: true
         interfaces:
-          - enp1s0.30
+          - ens18.30
   keycloak-realms:
     enabled: true
     namespace:

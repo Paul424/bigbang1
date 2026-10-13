@@ -439,16 +439,8 @@ talosctl gen config \
 
 # Then remove KubeFlannelCNIConfig from the generated controlplane.yaml
 
-talosctl apply-config --nodes $CTL1_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl1.yaml --insecure
-talosctl apply-config --nodes $CTL2_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl2.yaml --insecure
-talosctl apply-config --nodes $CTL3_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl3.yaml --insecure
-talosctl apply-config --nodes $WRK1_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk1.yaml --insecure
-talosctl apply-config --nodes $WRK2_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk2.yaml --insecure
-talosctl apply-config --nodes $WRK3_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk3.yaml --insecure
-talosctl apply-config --nodes $WRK4_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk4.yaml --insecure
-talosctl apply-config --nodes $WRK5_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk5.yaml --insecure
-talosctl apply-config --nodes $WRK6_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-wrk6.yaml --insecure
-talosctl apply-config --nodes $AI1_IP --file ./providers/talos/worker.yaml --config-patch @./providers/talos/config-patch-ai1.yaml --insecure
+# And apply the configs
+bash ./providers/talos/scripts/apply-config.sh [--insecure]
 
 export TALOSCONFIG="./providers/talos/talosconfig"
 talosctl config endpoint $CTL1_IP $CTL2_IP $CTL3_IP
@@ -553,20 +545,20 @@ But you do need to provide a static DNS name mapping:
 
 ```
 192.168.50.253  ceph.dev.bigbang.mil
-192.168.50.252  keycloak.dev.bigbang.mil
-192.168.50.252  openldap.dev.bigbang.mil
-192.168.50.251  gitlab.dev.bigbang.mil
-192.168.50.251  registry.dev.bigbang.mil
-192.168.50.251  harbor.dev.bigbang.mil
-192.168.50.251  backstage.dev.bigbang.mil
-192.168.50.251  kiali.dev.bigbang.mil
-192.168.50.251  grafana.dev.bigbang.mil
-192.168.50.251  prometheus.dev.bigbang.mil
-192.168.50.251  alertmanager.dev.bigbang.mil
-192.168.50.251  headlamp.dev.bigbang.mil
-192.168.50.251  neuvector.dev.bigbang.mil
-192.168.50.251  twistlock.dev.bigbang.mil
-192.168.50.251  chat.dev.bigbang.mil
+192.168.30.101  keycloak.dev.bigbang.mil
+192.168.30.101  openldap.dev.bigbang.mil
+192.168.30.100  gitlab.dev.bigbang.mil
+192.168.30.100  registry.dev.bigbang.mil
+192.168.30.100  harbor.dev.bigbang.mil
+192.168.30.100  backstage.dev.bigbang.mil
+192.168.30.100  kiali.dev.bigbang.mil
+192.168.30.100  grafana.dev.bigbang.mil
+192.168.30.100  prometheus.dev.bigbang.mil
+192.168.30.100  alertmanager.dev.bigbang.mil
+192.168.30.100  headlamp.dev.bigbang.mil
+192.168.30.100  neuvector.dev.bigbang.mil
+192.168.30.100  twistlock.dev.bigbang.mil
+192.168.30.100  chat.dev.bigbang.mil
 ```
 
 # Archive

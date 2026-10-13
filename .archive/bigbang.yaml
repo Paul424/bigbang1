@@ -110,11 +110,11 @@ istioGateway:
       public:
         upstream:
           service:
-            loadBalancerIP: 192.168.50.251
+            loadBalancerIP: 192.168.30.100
       passthrough:
         upstream:
           service:
-            loadBalancerIP: 192.168.50.252
+            loadBalancerIP: 192.168.30.101
 
 kiali:
   sso:

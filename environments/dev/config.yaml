@@ -23,11 +23,11 @@ istioGateway:
       public:
         upstream:
           service:
-            loadBalancerIP: 192.168.50.251
+            loadBalancerIP: 192.168.30.100
       passthrough:
         upstream:
           service:
-            loadBalancerIP: 192.168.50.252
+            loadBalancerIP: 192.168.30.101
 
 kiali:
   sso:
@@ -585,7 +585,7 @@ packages:
             patch: |-
               - op: add
                 path: /spec/loadBalancerIP
-                value: 192.168.50.250
+                value: 192.168.30.150
           - target:
               kind: Deployment
               name: bind9
@@ -649,18 +649,18 @@ packages:
                                     86400 )    ; Minimum TTL
             ;
             @       IN      NS      dev.bigbang.mil.
-            @       IN      A       192.168.50.250
-            ns1     IN      A       192.168.50.250
-            keycloak     IN      A       192.168.50.252
-            openldap     IN      A       192.168.50.252
-            kiali        IN      A       192.168.50.251
-            grafana      IN      A       192.168.50.251
-            prometheus   IN      A       192.168.50.251
-            alertmanager IN      A       192.168.50.251
-            headlamp     IN      A       192.168.50.251
-            neuvector    IN      A       192.168.50.251
-            twistlock    IN      A       192.168.50.251
-            chat         IN      A       192.168.50.251
+            @       IN      A       192.168.30.150
+            ns1     IN      A       192.168.30.150
+            keycloak     IN      A       192.168.30.101
+            openldap     IN      A       192.168.30.101
+            kiali        IN      A       192.168.30.100
+            grafana      IN      A       192.168.30.100
+            prometheus   IN      A       192.168.30.100
+            alertmanager IN      A       192.168.30.100
+            headlamp     IN      A       192.168.30.100
+            neuvector    IN      A       192.168.30.100
+            twistlock    IN      A       192.168.30.100
+            chat         IN      A       192.168.30.100
 
   rook-ceph:
     enabled: true

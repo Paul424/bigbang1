@@ -105,7 +105,7 @@ nameservers:
       
       # # TLS server name to validate the nameserver certificate against.
       # tlsServerName: dns1.example.com
-    - address: 192.168.50.250 # The IP address of the nameserver.
+    - address: 192.168.30.150 # The IP address of the bind9 nameserver.
       
       # # TLS server name to validate the nameserver certificate against.
       # tlsServerName: dns1.example.com

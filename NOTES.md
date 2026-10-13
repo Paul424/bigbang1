@@ -7,19 +7,21 @@ daemonset-controller  Error creating: pods "metallb-speaker-r9j7b" is forbidden:
 
 metallb/metallb-speaker
 
-
 daemonset-controller  Error creating: pods "rook-ceph.cephfs.csi.ceph.com-nodeplugin-tc9rz" is forbidden: violates PodSecurity "baseline:latest": non-default capabi │
 │ lities (container "csi-cephfsplugin" must not include "SYS_ADMIN" in securityContext.capabilities.add), host namespaces (hostNetwork=true), hostPath volumes (volumes "host-dev", "host-sys", "host-run-mount", "li │
 │ b-modules", "plugin-dir", "plugin-mount-dir", "pods-mount-dir", "registration-dir", "ceph-csi-mountinfo"), privileged (containers "csi-cephfsplugin", "driver-registrar" must not set securityContext.privileged=tr │
 │ ue)
 
-
 kubectl label namespace rook-ceph \
   pod-security.kubernetes.io/enforce=privileged \
   --overwrite
 
+Beide configured in bb config.yaml met ns label
 
 
+bind9 192.168.50.250 => 192.168.30.150
+istio gw 192.168.50.251 => 192.168.30.100
+istio gw passthrough 192.168.50.252 => 192.168.30.101
 
 $$20261007$$
 

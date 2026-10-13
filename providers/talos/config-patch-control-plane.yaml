@@ -61,7 +61,7 @@ apiVersion: v1alpha1
 kind: ResolverConfig
 # A list of nameservers (DNS servers) to use for resolving domain names.
 nameservers:
-    - address: 192.168.50.250 # The IP address of the nameserver.
+    - address: 192.168.30.150 # The IP address of the bind9 nameserver.
     - address: 192.168.50.1 # The IP address of the nameserver.
 ---
 apiVersion: v1alpha1

@@ -12,7 +12,7 @@ spec:
   interval: 1m
   url: https://github.com/Paul424/bigbang1
   ref:
-    branch: from-quickstart-to-gitrepo
+    branch: vlan
   secretRef:
     name: private-git
 ---

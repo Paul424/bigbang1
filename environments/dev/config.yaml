@@ -166,6 +166,9 @@ tempo:
 prometheusOperatorCRDs: {}
 
 monitoring:
+  dependsOn:
+    - name: k8s-resources
+      namespace: k8s-resources
   sso:
     enabled: true
     prometheus:
@@ -174,6 +177,12 @@ monitoring:
     alertmanager:
       client_id: "kind-alertmanager"
       client_secret: "o4TdJfYuom979hGDrcpXdy7lrVZg4GTm"
+  # values:
+  #   namespace:
+  #     labels:
+  #       pod-security.kubernetes.io/enforce: privileged
+  #       pod-security.kubernetes.io/audit: privileged
+  #       pod-security.kubernetes.io/warn: privileged      
   # postRenderers:
   # # Allow api-server access /w Cilium (not supporting ipBlocks)
   # - kustomize: *patch-nwpol-to-kube-api
@@ -210,8 +219,6 @@ twistlock:
   #       - username: "fred"
   #         role: "devOps"
   #         authType: "saml"
-
-bbctl: {}
 
 addons:
   gitlab:
@@ -319,31 +326,6 @@ addons:
         # We should configure trivy to use the harbor oci registry and in the readme provide upload instructions
         trivy:
           gitHubToken: "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"
-
-  backstage:
-    enabled: false
-    sso:
-      enabled: true
-      client_id: "kind-backstage"
-      client_secret: "J8bUA8JIsqTFc96XvghAXVuakIwkZzPn"
-    # Grafana secret wasn't sync'ed to backstage (by Kyverno) due to background controller not running
-    # postRenderers:
-    #   - kustomize:
-    #       patches:
-    #         - target:
-    #             kind: Deployment
-    #             name: release-name-backstage
-    #           patch: |-
-    #             - op: replace
-    #               path: /spec/template/spec/initContainers/0/env/2
-    #               value:
-    #                 name: GRAFANA_ADMIN
-    #                 value: admin
-    #             - op: replace
-    #               path: /spec/template/spec/initContainers/0/env/3
-    #               value:
-    #                 name: GRAFANA_PASS
-    #                 value: prom-operator
 
   authservice:
     enabled: true
@@ -473,6 +455,37 @@ addons:
           memory: 128Mi
 
 packages:
+  k8s-resources:
+    enabled: true
+    namespace:
+      name: k8s-resources
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: deliveryhero
+      chartName: k8s-resources
+      tag: 0.8.2
+    # passBigBangValues: false
+    # wrapper:
+    #   enabled: false
+    #   postRenderers: []
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    # dependsOn: []
+    istio:
+      injection: disabled
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      Namespaces:
+        - name: monitoring
+          annotations: {}
+          extraLabels:
+            pod-security.kubernetes.io/enforce: privileged
+            pod-security.kubernetes.io/audit: privileged
+            pod-security.kubernetes.io/warn: privileged      
+
   metallb:
     enabled: true
     namespace:

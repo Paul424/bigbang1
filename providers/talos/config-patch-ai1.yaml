@@ -1,3 +1,13 @@
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+    image: factory.talos.dev/metal-installer/914b38adefad3d77212f565745ed52013bf3a424e7da2730e9e7dad8ee297342:v1.14.2 # Allows for supplying the image used to perform the installation.
+provisioning:
+    diskSelector:
+        match: disk.dev_path == "/dev/sda"
+    wipe: false
+---
 version: v1alpha1
 machine:
   kernel:

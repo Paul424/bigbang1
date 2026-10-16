@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euxo pipefail
+# set -euxo pipefail
+set -x
 
 talosctl apply-config --nodes $CTL1_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl1.yaml "$@" 
 talosctl apply-config --nodes $CTL2_IP --file ./providers/talos/controlplane.yaml --config-patch @./providers/talos/config-patch-ctl2.yaml "$@"

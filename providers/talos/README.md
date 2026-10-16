@@ -66,8 +66,8 @@ p3: 192.168.50.172|i5(6vcpu)|256(nvme)|512(ssd)|40GB
     wrk5: 192.168.20.24|BC:24:11:F7:7E:32|6vcpu|32GB(nvme)|240(ssd)|16GB
     wrk6: 192.168.20.25|BC:24:11:F7:7E:33|6vcpu|32GB(nvme)|240(ssd)|16GB
 
-p4: 192.168.50.173|xeon2125(8vcpu)|256nvme|32GB
-    ai1: 192.168.20.26|BC:24:11:F7:7E:41|1gpu|6vcpu|240GB(nvme)|32GB
+p4: 192.168.50.173|xeon2125(8vcpu)|256nvme|250(ssd)|64GB
+    ai1: 192.168.20.26|BC:24:11:F7:7E:41|1gpu|6vcpu|32GB(nvme)|230(ssd)|56GB
 ```
 
 ## Router setup
@@ -146,7 +146,7 @@ pvesm alloc data $VM_WRK2_ID vm-${VM_WRK2_ID}-disk-1 240G
 
 qm create ${VM_CTL1_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL1_NAME} \
   --net0 virtio=BC:24:11:F7:7E:11,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_CTL1_ID}-disk-0,size=32G \
@@ -163,7 +163,7 @@ qm create ${VM_CTL1_ID} \
 
 qm create ${VM_WRK1_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK1_NAME} \
   --net0 virtio=BC:24:11:F7:7E:12,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK1_ID}-disk-0,size=32G \
@@ -181,7 +181,7 @@ qm create ${VM_WRK1_ID} \
 
 qm create ${VM_WRK2_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK2_NAME} \
   --net0 virtio=BC:24:11:F7:7E:13,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK2_ID}-disk-0,size=32G \
@@ -231,7 +231,7 @@ pvesm alloc data $VM_WRK4_ID vm-${VM_WRK4_ID}-disk-1 240G
 
 qm create ${VM_CTL2_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL2_NAME} \
   --net0 virtio=BC:24:11:F7:7E:21,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_CTL2_ID}-disk-0,size=32G \
@@ -248,7 +248,7 @@ qm create ${VM_CTL2_ID} \
 
 qm create ${VM_WRK3_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK3_NAME} \
   --net0 virtio=BC:24:11:F7:7E:22,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK3_ID}-disk-0,size=32G \
@@ -266,7 +266,7 @@ qm create ${VM_WRK3_ID} \
 
 qm create ${VM_WRK4_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK4_NAME} \
   --net0 virtio=BC:24:11:F7:7E:23,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK4_ID}-disk-0,size=32G \
@@ -316,7 +316,7 @@ pvesm alloc data $VM_WRK6_ID vm-${VM_WRK6_ID}-disk-1 240G
 
 qm create ${VM_CTL3_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL3_NAME} \
   --net0 virtio=BC:24:11:F7:7E:31,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_CTL3_ID}-disk-0,size=32G \
@@ -333,7 +333,7 @@ qm create ${VM_CTL3_ID} \
 
 qm create ${VM_WRK5_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK5_NAME} \
   --net0 virtio=BC:24:11:F7:7E:32,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK5_ID}-disk-0,size=32G \
@@ -351,7 +351,7 @@ qm create ${VM_WRK5_ID} \
 
 qm create ${VM_WRK6_ID} \
   --agent 1 \
-  --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
+  --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK6_NAME} \
   --net0 virtio=BC:24:11:F7:7E:33,bridge=${BRIDGE},firewall=1,tag=20 \
   --scsi0 local-lvm:vm-${VM_WRK6_ID}-disk-0,size=32G \
@@ -390,6 +390,7 @@ pvesm alloc edata $VM_AI1_ID vm-${VM_AI1_ID}-disk-1 230G
 
 qm create ${VM_AI1_ID} \
   --agent 1 \
+  --hostpci0 0000:15:00,pcie=1 \
   --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
   --name ${VM_AI1_NAME} \
   --net0 virtio=BC:24:11:F7:7E:42,bridge=${BRIDGE},firewall=1,tag=20 \
@@ -398,7 +399,7 @@ qm create ${VM_AI1_ID} \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
   --machine q35 \
-  --memory 24576 \
+  --memory 57344 \
   --onboot no \
   --sockets 1 \
   --cpu x86-64-v3 \
@@ -434,7 +435,7 @@ talosctl gen config \
   --config-patch @./providers/talos/config-patch.yaml \
   --config-patch-control-plane @./providers/talos/config-patch-control-plane.yaml \
   --config-patch-worker @./providers/talos/config-patch-worker.yaml \
-  --install-image factory.talos.dev/metal-installer/914b38adefad3d77212f565745ed52013bf3a424e7da2730e9e7dad8ee297342:v1.14.2 \
+  --install-image factory.talos.dev/metal-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.14.2 \
   --force
 
 # Then remove KubeFlannelCNIConfig from the generated controlplane.yaml
@@ -459,7 +460,67 @@ The CNI is installed manually here (because it cannot be integrated into gitops 
 kubectl apply --server-side --kustomize ./providers/talos/calico/
 ```
 
-## Decommission a node
+## Config details
+
+### GPU
+
+Proxmox needs additional [configs](https://github.com/proxmox/pve-docs/blob/master/qm-pci-passthrough.adoc) to expose the GPU device to the (talos) VM.
+
+>>> Locate the Card's PCI address
+
+```
+root@p4:~# lspci | grep -i nvidia
+15:00.0 VGA compatible controller: NVIDIA Corporation GA104GL [RTX A4000] (rev a1)
+15:00.1 Audio device: NVIDIA Corporation GA104 High Definition Audio Controller (rev a1)
+21:00.0 VGA compatible controller: NVIDIA Corporation GP106GL [Quadro P2000] (rev a1)
+21:00.1 Audio device: NVIDIA Corporation GP106 High Definition Audio Controller (rev a1)
+```
+
+>>> Enable IOMMU support
+
+Needs to be done in the BIOS.
+
+And enable kernel options:
+```
+# /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt"
+```
+
+>>> Enable Kernel Modules
+
+Enable vfio modules:
+```
+cat << EOF > /etc/modules-load.d/vfio.conf
+vfio
+vfio_iommu_type1
+vfio_pci
+EOF
+
+update-initramfs -u -k all
+```
+
+>>> Check iommu is enabled
+
+```
+dmesg | grep -e DMAR -e IOMMU -e AMD-Vi
+...
+[    0.543664] DMAR: Intel(R) Virtualization Technology for Directed I/O
+```
+
+>>> Setup Host Device Passthrough
+
+Proxmox should by default make the PCI device unavailable to the host; so nothing needs to be done to the host.
+
+For the VM you need to add the PCI device (raw), for instance:
+
+```
+qm create ${VM_AI1_ID} \
+  --hostpci0: 0000:15:00,pcie=1 \
+```
+
+## Ops
+
+### Decommission a node
 
 Decommissioning a node on the talos setup (/w Ceph running on workers) is not trivial, follow these steps for safe decommissioning a node.
 
@@ -519,7 +580,7 @@ $ ceph osd purge <X> --yes-i-really-mean-it
 purged osd.<X>
 ```
 
-## Commission a node
+### Commission a node
 
 Just create a new node (on Proxmox) and boot into Talos. Then push the config to tell it to join the cluster. After some minutes the node will popup in Kubernetes and the CNI and storage services will be deployed to the node.
 
@@ -527,7 +588,7 @@ The rook operator will discover the new (raw) volumes and initialize an OSD, as 
 
 Check the storage cluster health for all PG's to become healthy `active+clean`
 
-## Upgrade Talos
+### Upgrade Talos
 
 ```
 ceph osd out osd.3
@@ -537,7 +598,7 @@ ceph --watch
 ceph osd in osd.3
 ```
 
-# Network Access
+## Network Access
 
 For a talos setup the endpoints are accessible to the local network, so no tunnels are required.
 
@@ -561,11 +622,11 @@ But you do need to provide a static DNS name mapping:
 192.168.30.100  chat.dev.bigbang.mil
 ```
 
-# Archive
+## Archive
 
 These sections are outdated, i.e. no longer relevant.
 
-## Storage (Block, fs, s3) using Rook / Ceph
+### Storage (Block, fs, s3) using Rook / Ceph
 ```
 helm repo add rook-release https://charts.rook.io/release
 helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph --values ./talos/ceph/rook-ceph.yaml rook-release/rook-ceph
@@ -576,7 +637,7 @@ helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluste
 # helm template --namespace rook-ceph rook-ceph-cluster --values ./talos/ceph/rook-ceph-cluster.yaml rook-release/rook-ceph-cluster --post-renderer kustomization-ceph --debug --output-dir ./debug/out.rook-ceph-cluster
 ```
 
-## DNS Server (bind9) for static .mil addresses
+### DNS Server (bind9) for static .mil addresses
 ```
 helm repo add unxwares https://helm.unxwares.studio
 helm plugin install ./talos/bind9/kustomize-bind9-plugin
@@ -584,7 +645,7 @@ helm upgrade --install --create-namespace --namespace bind9 bind9 --values ./tal
 helm template --namespace bind9 bind9 --values ./talos/bind9/values.yaml unxwares/bind9 --post-renderer kustomization-bind9 --debug --output-dir ./debug/out.bind9
 ```
 
-## Load balancer using Metallb
+### Load balancer using Metallb
 ```
 helm repo add metallb https://metallb.github.io/metallb
 helm repo update
@@ -598,7 +659,11 @@ kubectl apply -f ./talos/metallb/metallb-l2-config.yaml
 kubectl get ipaddresspool -n metallb-system
 ```
 
-## Proxmox issue Nodes switching off; dropping to NotReady
+### Talos nodes rebooting
+
+Seems to be a side-effect when running an image with nvidia extensions without actually having GPU devices.
+
+### Proxmox issue Nodes switching off; dropping to NotReady
 
 Dat proxmox nodes wegvallen komt door intel driver issue:https://forum.proxmox.com/threads/fixed-intermittent-network-dropout-with-intel-i218-lm-nic-e1000e-hardware-offloading-bug.182062/
 
@@ -611,14 +676,13 @@ iface nic0 inet manual
     post-up ethtool -K nic0 gso off tso off rxvlan on txvlan on gro off tx off rx off sg off
 ```
 
-## Proxmox node becomes unreachable
+### Proxmox node becomes unreachable
 
 Mogelijke oplossing:
 
 ethtool --show-eee nic0
 ethtool --set-eee nic0 eee off
 ethtool --show-eee nic0
-
 
 root@p3:~# ethtool -S nic0 | egrep -i 'err|drop|timeout|reset|hang|fail|miss'
      rx_errors: 0
@@ -678,7 +742,6 @@ root@p3:~# ethtool -S nic0 | egrep -i 'err|drop|timeout|reset|hang|fail|miss'
      uncorr_ecc_errors: 0
      corr_ecc_errors: 0
      tx_hwtstamp_timeouts: 0
-
 
 2e stap: 
   ethtool -K nic0 tso off gso off gro off

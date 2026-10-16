@@ -13,3 +13,4 @@ resources:
 
 patches:
   - path: common-bb-secret.enc.yaml
+  - path: helmrelease-bigbang-patch.yaml

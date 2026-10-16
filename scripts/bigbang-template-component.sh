@@ -74,8 +74,6 @@ helm template $BASE/upstream/$COMPONENT/chart \
 
 
 
-
-
 # function template_bigbang_test_patches {
 #     OUTPUT=${1}
 #     echo "Templating bigbang to $OUTPUT"

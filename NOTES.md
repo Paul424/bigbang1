@@ -1,4 +1,25 @@
 
+$$20261016$$
+
+- als ik lokaal een bootstrap.sh doe dan komt flux v1.6.4 op en dat is ok; de upgrade
+- dan echter komt er een GitRepo bigbang @ 3.23.0 waardoor de flux tooling weer wordt gedowngrade
+
+bootstrap 
+=> $BASE/environments/dev/bigbang.yaml
+    GitRepository-env (uit Paul424 repo)
+    Met een kustomization /environments/dev uit die repo (Paul424)
+    => https://repo1.dso.mil/platform-one/big-bang/bigbang.git/base?ref=3.34.0
+      GitRepository bigbang
+      HelmRelease
+    => flux-components.yaml
+      Kustomization flux-components uit repo bigbang met path ./base/flux
+
+Hoe kan de GitRepo bigbang nu terugvallen op @3.23.0 ?????
+Ook na suspend van flux-components blijft de bigbang gitrepo hangen op tag 3.23.0
+Ah, nee wacht nu komt hij toch; nu naar 3.34.0
+En ook de bb-env is nu applied!
+Kijken wat resume doet? Ok nu applied nu direct v3.34.0
+
 $$20261015$$
 
 - proxmox confs gemaakt om de nvidia pci device raw door te geven.

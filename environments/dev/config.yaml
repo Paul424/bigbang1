@@ -467,6 +467,10 @@ packages:
     namespace:
       name: k8s-resources
     sourceType: "helmRepo"
+    ociRepo:
+      repoName: ghcr.io/deliveryhero
+      chartName: k8s-resources
+      tag: 0.8.2
     helmRepo:
       repoName: deliveryhero
       chartName: k8s-resources
@@ -487,7 +491,7 @@ packages:
     values:
       Namespaces:
         - name: monitoring
-          annotations: {}
+          fullnameOverride: monitoring
           extraLabels:
             pod-security.kubernetes.io/enforce: privileged
             pod-security.kubernetes.io/audit: privileged

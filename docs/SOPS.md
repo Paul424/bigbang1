@@ -83,3 +83,12 @@ code environments/base/common-bb-secret.yaml
 sops --encrypt environments/base/common-bb-secret.yaml > environments/base/common-bb-secret.enc.yaml
 sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/secrets/dev-bb-secret.enc.yaml
 ```
+
+## SOPS gpg key rotation
+
+The simple approach (when doing a full redeployment) is to just:
+1. Remove the old gpg key
+2. Create a new gpg key
+3. Take the fp to .sops
+4. Encrypt all files
+5. Export the new key to the cluster

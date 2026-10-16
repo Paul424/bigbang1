@@ -11,7 +11,7 @@ export REPO1_LOCATION=$BASE/upstream
 kubectl create namespace bigbang --dry-run=client -o yaml | kubectl apply -f -
 
 # Export the SOPS key to the cluster
-# gpg --export-secret-key --armor "${SOPS_KEY_NAME}" | kubectl create secret generic sops-gpg -n bigbang --from-file=bigbangkey.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
+gpg --export-secret-key --armor "${SOPS_KEY_NAME}" | kubectl create secret generic sops-gpg -n bigbang --from-file=bigbangkey.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
 
 # Git (private) repo credentials
 kubectl create secret generic private-git -n bigbang \

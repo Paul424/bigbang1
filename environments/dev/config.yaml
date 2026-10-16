@@ -18,6 +18,9 @@ istiod:
             SECRET_TTL: 2880m  # Default TTLS for workload crts set to 2 days to survive laptop in sleep for several hours
 
 istioGateway:
+  dependsOn:
+    - name: metallb-config
+      namespace: metallb
   values:
     gateways:
       public:
@@ -169,6 +172,8 @@ monitoring:
   dependsOn:
     - name: k8s-resources
       namespace: k8s-resources
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   sso:
     enabled: true
     prometheus:
@@ -223,6 +228,9 @@ twistlock:
 addons:
   gitlab:
     enabled: true
+    dependsOn:
+      - name: rook-ceph-cluster-config
+        namespace: rook-ceph
     sso:
       enabled: true
       client_id: "kind-gitlab"
@@ -410,6 +418,9 @@ addons:
 
   keycloak:
     enabled: true
+    dependsOn:
+      - name: rook-ceph-cluster
+        namespace: rook-ceph
     values:
       networkPolicies:
         egress:

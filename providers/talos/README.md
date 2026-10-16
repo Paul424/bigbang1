@@ -457,7 +457,7 @@ talosctl kubeconfig --merge --nodes $CTL2_IP ~/.kube/bb9-dev-quickstart-config
 The CNI is installed manually here (because it cannot be integrated into gitops since the flux controllers won't run without a CNI).
 ```
 # Install the CNI (Calico because we need nwpols /w ipBlock support for BB)
-kubectl apply --server-side --kustomize ./providers/talos/calico/
+bash ./providers/talos/calico/install.sh
 ```
 
 ## Config details

@@ -88,6 +88,9 @@ sops --encrypt environments/dev/secrets/dev-bb-secret.yaml > environments/dev/se
 
 The simple approach (when doing a full redeployment) is to just:
 1. Remove the old gpg key
+```
+gpg --delete-secret-and-public-key FINGERPRINT
+```
 2. Create a new gpg key
 3. Take the fp to .sops
 4. Encrypt all files

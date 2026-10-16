@@ -3,6 +3,4 @@ kind: Kustomization
 
 resources:
 - tigera-operator.yaml
-# - installation-nftables.yaml
 - v3_projectcalico_org.yaml
-- custom-resources.yaml

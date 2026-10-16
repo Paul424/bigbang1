@@ -20,7 +20,12 @@ kubectl create secret generic private-git -n bigbang \
     --dry-run=client -o yaml | kubectl apply -f -
 
 # Deploy flux
-git clone https://repo1.dso.mil/big-bang/bigbang.git $REPO1_LOCATION/bigbang
+if [ ! -d "$REPO1_LOCATION/bigbang" ]; then
+  echo "Cloning repository into $REPO1_LOCATION/bigbang..."
+  git clone https://repo1.dso.mil/big-bang/bigbang.git $REPO1_LOCATION/bigbang
+else
+  echo "Directory $REPO1_LOCATION/bigbang already exists. Skipping clone."
+fi
 $REPO1_LOCATION/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_TOKEN
 
 # The top level reconciler

@@ -170,8 +170,8 @@ prometheusOperatorCRDs: {}
 
 monitoring:
   dependsOn:
-    - name: k8s-resources
-      namespace: k8s-resources
+    # - name: k8s-resources
+    #   namespace: k8s-resources
     - name: rook-ceph-cluster
       namespace: rook-ceph
   sso:
@@ -462,40 +462,40 @@ addons:
           memory: 128Mi
 
 packages:
-  k8s-resources:
-    enabled: true
-    namespace:
-      name: k8s-resources
-    sourceType: "helmRepo"
-    ociRepo:
-      repoName: ghcr.io/deliveryhero
-      chartName: k8s-resources
-      tag: 0.8.2
-    helmRepo:
-      repoName: deliveryhero
-      chartName: k8s-resources
-      tag: 0.8.2
-    # passBigBangValues: false
-    # wrapper:
-    #   enabled: false
-    #   postRenderers: []
-    flux:
-      timeout: 5m
-    # postRenderers: []
-    # dependsOn: []
-    istio:
-      injection: disabled
-    # monitor: {}
-    # secrets: {}
-    # configMaps: {}
-    values:
-      Namespaces:
-        - name: monitoring
-          fullnameOverride: monitoring
-          extraLabels:
-            pod-security.kubernetes.io/enforce: privileged
-            pod-security.kubernetes.io/audit: privileged
-            pod-security.kubernetes.io/warn: privileged      
+  # k8s-resources:
+  #   enabled: true
+  #   namespace:
+  #     name: k8s-resources
+  #   sourceType: "helmRepo"
+  #   ociRepo:
+  #     repoName: ghcr.io/deliveryhero
+  #     chartName: k8s-resources
+  #     tag: 0.8.2
+  #   helmRepo:
+  #     repoName: deliveryhero
+  #     chartName: k8s-resources
+  #     tag: 0.8.2
+  #   # passBigBangValues: false
+  #   # wrapper:
+  #   #   enabled: false
+  #   #   postRenderers: []
+  #   flux:
+  #     timeout: 5m
+  #   # postRenderers: []
+  #   # dependsOn: []
+  #   istio:
+  #     injection: disabled
+  #   # monitor: {}
+  #   # secrets: {}
+  #   # configMaps: {}
+  #   values:
+  #     Namespaces:
+  #       - name: monitoring
+  #         fullnameOverride: monitoring
+  #         extraLabels:
+  #           pod-security.kubernetes.io/enforce: privileged
+  #           pod-security.kubernetes.io/audit: privileged
+  #           pod-security.kubernetes.io/warn: privileged      
 
   metallb:
     enabled: true

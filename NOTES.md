@@ -20,6 +20,29 @@ Ah, nee wacht nu komt hij toch; nu naar 3.34.0
 En ook de bb-env is nu applied!
 Kijken wat resume doet? Ok nu applied nu direct v3.34.0
 
+authservice:
+
+pods "authservice-84c5bc4dc-v77sq" is forbidden: violates PodSecurity                                                                                                                                │
+│       "baseline:latest": non-default capabilities (container "istio-init" must not                                                                                                                                 │
+│       include "NET_ADMIN", "NET_RAW" in securityContext.capabilities.add)'
+
+For now lets simply set enforce=privileged
+Then later (BB4) we can switch to istio cni
+
+prometheus:
+
+="Failed to apply configuration" err="unable to read CA cert: unable to read file /etc/prom-certs/root-cert.pem: open /etc/prom-certs/root-cert.pem: no such file or directory"                                                                            
+
+msg="Fatal error" err="error loading config from \"/etc/prometheus/config_out/prometheus.env.yaml\": one or more errors occurred while applying the  │
+│ new configuration (--config.file=\"/etc/prometheus/config_out/prometheus.env.yaml\")" 
+
+.Values.alertmanager.alertmanagerSpec.tlsConfig
+Ik vermoed dat ns monitoring toch injected draaide! Hierdoor kwam de sidecar etc...
+Eerste ven gemakkelijk terugzetten en bekijken.
+Trouwens k8s-resources komt toch te vervallen door cluster op privileged ;-)
+
+
+
 $$20261015$$
 
 - proxmox confs gemaakt om de nvidia pci device raw door te geven.

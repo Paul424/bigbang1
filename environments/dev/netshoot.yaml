@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netshoot
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: netshoot
+  namespace: netshoot
+spec:
+  selector:
+    matchLabels:
+      app: netshoot
+  template:
+    metadata:
+      labels:
+        app: netshoot
+    spec:
+      hostNetwork: true
+      containers:
+      - name: netshoot
+        image: nicolaka/netshoot:v0.16
+        imagePullPolicy: IfNotPresent
+        command:
+        - sleep
+        - "3600"

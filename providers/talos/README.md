@@ -605,7 +605,7 @@ For a talos setup the endpoints are accessible to the local network, so no tunne
 But you do need to provide a static DNS name mapping:
 
 ```
-192.168.50.253  ceph.dev.bigbang.mil
+192.168.30.102  ceph.dev.bigbang.mil
 192.168.30.101  keycloak.dev.bigbang.mil
 192.168.30.101  openldap.dev.bigbang.mil
 192.168.30.100  gitlab.dev.bigbang.mil

@@ -64,6 +64,12 @@ kyvernoPolicies:
           - rook-ceph
           names:
           - "*"
+      # netshoot on talos
+      - resources:
+          namespaces:
+          - netshoot
+          names:
+          - "*"
       # metallb on talos
       - resources:
           namespaces:
@@ -561,6 +567,7 @@ packages:
         enabled: true
         interfaces:
           - ens18.30
+
   keycloak-realms:
     enabled: true
     namespace:
@@ -1146,7 +1153,7 @@ packages:
     values:
       service:
         type: LoadBalancer
-        loadBalancerIP: 192.168.50.253
+        loadBalancerIP: 192.168.30.102
       objectStoreUsers:
         - name: gitlab
           keys:

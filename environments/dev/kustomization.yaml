@@ -10,6 +10,7 @@ configMapGenerator:
 resources:
 - ../base
 - secrets/dev-bb-secret.enc.yaml
+- netshoot.yaml
 
 patches:
 # # Enable the line below if a secrets.enc.yaml is created in this directory

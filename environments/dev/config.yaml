@@ -1351,16 +1351,6 @@ packages:
           enabled: true
       ingress:
         enabled: false
-        # className: traefik
-        # hosts:
-        # - host: ollama.dev.scipio.mil
-        #   paths:
-        #     - path: /
-        #       pathType: Prefix
-        # tls:
-        #   - secretName: ollama-tls
-        #     hosts:
-        #       - ollama.dev.scipio.mil
       resources:
         requests:
           memory: 4096Mi
@@ -1414,9 +1404,13 @@ packages:
       enabled: true
     istio:
       hosts:
-        - opencode.dev.bigbang.mil
-      gateways:
-        - public      
+        - names:
+            - opencode
+          gateways:
+            - public
+          destination:
+            service: opencode-kubeopencode-server.opencode.svc.cluster.local
+            port: 2746
     values:
       server:
         auth:

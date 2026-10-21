@@ -87,6 +87,11 @@ num   pkts bytes target     prot opt in     out     source               destina
 18       0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate DNAT
 
 
+ana logger=authn.service traceID=20d71dfe31b2d2a905cbb907b181c7f0 t=2026-10-21T09:10:42.736330908Z level=error msg="Failed to authenticate request" client=auth.client.generic_oauth error="[auth.oauth.token.exchange │
+│ ] failed to exchange code to token: Post \"https://keycloak.dev.bigbang.mil/auth/realms/me-yoda/protocol/openid-connect/token\": dial tcp: lookup keycloak.dev.bigbang.mil on 10.96.0.10:53: no such host"                 │
+│ grafan
+
+
 
 $$20261020$$
 
@@ -224,8 +229,4 @@ $$20261007$$
 + api version alphav1 deprecated
 + eerst alleen control planes doen; kijken of dat up komt op vlan20
 + ntp session timeout :4460
-- node p3 valt weg; mogelijk EEE related
 - ai node label toevoegen en drivers aanzetten
-- ai-node heeft geen storage?
-- 
-

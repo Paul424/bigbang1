@@ -5,6 +5,11 @@ auto: off
 hostname: talos-ai1
 ---
 apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+    nvidia.com/gpu.present: "true"
+---
+apiVersion: v1alpha1
 kind: VLANConfig
 name: ens18.20
 vlanID: 20

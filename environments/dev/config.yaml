@@ -88,6 +88,12 @@ kyvernoPolicies:
           - calico-system
           names:
           - "*"
+      # Nvidia gpu-operator
+      - resources:
+          namespaces:
+          - gpu-operator
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:
@@ -1267,71 +1273,21 @@ packages:
       path: chart
     values: {}
 
-  # freeipa:
-  #   enabled: true
-  #   sourceType: "git"
-  #   git:
-  #     repo: https://github.com/Paul424/freeipa.git
-  #     path: "./manifests"
-  #     branch: main
-  #   kustomize: true
-  #   passBigBangValues: false
-  #   wrapper:
-  #     enabled: true
-  #     postRenderers: []
-  #   flux:
-  #     timeout: 5m
-  #   postRenderers: []
-  #   dependsOn: []
-  #   # istio:
-  #   #   hosts:
-  #   #     - names:
-  #   #         - freeipa
-  #   #       gateways:
-  #   #         - istio-gateway/passthrough-ingressgateway
-  #   #       destination:
-  #   #         protocol: tcp
-  #   #         service: openldap
-  #   #         port: 1389
-  #     # hardened:
-  #     #   customAuthorizationPolicies:
-  #     #     - name: allow-ingress-to-openldap-tcp-port-1389-from-ns-keycloak
-  #     #       enabled: true
-  #     #       spec:
-  #     #         action: ALLOW
-  #     #         rules:
-  #     #         - from:
-  #     #           - source:
-  #     #               principals:
-  #     #               - cluster.local/ns/keycloak/sa/keycloak-keycloak
-  #     #           to:
-  #     #           - operation:
-  #     #               ports:
-  #     #               - "1389"
-  #     #         selector:
-  #     #           matchLabels:
-  #     #             app: openldap
-  #   monitor: {}
-  #   # network:
-  #   #   additionalPolicies:
-  #   #     - name: allow-ingress-to-openldap-1389-from-ns-keycloak
-  #   #       spec:
-  #   #         ingress:
-  #   #         - from:
-  #   #           - namespaceSelector:
-  #   #               matchLabels:
-  #   #                 kubernetes.io/metadata.name: keycloak
-  #   #             podSelector:
-  #   #               matchLabels:
-  #   #                 app.kubernetes.io/name: keycloak
-  #   #           ports:
-  #   #           - port: 1389
-  #   #             protocol: TCP
-  #   #         podSelector:
-  #   #           matchLabels:
-  #   #             app: openldap
-  #   #         policyTypes:
-  #   #         - Ingress
-  #   secrets: {}
-  #   configMaps: {}
-  #   # values: {}
+  gpu-operator:
+    enabled: true
+    namespace:
+      name: gpu-operator
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: nvidia
+      chartName: gpu-operator
+      tag: v26.7.2
+    flux:
+      timeout: 5m
+    istio:
+      injection: disabled
+    values:
+      driver:
+        enabled: false
+      toolkit:
+        enabled: false

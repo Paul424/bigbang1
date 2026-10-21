@@ -10,3 +10,16 @@ In addition the router is configured to forward DNS requests to bind9 for the do
 # /jffs/configs/dnsmasq.conf.add
 server=/dev.bigbang.mil/192.168.30.150
 ```
+
+## Test
+
+```
+# Through VLAN20 gateway
+dig @192.168.20.1 keycloak.dev.bigbang.mil
+
+# Directly on bind9
+dig @192.168.30.150 keycloak.dev.bigbang.mil
+
+# Inspect talos node resolvers
+talosctl -n talos-wrk2 get resolvers
+```

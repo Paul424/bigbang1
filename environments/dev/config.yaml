@@ -1318,6 +1318,7 @@ packages:
     #       patches:
     dependsOn:
       - name: gpu-operator
+        namespace: gpu-operator
     istio:
       injection: disabled
     # monitor: {}

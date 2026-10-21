@@ -12,6 +12,14 @@ name: ens18
 ---
 apiVersion: v1alpha1
 kind: VLANConfig
+name: ens18.20
+vlanID: 20
+vlanMode: 802.1q
+parent: ens18
+up: true
+---
+apiVersion: v1alpha1
+kind: VLANConfig
 name: ens18.30
 vlanID: 30
 vlanMode: 802.1q

@@ -15,6 +15,10 @@ spec:
         encapsulation: VXLANCrossSubnet
         natOutgoing: Enabled
         nodeSelector: all()
+    nodeAddressAutodetectionV4:
+      firstFound: false
+      cidrs:
+        - 192.168.20.0/24  # Make sure Calico uses VLAN20 and does not select (first-found) VLAN30 for its VXLAN/IPIP-tunnel-endpoint or BGP-peer
   kubeletVolumePluginPath: None
   flexVolumePath: None
 ---

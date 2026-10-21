@@ -1,3 +1,100 @@
+$$20261021$$
+
+Met twee interfaces en policy routing kan strict mode pakketten droppen. Zet zo nodig net.ipv4.conf.all.rp_filter: "2" in machine.sysctls.
+
+
+
+
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# ip route get 192.168.30.100
+192.168.30.100 dev br30 src 192.168.30.1 uid 0 
+    cache 
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# ip -br addr | grep 192.168.30
+br30             UP             192.168.30.1/24 
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -L SVC30 -v -n --line-numbers
+Chain SVC30 (1 references)
+num   pkts bytes target     prot opt in     out     source               destination         
+1     4882 2260K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+2        5   300 ACCEPT     tcp  --  br0    br30    192.168.50.0/24      192.168.30.0/24      multiport dports 80,443 ctstate NEW
+3     2295  360K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -t nat -L POSTROUTING -v -n --line-numbers | head
+Chain POSTROUTING (policy ACCEPT 8052 packets, 654K bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1        1    60 MASQUERADE  tcp  --  *      br30    192.168.50.0/24      192.168.30.0/24      multiport dports 80,443
+2      126 14504 MASQUERADE  all  --  *      vlan4   0.0.0.0/0            0.0.0.0/0           
+3    2073K  184M PUPNP      all  --  *      ppp0    0.0.0.0/0            0.0.0.0/0           
+4    69226   21M MASQUERADE  all  --  *      ppp0   !86.88.91.166         0.0.0.0/0           
+5      117  7020 MASQUERADE  all  --  *      vlan6  !169.254.137.240      0.0.0.0/0           
+6     2684  337K MASQUERADE  all  --  *      br0     192.168.50.0/24      192.168.50.0/24     
+7        0     0 MASQUERADE  all  --  *      ppp0    192.168.20.0/24      0.0.0.0/0           
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -L FORWARD -v -n --line-numbers | head -20
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1     8016 2967K SVC30      all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+2    5167K 3656M TALOS20    all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+3    4274K 3306M IPSEC_DROP_SUBNET_ICMP  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+4    4274K 3306M IPSEC_STRONGSWAN  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+5    2271K 3079M ACCEPT     udp  --  *      *       0.0.0.0/0            224.0.0.0/4         
+6     510K   31M TCPMSS     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcpflags: 0x06/0x02 TCPMSS clamp to PMTU
+7       25  7690 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+8    2003K  226M WGSF       all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+9    2003K  226M OVPNSF     all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+10    6647 2602K WGNPControls  all  --  br1    *       0.0.0.0/0            0.0.0.0/0           
+11    4927 2499K ACCEPT     all  --  br1    ppp0    0.0.0.0/0            0.0.0.0/0           
+12     124 10095 DROP       all  --  !br0   ppp0    0.0.0.0/0            0.0.0.0/0           
+13    1720  103K WGNPControls  all  --  br1    *       0.0.0.0/0            0.0.0.0/0           
+14      32  1920 ACCEPT     all  --  br1    vlan6   0.0.0.0/0            0.0.0.0/0           
+15       2   120 DROP       all  --  !br0   vlan6   0.0.0.0/0            0.0.0.0/0           
+16       0     0 ACCEPT     all  --  br0    br0     0.0.0.0/0            0.0.0.0/0           
+17   11774  857K DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID
+18       0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate DNAT
+<hier curl command gedaan>
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -L SVC30 -v -n --line-numbers
+Chain SVC30 (1 references)
+num   pkts bytes target     prot opt in     out     source               destination         
+1     5902 2757K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+2       10   600 ACCEPT     tcp  --  br0    br30    192.168.50.0/24      192.168.30.0/24      multiport dports 80,443 ctstate NEW
+3     2640  444K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -t nat -L POSTROUTING -v -n --line-numbers | head
+Chain POSTROUTING (policy ACCEPT 9136 packets, 742K bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1        2   120 MASQUERADE  tcp  --  *      br30    192.168.50.0/24      192.168.30.0/24      multiport dports 80,443
+2      126 14504 MASQUERADE  all  --  *      vlan4   0.0.0.0/0            0.0.0.0/0           
+3    2074K  184M PUPNP      all  --  *      ppp0    0.0.0.0/0            0.0.0.0/0           
+4    69326   21M MASQUERADE  all  --  *      ppp0   !86.88.91.166         0.0.0.0/0           
+5      117  7020 MASQUERADE  all  --  *      vlan6  !169.254.137.240      0.0.0.0/0           
+6     2686  337K MASQUERADE  all  --  *      br0     192.168.50.0/24      192.168.50.0/24     
+7        0     0 MASQUERADE  all  --  *      ppp0    192.168.20.0/24      0.0.0.0/0           
+adm820@RT-AX88U_Pro-F218:/jffs/scripts# iptables -L FORWARD -v -n --line-numbers | head -20
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1     8649 3214K SVC30      all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+2    5168K 3656M TALOS20    all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+3    4274K 3306M IPSEC_DROP_SUBNET_ICMP  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+4    4274K 3306M IPSEC_STRONGSWAN  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+5    2271K 3079M ACCEPT     udp  --  *      *       0.0.0.0/0            224.0.0.0/4         
+6     510K   31M TCPMSS     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcpflags: 0x06/0x02 TCPMSS clamp to PMTU
+7       25  7690 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+8    2003K  226M WGSF       all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+9    2003K  226M OVPNSF     all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+10    6647 2602K WGNPControls  all  --  br1    *       0.0.0.0/0            0.0.0.0/0           
+11    4927 2499K ACCEPT     all  --  br1    ppp0    0.0.0.0/0            0.0.0.0/0           
+12     129 10395 DROP       all  --  !br0   ppp0    0.0.0.0/0            0.0.0.0/0           
+13    1720  103K WGNPControls  all  --  br1    *       0.0.0.0/0            0.0.0.0/0           
+14      32  1920 ACCEPT     all  --  br1    vlan6   0.0.0.0/0            0.0.0.0/0           
+15       2   120 DROP       all  --  !br0   vlan6   0.0.0.0/0            0.0.0.0/0           
+16       0     0 ACCEPT     all  --  br0    br0     0.0.0.0/0            0.0.0.0/0           
+17   11774  857K DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID
+18       0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate DNAT
+
+
+
+$$20261020$$
+
+Oplossing A (Aanbevolen): Configureer Symmetric Routing op de node (bijvoorbeeld met ip rule en ip route tabellen per VLAN) zodat verkeer dat binnenkomt op de VLAN-interface ook verplicht via de gateway van datzelfde VLAN beantwoordt.
+
+$$20261017$$
+
+Tbv vlan debug: netshoot pod als daemonset draaien op hostnetwork
 
 $$20261016$$
 
@@ -38,9 +135,9 @@ msg="Fatal error" err="error loading config from \"/etc/prometheus/config_out/pr
 
 .Values.alertmanager.alertmanagerSpec.tlsConfig
 Ik vermoed dat ns monitoring toch injected draaide! Hierdoor kwam de sidecar etc...
+  istio-injection: enabled
 Eerste ven gemakkelijk terugzetten en bekijken.
 Trouwens k8s-resources komt toch te vervallen door cluster op privileged ;-)
-
 
 
 $$20261015$$

@@ -41,6 +41,7 @@ machine:
     #       # The `value` field is used to provide the seccomp profile.
     #       value:
     #         defaultAction: SCMP_ACT_LOG
+
 # Provides cluster specific configuration options.
 cluster:
     token: zszxjm.d69nip3tzvpcgp54 # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
@@ -55,8 +56,9 @@ cluster:
         # image: registry.k8s.io/etcd:3.7.1
 
         # # The `advertisedSubnets` field configures the networks to pick etcd advertised IP from.
-        # advertisedSubnets:
-        #     - 10.0.0.0/8
+        advertisedSubnets:
+            # Make sure talos administration uses VLAN20
+            - 192.168.20.0/24
     
     # # External cloud provider configuration.
     # externalCloudProvider:
@@ -172,7 +174,10 @@ endpoint: https://192.168.20.10:6443 # The Kubernetes API endpoint.
 apiVersion: v1alpha1
 kind: KubeNodeConfig
 # The `nodeIP` field is used to configure `--node-ip` flag for the kubelet.
-nodeIP: {}
+nodeIP:
+  validSubnets:
+    # Make sure talos administration uses VLAN20
+    - 192.168.20.0/24
 # Configures the node labels for the machine.
 labels:
     node-role.kubernetes.io/control-plane: ""

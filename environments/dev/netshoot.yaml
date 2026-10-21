@@ -26,6 +26,9 @@ spec:
         command:
         - sleep
         - "3600"
+        securityContext:
+          # Needs NET_ADMIN/NET_RAW capabilities
+          privileged: true
       nodeSelector:
         kubernetes.io/os: linux
       tolerations:

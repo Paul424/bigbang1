@@ -148,7 +148,7 @@ qm create ${VM_CTL1_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL1_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:11,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:11,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_CTL1_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -165,7 +165,7 @@ qm create ${VM_WRK1_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK1_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:12,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:12,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK1_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK1_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -183,7 +183,7 @@ qm create ${VM_WRK2_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK2_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:13,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:13,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK2_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK2_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -233,7 +233,7 @@ qm create ${VM_CTL2_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL2_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:21,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:21,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_CTL2_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -250,7 +250,7 @@ qm create ${VM_WRK3_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK3_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:22,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:22,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK3_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK3_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -268,7 +268,7 @@ qm create ${VM_WRK4_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK4_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:23,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:23,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK4_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK4_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -318,7 +318,7 @@ qm create ${VM_CTL3_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_CTL3_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:31,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:31,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_CTL3_ID}-disk-0,size=32G \
   --scsihw virtio-scsi-pci \
   --ostype l26 \
@@ -335,7 +335,7 @@ qm create ${VM_WRK5_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK5_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:32,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:32,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK5_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK5_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -353,7 +353,7 @@ qm create ${VM_WRK6_ID} \
   --agent 1 \
   --ide2 local:iso/metal-amd64-qemu.iso,media=cdrom,size=308556K \
   --name ${VM_WRK6_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:33,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:33,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_WRK6_ID}-disk-0,size=32G \
   --scsi1 data:vm-${VM_WRK6_ID}-disk-1,discard=on,size=240G \
   --scsihw virtio-scsi-pci \
@@ -380,7 +380,7 @@ qm agent ${VM_WRK6_ID} network-get-interfaces
 ```
 export BRIDGE=vmbr0
 export VM_AI1_NAME=bb9-ai1
-export VM_AI1_ID=301
+export VM_AI1_ID=210
 
 qm stop ${VM_AI1_ID}
 qm destroy ${VM_AI1_ID}
@@ -393,7 +393,7 @@ qm create ${VM_AI1_ID} \
   --hostpci0 0000:15:00,pcie=1 \
   --ide2 local:iso/metal-amd64-qemu-nvidia-kmod.iso,media=cdrom,size=308556K \
   --name ${VM_AI1_NAME} \
-  --net0 virtio=BC:24:11:F7:7E:42,bridge=${BRIDGE},firewall=1,tag=20 \
+  --net0 virtio=BC:24:11:F7:7E:41,bridge=${BRIDGE},firewall=1,trunks="20;30" \
   --scsi0 local-lvm:vm-${VM_AI1_ID}-disk-0,size=32G \
   --scsi1 edata:vm-${VM_AI1_ID}-disk-1,discard=on,size=230G \
   --scsihw virtio-scsi-pci \
@@ -428,6 +428,11 @@ export AI1_IP=192.168.20.26
 talosctl get disks --nodes $CTL1_IP --insecure
 talosctl get disks --nodes $WRK1_IP --insecure
 
+# Generate the config only once; since you want to make changes to it:
+# 1. Remove KubeFlannelCNIConfig from the generated controlplane.yaml
+# 2. Set cluster.etcd.advertisedSubnets to VLAN20 (etcd)
+# 3. Set KubeNodeConfig.nodeIP.validSubnets to VLAN20 (kubelet)
+# 
 talosctl gen config \
   bb9 \
   https://$CTL1_IP:6443 \
@@ -437,8 +442,6 @@ talosctl gen config \
   --config-patch-worker @./providers/talos/config-patch-worker.yaml \
   --install-image factory.talos.dev/metal-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.14.2 \
   --force
-
-# Then remove KubeFlannelCNIConfig from the generated controlplane.yaml
 
 # And apply the configs
 bash ./providers/talos/scripts/apply-config.sh [--insecure]

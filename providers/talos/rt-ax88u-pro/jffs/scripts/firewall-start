@@ -17,9 +17,11 @@
 
 TALOS_NET="192.168.20.0/24"
 LAN_NET="192.168.50.0/24"
+SVC_NET="192.168.30.0/24"
 
-TALOS_BR="br20"
 LAN_BR="br0"
+TALOS_BR="br20"
+SVC_BR="br30"
 
 WAN_IF="ppp0"   # "$(nvram get wan0_ifname)"
 
@@ -207,3 +209,46 @@ iptables -t mangle -I FORWARD 1 \
     -p tcp \
     --tcp-flags SYN,RST SYN \
     -j TCPMSS --clamp-mss-to-pmtu
+
+# ============================================================
+# VLAN30 SERVICES: LAN -> Services VLAN
+#
+# LAN:      192.168.50.0/24
+# Services: 192.168.30.0/24
+# Allowed:  TCP 80,443
+# ============================================================
+
+while iptables -D FORWARD -j SVC30 2>/dev/null; do
+    :
+done
+
+iptables -N SVC30 2>/dev/null || true
+iptables -F SVC30
+
+# Replies altijd toestaan (niet afhankelijk van TALOS20)
+iptables -A SVC30 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+iptables -A SVC30 \
+    -i "$LAN_BR" \
+    -o "$SVC_BR" \
+    -s "$LAN_NET" \
+    -d "$SVC_NET" \
+    -p tcp -m multiport --dports 80,443 \
+    -m conntrack --ctstate NEW \
+    -j ACCEPT
+
+iptables -A SVC30 -j RETURN
+iptables -I FORWARD 1 -j SVC30
+
+# --- nat: masquerade LAN -> VLAN30 ---
+# Met SNAT ziet de talos node alleen nog 192.168.30.1 als client. De reply gaat daardoor via de connected route op ens18.30 terug, 
+# en je hebt geen dst-rules in Talos meer nodig. Verwijder dus de RoutingRuleConfig met dst: 192.168.50.x.
+while iptables -t nat -D POSTROUTING \
+    -s "$LAN_NET" -d "$SVC_NET" -o "$SVC_BR" \
+    -p tcp -m multiport --dports 80,443 \
+    -j MASQUERADE 2>/dev/null; do :; done
+
+iptables -t nat -I POSTROUTING 1 \
+    -s "$LAN_NET" -d "$SVC_NET" -o "$SVC_BR" \
+    -p tcp -m multiport --dports 80,443 \
+    -j MASQUERADE

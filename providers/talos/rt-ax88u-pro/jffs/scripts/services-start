@@ -32,6 +32,26 @@ ip link set br20 up
 ip addr del 192.168.20.1/24 dev br20 2>/dev/null
 ip addr add 192.168.20.1/24 dev br20
 
+# VLAN 30
+if ! ip link show eth1.30 >/dev/null 2>&1; then
+    ip link add link eth1 name eth1.30 type vlan id 30
+fi
+
+ip link set eth1.30 up
+
+if ! brctl show br30 >/dev/null 2>&1; then
+    brctl addbr br30
+fi
+
+if ! brctl show br30 | grep -q eth1.30; then
+    brctl addif br30 eth1.30
+fi
+
+ip link set br30 up
+
+ip addr del 192.168.30.1/24 dev br30 2>/dev/null
+ip addr add 192.168.30.1/24 dev br30
+
 # nvram items?
 # nvram set lan_ifnames="vlan1 eth1 eth2"
 # nvram set lan_ifname="br0"

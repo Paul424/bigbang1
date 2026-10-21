@@ -3,3 +3,49 @@ apiVersion: v1alpha1
 kind: HostnameConfig
 auto: off
 hostname: talos-wrk2
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: ens18.20
+vlanID: 20
+vlanMode: 802.1q
+parent: ens18
+up: true
+addresses:
+  - address: 192.168.20.21/24
+routes:
+    - gateway: 192.168.20.1
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: ens18.30
+vlanID: 30
+vlanMode: 802.1q
+parent: ens18
+up: true
+addresses:
+  - address: 192.168.30.21/24
+routes:
+  - gateway: 192.168.30.1
+    table: 30
+    metric: 100
+# ---
+# Waarom rule 1000 niet matcht
+# Het verkeer naar het VIP wordt door Calico (nftables) gedNAT’t naar een pod. De reply komt dus van de pod (10.244.x.x) en wordt geforward. 
+# Conntrack zet het bronadres pas terug naar het VIP in POSTROUTING, na de routing-beslissing. Op het moment dat de kernel de route kiest, 
+# is het bronadres dus nog 10.244.x.x, en dan matcht from 192.168.30.0/24 nooit. De kernel kijkt in de main table en vindt voor 192.168.50.88 
+# de connected route 192.168.50.0/24 dev ens18. Dat is precies wat je ziet.
+#
+# Tevens bij SNAT (router vervangt client ip met 192.168.30.1) werkt de routing naar VXLAN niet meer omdat de node uitstuurt naar ens18.30 (ipv vxlan.calico)
+#
+# apiVersion: v1alpha1
+# kind: RoutingRuleConfig
+# name: "1000"
+# src: 192.168.30.0/24
+# table: 30
+# ---
+# apiVersion: v1alpha1
+# kind: RoutingRuleConfig
+# name: "999"
+# dst: 192.168.50.88/32
+# table: 30

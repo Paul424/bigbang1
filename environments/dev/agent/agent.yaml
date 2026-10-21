@@ -1,0 +1,76 @@
+---
+apiVersion: kubeopencode.io/v1alpha1
+kind: Agent
+metadata:
+  name: qwen-ollama
+  namespace: opencode
+spec:
+  agentImage: paul424/kubeopencode-agent-opencode-1.18.33:v0.1.9
+  profile: "Qwen (ollama) development agent"
+  workspaceDir: /workspace
+  serviceAccountName: opencode-sa
+  config:
+    "$schema": "https://opencode.ai/config.json"
+    model: "ollama/qwen3.5:9b"
+    provider:
+      ollama:
+        npm: "@ai-sdk/openai-compatible"
+        name: "Qwen (ollama)"
+        options:
+          baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
+        models:
+          "qwen3.5:9b":
+            name: "Qwen3.5:9b (ollama)"
+            tools: true
+            limit:
+              context: 128000
+              output: 65536
+          # "qwen2.5-coder:7b":
+          #   name: "Qwen2.5-coder:7b (ollama)"
+          #   limit:
+          #     context: 128000
+          #     output: 65536
+    default_agent: "build"
+    # tools:
+    #   bash: true
+    #   edit: true
+    #   read: true
+    #   webfetch: false
+    #   websearch: false
+    #   web_fetch: false
+    #   file_edit: false
+    permission:
+      "*": allow
+      bash: deny
+      # bash: allow
+      # read: allow
+      # edit: ask
+      # write: ask
+      # kubernetes_*: allow
+      # webfetch: deny
+      # websearch: deny
+      # "*": deny
+    mcp:
+      kubernetes:
+        enabled: true
+        type: remote
+        url: "http://kubernetes-mcp-server.kubernetes-mcp-server.svc.cluster.local:8080/mcp"
+  credentials:
+    - name: api-key
+      secretRef:
+        name: opencode-ai-credentials
+        key: api-key
+      env: OPENAI_API_KEY
+  persistence:
+    sessions:
+      size: "8Gi"
+      storageClassName: ceph-block
+    workspace:
+      size: "16Gi"
+      storageClassName: ceph-block
+  maxConcurrentTasks: 2
+  podSpec:
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000

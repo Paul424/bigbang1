@@ -1418,3 +1418,24 @@ packages:
           allowAnonymous: true
         ingress:
           enabled: false
+
+  opencode-agent:
+    enabled: true
+    namespace:
+      name: opencode
+      create: false
+    sourceType: "git"
+    git:
+      repo: https://github.com/Paul424/bigbang1.git
+      path: "./environments/dev/agent/kustomization.yaml"
+      branch: main
+    kustomize: true
+    flux:
+      timeout: 5m
+    # postRenderers: []
+    dependsOn:
+      - name: opencode
+    # istio: {}
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}

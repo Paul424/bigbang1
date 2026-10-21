@@ -1340,7 +1340,7 @@ packages:
         - names:
             - ollama
           gateways:
-            - public-ingressgateway
+            - istio-gateway/public-ingressgateway
           destination:
             service: ollama.ollama.svc.cluster.local
             port: 11434
@@ -1418,7 +1418,7 @@ packages:
         - names:
             - opencode
           gateways:
-            - public-ingressgateway
+            - istio-gateway/public-ingressgateway
           destination:
             service: opencode-kubeopencode-server.opencode.svc.cluster.local
             port: 2746
@@ -1456,7 +1456,7 @@ packages:
         - names:
             - qwen-agent.opencode
           gateways:
-            - public-ingressgateway
+            - istio-gateway/public-ingressgateway
           destination:
             service: qwen-ollama.opencode.svc.cluster.local
             port: 4096

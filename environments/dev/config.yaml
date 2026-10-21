@@ -100,6 +100,12 @@ kyvernoPolicies:
           - ollama
           names:
           - "*"
+      # kubernetes-mcp-server
+      - resources:
+          namespaces:
+          - kubernetes-mcp-server
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:
@@ -1360,3 +1366,29 @@ packages:
         enabled: true
         size: 128Gi
         storageClass: ceph-block
+
+  kubernetes-mcp-server:
+    enabled: true
+    namespace:
+      name: kubernetes-mcp-server
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: kubernetes-mcp-server
+      chartName: kubernetes-mcp-server
+      tag: 0.1.0
+    flux:
+      timeout: 5m
+    istio:
+      injection: disabled
+    values:
+      rbac:
+        create: true
+        extraClusterRoleBindings:
+          - name: cluster-admin
+            roleRef:
+              name: cluster-admin
+              external: true
+      serviceAccount:
+        create: true
+      ingress:
+        enabled: false

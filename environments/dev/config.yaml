@@ -1454,7 +1454,7 @@ packages:
     istio:
       hosts:
         - names:
-            - qwen-agent.opencode
+            - qwen-agent-opencode
           gateways:
             - istio-gateway/public-ingressgateway
           destination:

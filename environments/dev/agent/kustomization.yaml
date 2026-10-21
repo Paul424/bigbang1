@@ -9,7 +9,7 @@ namespace: opencode
 secretGenerator:
 - name: opencode-ai-credentials
   literals:
-    - api-key: c2stbG9jYWwtZHVtbXkta2V5
+    - api-key=c2stbG9jYWwtZHVtbXkta2V5
 
 resources:
 - agent.yaml

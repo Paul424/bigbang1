@@ -106,6 +106,12 @@ kyvernoPolicies:
           - kubernetes-mcp-server
           names:
           - "*"
+      # opencode
+      - resources:
+          namespaces:
+          - opencode
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:
@@ -1392,3 +1398,29 @@ packages:
         create: true
       ingress:
         enabled: false
+
+  opencode:
+    enabled: true
+    namespace:
+      name: opencode
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: kubeopencode
+      chartName: kubeopencode
+      tag: 0.1.9
+    flux:
+      timeout: 5m
+    wrapper:
+      enabled: true
+    istio:
+      hosts:
+        - opencode.dev.bigbang.mil
+      gateways:
+        - public      
+    values:
+      server:
+        auth:
+          enabled: true
+          allowAnonymous: true
+        ingress:
+          enabled: false

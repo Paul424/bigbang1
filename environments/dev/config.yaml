@@ -1427,7 +1427,7 @@ packages:
     sourceType: "git"
     git:
       repo: https://github.com/Paul424/bigbang1.git
-      path: "./environments/dev/agent/kustomization.yaml"
+      path: "./environments/dev/agent"
       branch: main
     kustomize: true
     flux:

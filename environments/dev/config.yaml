@@ -1325,10 +1325,10 @@ packages:
     # secrets: {}
     # configMaps: {}
     values:
-      image:
-        # repository: ollama/ollama
-        # pullPolicy: IfNotPresent
-        # tag: 0.35.0
+      # image:
+      #   repository: ollama/ollama
+      #   pullPolicy: IfNotPresent
+      #   tag: 0.35.0
       extraEnv:
         - name: OLLAMA_DEBUG
           value: "1"

@@ -3,12 +3,11 @@ apiVersion: kubeopencode.io/v1alpha1
 kind: Agent
 metadata:
   name: qwen-ollama
-  namespace: opencode
 spec:
   agentImage: paul424/kubeopencode-agent-opencode-1.18.33:v0.1.9
   profile: "Qwen (ollama) development agent"
   workspaceDir: /workspace
-  serviceAccountName: opencode-sa
+  serviceAccountName: opencode-agent-sa
   config:
     "$schema": "https://opencode.ai/config.json"
     model: "ollama/qwen3.5:9b"

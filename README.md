@@ -129,7 +129,7 @@ SSO is preconfigured using Keycloak with following users:
 
 ## App Links
 
-1. [Keycloak](https://keycloak.dev.bigbang.mil/auth/admin)
+1. [Keycloak (user: admin | pass: password)](https://keycloak.dev.bigbang.mil/auth/admin)
 2. [Backstage](https://backstage.dev.bigbang.mil/)
 3. [Harbor](https://harbor.dev.bigbang.mil/)
 4. [Prometheus](https://prometheus.dev.bigbang.mil/)

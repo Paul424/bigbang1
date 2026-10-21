@@ -98,8 +98,6 @@ apiVersion: v1alpha1
 kind: ResolverConfig
 # A list of nameservers (DNS servers) to use for resolving domain names.
 nameservers:
-    - address: 192.168.20.250 # The IP address of the nameserver.
-      
       # # TLS server name to validate the nameserver certificate against.
       # tlsServerName: dns1.example.com
     - address: 192.168.20.1 # The IP address of the nameserver.

@@ -140,6 +140,9 @@ SSO is preconfigured using Keycloak with following users:
 9. [Twistlock](https://twistlock.dev.bigbang.mil/)
 10. [Neuvector](https://neuvector.dev.bigbang.mil/)
 11. [Gitlab](https://gitlab.dev.bigbang.mil/)
+12. [Ollama](https://ollama.dev.bigbang.mil)
+13. [Opencode](https://opencode.dev.bigbang.mil)
+14. [Qwen agent Opencode](https://qwen-agent.opencode.dev.bigbang.mil)
 
 Talos specific:
 

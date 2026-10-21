@@ -716,6 +716,8 @@ packages:
             neuvector    IN      A       192.168.30.100
             twistlock    IN      A       192.168.30.100
             chat         IN      A       192.168.30.100
+            ollama       IN      A       192.168.30.100
+            opencode     IN      A       192.168.30.100
 
   rook-ceph:
     enabled: true
@@ -1331,8 +1333,17 @@ packages:
     dependsOn:
       - name: gpu-operator
         namespace: gpu-operator
+    wrapper:
+      enabled: true
     istio:
-      injection: disabled
+      hosts:
+        - names:
+            - ollama
+          gateways:
+            - public
+          destination:
+            service: ollama.ollama.svc.cluster.local
+            port: 11434
     # monitor: {}
     # secrets: {}
     # configMaps: {}
@@ -1435,7 +1446,17 @@ packages:
     # postRenderers: []
     dependsOn:
       - name: opencode
-    # istio: {}
     # monitor: {}
     # secrets: {}
     # configMaps: {}
+    wrapper:
+      enabled: true
+    istio:
+      hosts:
+        - names:
+            - qwen-agent.opencode
+          gateways:
+            - public
+          destination:
+            service: qwen-ollama.opencode.svc.cluster.local
+            port: 4096

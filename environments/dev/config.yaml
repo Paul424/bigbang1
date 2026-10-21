@@ -1460,3 +1460,17 @@ packages:
           destination:
             service: qwen-ollama.opencode.svc.cluster.local
             port: 4096
+    network:
+      allowControlPlaneEgress: true
+      # additionalPolicies: []
+      # example of additional egress network policy
+      # - name: egress-additional
+      #   spec: 
+      #     podSelector: {}
+      #     policyTypes:
+      #     - Egress
+      #     egress:
+      #     - to:
+      #       ports:
+      #       - protocol:
+      #         port: 9999

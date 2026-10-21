@@ -1,7 +1,11 @@
 $$20261021$$
 
-Met twee interfaces en policy routing kan strict mode pakketten droppen. Zet zo nodig net.ipv4.conf.all.rp_filter: "2" in machine.sysctls.
+X Met twee interfaces en policy routing kan strict mode pakketten droppen. Zet zo nodig net.ipv4.conf.all.rp_filter: "2" in machine.sysctls.
 
+gpu:
+
+todo dcgm dashboard toevoegen:
+curl -LfO https://github.com/NVIDIA/dcgm-exporter/raw/main/grafana/dcgm-exporter-dashboard.json
 
 
 
@@ -229,4 +233,4 @@ $$20261007$$
 + api version alphav1 deprecated
 + eerst alleen control planes doen; kijken of dat up komt op vlan20
 + ntp session timeout :4460
-- ai node label toevoegen en drivers aanzetten
++ ai node label toevoegen en drivers aanzetten

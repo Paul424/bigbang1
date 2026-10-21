@@ -94,6 +94,12 @@ kyvernoPolicies:
           - gpu-operator
           names:
           - "*"
+      # Ollama
+      - resources:
+          namespaces:
+          - ollama
+          names:
+          - "*"
       # control-plane (/w cilium) on talos
       - resources:
           namespaces:
@@ -1291,3 +1297,65 @@ packages:
         enabled: false
       toolkit:
         enabled: false
+
+  ollama:
+    enabled: true
+    namespace:
+      name: ollama
+    sourceType: "helmRepo"
+    helmRepo:
+      repoName: ollama
+      chartName: ollama
+      tag: 1.90.0
+    wrapper:
+      enabled: false
+    network:
+      policies: false
+    flux:
+      timeout: 10m
+    # postRenderers:
+    #   - kustomize:
+    #       patches:
+    dependsOn:
+      - name: gpu-operator
+    istio:
+      injection: disabled
+    # monitor: {}
+    # secrets: {}
+    # configMaps: {}
+    values:
+      image:
+        # repository: ollama/ollama
+        # pullPolicy: IfNotPresent
+        # tag: 0.35.0
+      extraEnv:
+        - name: OLLAMA_DEBUG
+          value: "1"
+        - name: OLLAMA_CONTEXT_LENGTH
+          value: "32768"
+      ollama:
+        gpu:
+          enabled: true
+      ingress:
+        enabled: false
+        # className: traefik
+        # hosts:
+        # - host: ollama.dev.scipio.mil
+        #   paths:
+        #     - path: /
+        #       pathType: Prefix
+        # tls:
+        #   - secretName: ollama-tls
+        #     hosts:
+        #       - ollama.dev.scipio.mil
+      resources:
+        requests:
+          memory: 4096Mi
+          cpu: 2000m
+        limits:
+          memory: 16384Mi
+          cpu: 12000m
+      persistentVolume:
+        enabled: true
+        size: 128Gi
+        storageClass: ceph-block
